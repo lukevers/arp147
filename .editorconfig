@@ -1,0 +1,11 @@
+# If you're not sure what this is, check this out:
+# https://editorconfig.org
+
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = false
+
+[*.go]
+indent_style = tab

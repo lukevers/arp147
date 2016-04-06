@@ -1,0 +1,90 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/EngoEngine/engo",
+			"repository": "https://github.com/EngoEngine/engo",
+			"revision": "2851426869f8b64986b40283a9b76cd47c517115",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/engoengine/ecs",
+			"repository": "https://github.com/engoengine/ecs",
+			"revision": "bfa6761264ad48bf74ef74a8d7cd778df9d11844",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/engoengine/engo",
+			"repository": "https://github.com/engoengine/engo",
+			"revision": "2851426869f8b64986b40283a9b76cd47c517115",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/engoengine/webgl",
+			"repository": "https://github.com/engoengine/webgl",
+			"revision": "2a3aeb34d5873e981b3f8fdba40c919980f5362a",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-gl/gl/v2.1/gl",
+			"repository": "https://github.com/go-gl/gl",
+			"revision": "cd1cf4a9b229045e8a41d5945fc597617e8bae4f",
+			"branch": "master",
+			"path": "/v2.1/gl"
+		},
+		{
+			"importpath": "github.com/go-gl/glfw/v3.1/glfw",
+			"repository": "https://github.com/go-gl/glfw",
+			"revision": "80109e44fb72476ba189857a61030e38febbbf97",
+			"branch": "master",
+			"path": "/v3.1/glfw"
+		},
+		{
+			"importpath": "github.com/go-gl/mathgl/mgl32",
+			"repository": "https://github.com/go-gl/mathgl",
+			"revision": "667e7964455c5d0db23927d59cfd72852686e419",
+			"branch": "master",
+			"path": "/mgl32"
+		},
+		{
+			"importpath": "github.com/golang/freetype",
+			"repository": "https://github.com/golang/freetype",
+			"revision": "f9531a36062a85d4cef2daae173a3c9a35ae9f17",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/luxengine/math",
+			"repository": "https://github.com/luxengine/math",
+			"revision": "0095454b51941bef657ca532c25a3a17a4b7ed70",
+			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/image/font",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"branch": "master",
+			"path": "/font"
+		},
+		{
+			"importpath": "golang.org/x/image/math/f32",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"branch": "master",
+			"path": "/math/f32"
+		},
+		{
+			"importpath": "golang.org/x/image/math/fixed",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"branch": "master",
+			"path": "/math/fixed"
+		},
+		{
+			"importpath": "golang.org/x/mobile/exp/audio/al",
+			"repository": "https://go.googlesource.com/mobile",
+			"revision": "e1840f9c116aa316ea8e5bf23f1f3a84cdb7c3f2",
+			"branch": "master",
+			"path": "/exp/audio/al"
+		}
+	]
+}

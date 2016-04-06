@@ -1,0 +1,6 @@
+# Folders
+/pkg
+/bin
+
+# Files
+.DS_Store
