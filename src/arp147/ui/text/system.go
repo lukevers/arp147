@@ -18,12 +18,19 @@ type TextControlSystem struct {
 	Leave         func(entity *ecs.Entity, dt float32)
 }
 
+func (t *TextControlSystem) New(w *ecs.World) {
+	// ...
+}
+
 func (t *TextControlSystem) Type() string {
 	return "TextControlSystem"
 }
 
-func (t *TextControlSystem) New(w *ecs.World) {
-	// ...
+// Priority defines the order of which systems to load first. The higher the
+// priority, the higher up in the loop the system is loaded. The MouseSystem
+// has a priority of 10, and we want this to load right after that.
+func (t *TextControlSystem) Priority() int {
+	return 9
 }
 
 func (t *TextControlSystem) UpdateEntity(entity *ecs.Entity, dt float32) {
