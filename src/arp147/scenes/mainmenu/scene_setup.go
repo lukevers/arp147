@@ -2,6 +2,7 @@ package mainmenu
 
 import (
 	"arp147/ui/fonts"
+	"arp147/ui/position"
 	"arp147/ui/text"
 	"github.com/engoengine/ecs"
 	"github.com/engoengine/engo"
@@ -15,14 +16,17 @@ func (s *Scene) Setup(w *ecs.World) {
 	w.AddSystem(&engo.RenderSystem{})
 
 	title := text.New(text.Text{
-		Text:     "Arp 147",
-		Size:     64,
-		Position: engo.Point{25, 25},
-		Font:     fonts.FONT_PRIMARY,
-		Scale:    engo.Point{1, 1},
+		Text:  "Arp 147",
+		Size:  64,
+		Font:  fonts.FONT_PRIMARY,
+		Scale: engo.Point{1, 1},
 		Color: text.Color{
 			BG: color.Transparent,
 			FG: color.White,
+		},
+		Position: position.Position{
+			Point:    engo.Point{25, 25},
+			Position: position.BOTTOM_RIGHT,
 		},
 	})
 

@@ -2,6 +2,7 @@ package text
 
 import (
 	"arp147/ui/fonts"
+	"arp147/ui/position"
 	"github.com/engoengine/ecs"
 	"github.com/engoengine/engo"
 )
@@ -9,10 +10,10 @@ import (
 type Text struct {
 	Text     string
 	Size     float64
-	Position engo.Point
 	Font     fonts.Font
 	Scale    engo.Point
 	Color    Color
+	Position position.Position
 
 	control *TextControlSystem
 	entity  *ecs.Entity
@@ -42,7 +43,7 @@ func (t *Text) Render() {
 
 	x, y, _ := font.TextDimensions(t.Text)
 	t.entity.AddComponent(&engo.SpaceComponent{
-		Position: t.Position,
+		Position: t.Position.Calculate(float32(x), float32(y)),
 		Width:    float32(x),
 		Height:   float32(y),
 	})
