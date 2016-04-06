@@ -4,7 +4,6 @@ import (
 	"arp147/ui/fonts"
 	"github.com/engoengine/ecs"
 	"github.com/engoengine/engo"
-	"image/color"
 )
 
 type Text struct {
@@ -12,9 +11,8 @@ type Text struct {
 	Size     float64
 	Position engo.Point
 	Font     fonts.Font
-	BG       color.Color
-	FG       color.Color
 	Scale    engo.Point
+	Color    Color
 
 	control *TextControlSystem
 }
@@ -29,8 +27,8 @@ func New(t Text) *Text {
 func (t *Text) Entity(w *ecs.World) *ecs.Entity {
 	font := &engo.Font{
 		Size: t.Size,
-		BG:   t.BG,
-		FG:   t.FG,
+		BG:   t.Color.BG,
+		FG:   t.Color.FG,
 		TTF:  fonts.Get(t.Font),
 	}
 
@@ -96,3 +94,10 @@ func (t *Text) OnEnter(fn func(entity *ecs.Entity, dt float32)) {
 func (t *Text) OnLeave(fn func(entity *ecs.Entity, dt float32)) {
 	t.control.Leave = fn
 }
+
+
+
+/*
+//
+func (t *Text) 
+*/
