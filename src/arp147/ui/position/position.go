@@ -32,8 +32,8 @@ type Position struct {
 // discarded to avoid non-CENTER_CENTER behavior. This also runs true for other
 // points where CENTER is involved.
 func (p Position) Calculate(dx, dy float32) engo.Point {
-	width := engo.WindowWidth()
-	height := engo.WindowHeight()
+	width := engo.Width()
+	height := engo.Height()
 
 	switch p.Position {
 	case TOP_LEFT:
