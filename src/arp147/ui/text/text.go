@@ -15,6 +15,9 @@ type Text struct {
 	Color    Color
 
 	control *TextControlSystem
+	entity  *ecs.Entity
+	render  *engo.RenderComponent
+	space   *engo.SpaceComponent
 }
 
 // Create a new *Text
@@ -23,8 +26,10 @@ func New(t Text) *Text {
 	return &t
 }
 
-// Convert *Text to a usable *ecs.Entity
-func (t *Text) Entity(w *ecs.World) *ecs.Entity {
+// Update the entity's components that are rendered. The entity replaces each
+// component on update, so the GC will handle the deletion of the unused
+// components.
+func (t *Text) Render() {
 	font := &engo.Font{
 		Size: t.Size,
 		BG:   t.Color.BG,
@@ -32,27 +37,31 @@ func (t *Text) Entity(w *ecs.World) *ecs.Entity {
 		TTF:  fonts.Get(t.Font),
 	}
 
+	t.render = engo.NewRenderComponent(font.Render(t.Text), t.Scale, "text")
+	t.entity.AddComponent(t.render)
+
+	x, y, _ := font.TextDimensions(t.Text)
+	t.entity.AddComponent(&engo.SpaceComponent{
+		Position: t.Position,
+		Width:    float32(x),
+		Height:   float32(y),
+	})
+}
+
+// Convert *Text to a usable *ecs.Entity
+func (t *Text) Entity(w *ecs.World) *ecs.Entity {
 	w.AddSystem(t.control)
 
-	entity := ecs.NewEntity([]string{
+	t.entity = ecs.NewEntity([]string{
 		"RenderSystem",
 		"MouseSystem",
 		"TextControlSystem",
 	})
 
-	texture := font.Render(t.Text)
-	render := engo.NewRenderComponent(texture, t.Scale, "text")
-	x, y, _ := font.TextDimensions(t.Text)
+	t.Render()
+	t.entity.AddComponent(&engo.MouseComponent{})
 
-	entity.AddComponent(render)
-	entity.AddComponent(&engo.MouseComponent{})
-	entity.AddComponent(&engo.SpaceComponent{
-		Position: t.Position,
-		Width:    float32(x),
-		Height:   float32(y),
-	})
-
-	return entity
+	return t.entity
 }
 
 // Callback function for when the mouse clicked text
@@ -94,10 +103,3 @@ func (t *Text) OnEnter(fn func(entity *ecs.Entity, dt float32)) {
 func (t *Text) OnLeave(fn func(entity *ecs.Entity, dt float32)) {
 	t.control.Leave = fn
 }
-
-
-
-/*
-//
-func (t *Text) 
-*/

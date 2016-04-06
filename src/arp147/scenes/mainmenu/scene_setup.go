@@ -6,7 +6,6 @@ import (
 	"github.com/engoengine/ecs"
 	"github.com/engoengine/engo"
 	"image/color"
-	"util/log"
 )
 
 func (s *Scene) Setup(w *ecs.World) {
@@ -15,20 +14,35 @@ func (s *Scene) Setup(w *ecs.World) {
 	w.AddSystem(&engo.MouseSystem{})
 	w.AddSystem(&engo.RenderSystem{})
 
-	// Add button
-	button := text.New(text.Text{
-		Text:     "hello, how are you?",
-		Size:     32,
-		Position: engo.Point{0, 0},
+	title := text.New(text.Text{
+		Text:     "Arp 147",
+		Size:     64,
+		Position: engo.Point{25, 25},
 		Font:     fonts.FONT_PRIMARY,
-		BG:       color.Transparent,
-		FG:       color.White,
 		Scale:    engo.Point{1, 1},
+		Color: text.Color{
+			BG: color.Transparent,
+			FG: color.White,
+		},
 	})
 
-	button.OnClicked(func(entity *ecs.Entity, dt float32) {
-		log.Stdout.Println(entity)
+	title.OnEnter(func(entity *ecs.Entity, dt float32) {
+		title.Color = text.Color{
+			BG: color.White,
+			FG: color.Black,
+		}
+
+		title.Render()
 	})
 
-	w.AddEntity(button.Entity(w))
+	title.OnLeave(func(entity *ecs.Entity, dt float32) {
+		title.Color = text.Color{
+			BG: color.Transparent,
+			FG: color.White,
+		}
+
+		title.Render()
+	})
+
+	w.AddEntity(title.Entity(w))
 }
