@@ -48,7 +48,7 @@ func (t *Text) Render() {
 }
 
 // Convert *Text to a usable *ecs.Entity
-func (t *Text) Entity(w *ecs.World) *ecs.Entity {
+func (t *Text) Entity() *ecs.Entity {
 	t.entity = ecs.NewEntity(
 		"RenderSystem",
 		"MouseSystem",

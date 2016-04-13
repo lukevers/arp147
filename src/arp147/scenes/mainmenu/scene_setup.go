@@ -50,7 +50,7 @@ func (s *Scene) Setup(w *ecs.World) {
 		title.Render()
 	})
 
-	w.AddEntity(title.Entity(w))
+	w.AddEntity(title.Entity())
 
 	// ---
 
@@ -81,7 +81,7 @@ func (s *Scene) Setup(w *ecs.World) {
 		engo.Exit()
 	})
 
-	w.AddEntity(quit.Entity(w))
+	w.AddEntity(quit.Entity())
 
 	settings := text.New(text.Text{
 		Text:  "Settings",
@@ -107,7 +107,7 @@ func (s *Scene) Setup(w *ecs.World) {
 		engo.SetCursor(nil)
 	})
 
-	w.AddEntity(settings.Entity(w))
+	w.AddEntity(settings.Entity())
 
 	newGame := text.New(text.Text{
 		Text:  "New Game",
@@ -133,5 +133,5 @@ func (s *Scene) Setup(w *ecs.World) {
 		engo.SetCursor(nil)
 	})
 
-	w.AddEntity(newGame.Entity(w))
+	w.AddEntity(newGame.Entity())
 }
