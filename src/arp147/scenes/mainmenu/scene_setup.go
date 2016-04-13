@@ -71,11 +71,14 @@ func (s *Scene) Setup(w *ecs.World) {
 
 	quit.OnEnter(func(entity *ecs.Entity, dt float32) {
 		engo.SetCursor(engo.Hand)
-		log.Stdout.Println("z")
 	})
 
 	quit.OnLeave(func(entity *ecs.Entity, dt float32) {
 		engo.SetCursor(nil)
+	})
+
+	quit.OnClicked(func(entity *ecs.Entity, dt float32) {
+		engo.Exit()
 	})
 
 	w.AddEntity(quit.Entity(w))
