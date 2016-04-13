@@ -2,27 +2,21 @@
 	"version": 0,
 	"dependencies": [
 		{
-			"importpath": "github.com/EngoEngine/engo",
+			"importpath": "engo.io/ecs",
+			"repository": "https://github.com/EngoEngine/ecs",
+			"revision": "3e0cfaafb311b4abeac93c8243771bee11971405",
+			"branch": "master"
+		},
+		{
+			"importpath": "engo.io/engo",
 			"repository": "https://github.com/EngoEngine/engo",
-			"revision": "2851426869f8b64986b40283a9b76cd47c517115",
+			"revision": "dc3d748b9dda3d3a53600e290cb50b88f0de5dc5",
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/engoengine/ecs",
-			"repository": "https://github.com/engoengine/ecs",
-			"revision": "bfa6761264ad48bf74ef74a8d7cd778df9d11844",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/engoengine/engo",
-			"repository": "https://github.com/engoengine/engo",
-			"revision": "2851426869f8b64986b40283a9b76cd47c517115",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/engoengine/webgl",
-			"repository": "https://github.com/engoengine/webgl",
-			"revision": "2a3aeb34d5873e981b3f8fdba40c919980f5362a",
+			"importpath": "engo.io/webgl",
+			"repository": "https://github.com/EngoEngine/webgl",
+			"revision": "efd4d97a1547f02302f49375e1f359fc7b91685b",
 			"branch": "master"
 		},
 		{
@@ -49,7 +43,7 @@
 		{
 			"importpath": "github.com/golang/freetype",
 			"repository": "https://github.com/golang/freetype",
-			"revision": "f9531a36062a85d4cef2daae173a3c9a35ae9f17",
+			"revision": "c67e4d98d212356ec0d9436a1edcbb6eb799f847",
 			"branch": "master"
 		},
 		{
@@ -61,21 +55,21 @@
 		{
 			"importpath": "golang.org/x/image/font",
 			"repository": "https://go.googlesource.com/image",
-			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"revision": "14f8673644be7d4acb1747d3b3d1faa7cef3b290",
 			"branch": "master",
 			"path": "/font"
 		},
 		{
 			"importpath": "golang.org/x/image/math/f32",
 			"repository": "https://go.googlesource.com/image",
-			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"revision": "14f8673644be7d4acb1747d3b3d1faa7cef3b290",
 			"branch": "master",
 			"path": "/math/f32"
 		},
 		{
 			"importpath": "golang.org/x/image/math/fixed",
 			"repository": "https://go.googlesource.com/image",
-			"revision": "8b5ac8f8e598a62e443f4797fd70f6387ce04ab8",
+			"revision": "14f8673644be7d4acb1747d3b3d1faa7cef3b290",
 			"branch": "master",
 			"path": "/math/fixed"
 		},

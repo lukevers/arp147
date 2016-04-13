@@ -1,21 +1,12 @@
 package text
 
 import (
-	"github.com/engoengine/ecs"
-	"github.com/engoengine/engo"
+	"engo.io/ecs"
+	"engo.io/engo"
 )
 
 type TextControlSystem struct {
 	ecs.LinearSystem
-
-	Clicked       func(entity *ecs.Entity, dt float32)
-	Released      func(entity *ecs.Entity, dt float32)
-	Hovered       func(entity *ecs.Entity, dt float32)
-	Dragged       func(entity *ecs.Entity, dt float32)
-	RightClicked  func(entity *ecs.Entity, dt float32)
-	RightReleased func(entity *ecs.Entity, dt float32)
-	Enter         func(entity *ecs.Entity, dt float32)
-	Leave         func(entity *ecs.Entity, dt float32)
 }
 
 func (t *TextControlSystem) New(w *ecs.World) {
@@ -28,32 +19,41 @@ func (t *TextControlSystem) Type() string {
 
 // Priority defines the order of which systems to load first. The higher the
 // priority, the higher up in the loop the system is loaded. The MouseSystem
-// has a priority of 10, and we want this to load right after that.
+// has a priority of 10, and the TextControlSystem needs on the MouseSystem.
 func (t *TextControlSystem) Priority() int {
-	return 9
+	return 10
 }
 
 func (t *TextControlSystem) UpdateEntity(entity *ecs.Entity, dt float32) {
-	var mouse *engo.MouseComponent
-	if !entity.Component(&mouse) {
+	var (
+		mc *engo.MouseComponent
+		tc *TextControlComponent
+		ok bool
+	)
+
+	if mc, ok = entity.ComponentFast(mc).(*engo.MouseComponent); !ok {
 		return
 	}
 
-	if mouse.Clicked && t.Clicked != nil {
-		t.Clicked(entity, dt)
-	} else if mouse.Released && t.Released != nil {
-		t.Released(entity, dt)
-	} else if mouse.Hovered && t.Hovered != nil {
-		t.Hovered(entity, dt)
-	} else if mouse.Dragged && t.Dragged != nil {
-		t.Dragged(entity, dt)
-	} else if mouse.RightClicked && t.RightClicked != nil {
-		t.RightClicked(entity, dt)
-	} else if mouse.RightReleased && t.RightReleased != nil {
-		t.RightReleased(entity, dt)
-	} else if mouse.Enter && t.Enter != nil {
-		t.Enter(entity, dt)
-	} else if mouse.Leave && t.Leave != nil {
-		t.Leave(entity, dt)
+	if tc, ok = entity.ComponentFast(tc).(*TextControlComponent); !ok {
+		return
+	}
+
+	if mc.Clicked && tc.Mouse.Clicked != nil {
+		tc.Mouse.Clicked(entity, dt)
+	} else if mc.Released && tc.Mouse.Released != nil {
+		tc.Mouse.Released(entity, dt)
+	} else if mc.Hovered && tc.Mouse.Hovered != nil {
+		tc.Mouse.Hovered(entity, dt)
+	} else if mc.Dragged && tc.Mouse.Dragged != nil {
+		tc.Mouse.Dragged(entity, dt)
+	} else if mc.RightClicked && tc.Mouse.RightClicked != nil {
+		tc.Mouse.RightClicked(entity, dt)
+	} else if mc.RightReleased && tc.Mouse.RightReleased != nil {
+		tc.Mouse.RightReleased(entity, dt)
+	} else if mc.Enter && tc.Mouse.Enter != nil {
+		tc.Mouse.Enter(entity, dt)
+	} else if mc.Leave && tc.Mouse.Leave != nil {
+		tc.Mouse.Leave(entity, dt)
 	}
 }

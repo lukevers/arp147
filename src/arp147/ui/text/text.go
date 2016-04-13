@@ -3,8 +3,8 @@ package text
 import (
 	"arp147/ui/fonts"
 	"arp147/ui/position"
-	"github.com/engoengine/ecs"
-	"github.com/engoengine/engo"
+	"engo.io/ecs"
+	"engo.io/engo"
 )
 
 type Text struct {
@@ -15,15 +15,13 @@ type Text struct {
 	Color    Color
 	Position position.Position
 
-	control *TextControlSystem
-	entity  *ecs.Entity
-	render  *engo.RenderComponent
-	space   *engo.SpaceComponent
+	entity *ecs.Entity
+	mouse  *Mouse
 }
 
 // Create a new *Text
 func New(t Text) *Text {
-	t.control = &TextControlSystem{}
+	t.mouse = &Mouse{}
 	return &t
 }
 
@@ -38,8 +36,8 @@ func (t *Text) Render() {
 		TTF:  fonts.Get(t.Font),
 	}
 
-	t.render = engo.NewRenderComponent(font.Render(t.Text), t.Scale, "text")
-	t.entity.AddComponent(t.render)
+	render := engo.NewRenderComponent(font.Render(t.Text), t.Scale, "text")
+	t.entity.AddComponent(render)
 
 	x, y, _ := font.TextDimensions(t.Text)
 	t.entity.AddComponent(&engo.SpaceComponent{
@@ -51,56 +49,57 @@ func (t *Text) Render() {
 
 // Convert *Text to a usable *ecs.Entity
 func (t *Text) Entity(w *ecs.World) *ecs.Entity {
-	w.AddSystem(t.control)
-
-	t.entity = ecs.NewEntity([]string{
+	t.entity = ecs.NewEntity(
 		"RenderSystem",
 		"MouseSystem",
 		"TextControlSystem",
-	})
+	)
 
 	t.Render()
 	t.entity.AddComponent(&engo.MouseComponent{})
+	t.entity.AddComponent(&TextControlComponent{
+		Mouse: t.mouse,
+	})
 
 	return t.entity
 }
 
 // Callback function for when the mouse clicked text
 func (t *Text) OnClicked(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Clicked = fn
+	t.mouse.Clicked = fn
 }
 
 // Callback function for when the mouse released text
 func (t *Text) OnReleased(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Released = fn
+	t.mouse.Released = fn
 }
 
 // Callback function for when the mouse hovered text
 func (t *Text) OnHovered(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Hovered = fn
+	t.mouse.Hovered = fn
 }
 
 // Callback function for when the mouse dragged text
 func (t *Text) OnDragged(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Dragged = fn
+	t.mouse.Dragged = fn
 }
 
 // Callback function for when the mouse right clicked text
 func (t *Text) OnRightClicked(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.RightClicked = fn
+	t.mouse.RightClicked = fn
 }
 
 // Callback function for when the mouse right released text
 func (t *Text) OnRightReleased(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.RightReleased = fn
+	t.mouse.RightReleased = fn
 }
 
 // Callback function for when the mouse enters text
 func (t *Text) OnEnter(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Enter = fn
+	t.mouse.Enter = fn
 }
 
 // Callback function for when the mouse leaves text
 func (t *Text) OnLeave(fn func(entity *ecs.Entity, dt float32)) {
-	t.control.Leave = fn
+	t.mouse.Leave = fn
 }

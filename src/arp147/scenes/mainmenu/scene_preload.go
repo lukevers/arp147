@@ -1,7 +1,7 @@
 package mainmenu
 
 import (
-	"github.com/engoengine/engo"
+	"engo.io/engo"
 )
 
 func (s *Scene) Preload() {

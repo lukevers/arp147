@@ -1,7 +1,7 @@
 package position
 
 import (
-	"github.com/engoengine/engo"
+	"engo.io/engo"
 )
 
 const (
