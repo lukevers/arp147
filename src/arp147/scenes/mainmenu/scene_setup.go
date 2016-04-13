@@ -1,6 +1,7 @@
 package mainmenu
 
 import (
+	"arp147/ui/background"
 	"arp147/ui/fonts"
 	"arp147/ui/position"
 	"arp147/ui/text"
@@ -16,6 +17,11 @@ func (s *Scene) Setup(w *ecs.World) {
 	w.AddSystem(&engo.MouseSystem{})
 	w.AddSystem(&engo.RenderSystem{})
 	w.AddSystem(&text.TextControlSystem{})
+
+	background.TileWorld(w, background.Background{
+		Scale:   engo.Point{1, 1},
+		Texture: engo.Files.Image("space.png"),
+	})
 
 	title := text.New(text.Text{
 		Text:  "Arp 147",
