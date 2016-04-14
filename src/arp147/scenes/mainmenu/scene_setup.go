@@ -1,6 +1,8 @@
 package mainmenu
 
 import (
+	"arp147/ships"
+	"arp147/ships/player/gerschkin"
 	"arp147/ui/background"
 	"arp147/ui/fonts"
 	"arp147/ui/position"
@@ -8,10 +10,6 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"image/color"
-
-	"arp147/scenes/newgame"
-	"arp147/ships"
-	"arp147/ships/player/gerschkin"
 )
 
 func (s *Scene) Setup(w *ecs.World) {
@@ -96,6 +94,14 @@ func (s *Scene) Setup(w *ecs.World) {
 
 	w.AddEntity(quit.Entity())
 
+	// -- Fake Player
+
+	begin := false
+	ship := ships.New(&gerschkin.Ship{}).(*gerschkin.Ship).Entity("ShipSystem")
+	w.AddSystem(&ShipSystem{})
+	ship.AddComponent(&ShipComponent{Begin: &begin})
+	w.AddEntity(ship)
+
 	// -- New Game
 
 	newGame := text.New(text.Text{
@@ -123,13 +129,8 @@ func (s *Scene) Setup(w *ecs.World) {
 
 	newGame.OnClicked(func(entity *ecs.Entity, dt float32) {
 		engo.SetCursor(nil)
-		engo.SetScene(&newgame.Scene{}, true)
+		begin = true
 	})
 
 	w.AddEntity(newGame.Entity())
-
-	// -- Fake Player
-
-	ship := ships.New(&gerschkin.Ship{}).(*gerschkin.Ship)
-	w.AddEntity(ship.Entity())
 }

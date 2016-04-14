@@ -38,8 +38,8 @@ func (s *Ship) Render() {
 	})
 }
 
-func (s *Ship) Entity() *ecs.Entity {
-	s.entity = ecs.NewEntity("RenderSystem")
+func (s *Ship) Entity(systems ...string) *ecs.Entity {
+	s.entity = ecs.NewEntity(append(systems, "RenderSystem")...)
 	s.Render()
 	return s.entity
 }
