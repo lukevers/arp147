@@ -1,7 +1,6 @@
 package mainmenu
 
 import (
-	"arp147/scenes/mainmenu/display"
 	"arp147/ui/background"
 	"arp147/ui/fonts"
 	"arp147/ui/position"
@@ -9,6 +8,10 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"image/color"
+
+	"arp147/scenes/newgame"
+	"arp147/ships"
+	"arp147/ships/player/gerschkin"
 )
 
 func (s *Scene) Setup(w *ecs.World) {
@@ -17,7 +20,6 @@ func (s *Scene) Setup(w *ecs.World) {
 	w.AddSystem(&engo.MouseSystem{})
 	w.AddSystem(&engo.RenderSystem{})
 	w.AddSystem(&text.TextControlSystem{})
-	w.AddSystem(&display.FakePlayerSystem{})
 
 	// -- Background
 
@@ -94,30 +96,6 @@ func (s *Scene) Setup(w *ecs.World) {
 
 	w.AddEntity(quit.Entity())
 
-	// -- Fake Player
-
-	entity := ecs.NewEntity("RenderSystem", "MouseSystem", "FakePlayerSystem")
-	texture := engo.Files.Image("ship-00-no-shields.png")
-	entity.AddComponent(engo.NewRenderComponent(texture, engo.Point{1, 1}, "player"))
-	pos := position.Position{
-		Point:    engo.Point{0, 0},
-		Position: position.CENTER_CENTER,
-	}
-
-	var begin bool
-	entity.AddComponent(&engo.MouseComponent{})
-	entity.AddComponent(&display.FakePlayerComponent{
-		Begin: &begin,
-	})
-
-	entity.AddComponent(&engo.SpaceComponent{
-		Position: pos.Calculate(float32(texture.Width()), float32(texture.Height())),
-		Width:    texture.Width(),
-		Height:   texture.Height(),
-	})
-
-	w.AddEntity(entity)
-
 	// -- New Game
 
 	newGame := text.New(text.Text{
@@ -145,8 +123,13 @@ func (s *Scene) Setup(w *ecs.World) {
 
 	newGame.OnClicked(func(entity *ecs.Entity, dt float32) {
 		engo.SetCursor(nil)
-		begin = true
+		engo.SetScene(&newgame.Scene{}, true)
 	})
 
 	w.AddEntity(newGame.Entity())
+
+	// -- Fake Player
+
+	ship := ships.New(&gerschkin.Ship{}).(*gerschkin.Ship)
+	w.AddEntity(ship.Entity())
 }
