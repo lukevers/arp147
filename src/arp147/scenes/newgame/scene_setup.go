@@ -1,6 +1,7 @@
 package newgame
 
 import (
+	"arp147/computer"
 	"arp147/ui/background"
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -19,4 +20,10 @@ func (s *Scene) Setup(w *ecs.World) {
 		Scale:   engo.Point{1, 1},
 		Texture: engo.Files.Image("space.png"),
 	})
+
+	// -- Computer
+
+	c := computer.New()
+	w.AddSystem(&computer.ComputerSystem{})
+	w.AddEntity(c.Entity())
 }
