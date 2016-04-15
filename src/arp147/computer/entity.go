@@ -5,5 +5,6 @@ import (
 )
 
 func (c *Computer) Entity() *ecs.Entity {
+
 	return nil
 }
