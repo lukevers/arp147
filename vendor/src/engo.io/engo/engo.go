@@ -36,7 +36,8 @@ type RunOptions struct {
 	// HeadlessMode indicates whether or not OpenGL calls should be made
 	HeadlessMode bool
 
-	Fullscreen    bool
+	Fullscreen bool
+
 	Width, Height int
 
 	// VSync indicates whether or not OpenGL should wait for the monitor to swp the buffers
@@ -54,6 +55,7 @@ func Run(opts RunOptions, defaultScene Scene) {
 	SetScaleOnResize(opts.ScaleOnResize)
 	SetFPSLimit(opts.FPSLimit)
 	vsync = opts.VSync
+	defaultCloseAction = true
 
 	if opts.HeadlessMode {
 		headless = true
@@ -81,6 +83,10 @@ func SetBackground(c color.Color) {
 
 func SetScaleOnResize(b bool) {
 	scaleOnResize = b
+}
+
+func OverrideCloseAction() {
+	defaultCloseAction = false
 }
 
 func SetFPSLimit(limit int) error {
