@@ -64,6 +64,11 @@ func (t *Text) Entity() *ecs.Entity {
 	return t.entity
 }
 
+// Remove the entity from the world given
+func (t *Text) Remove(w *ecs.World) {
+	w.RemoveEntity(t.entity)
+}
+
 // Callback function for when the mouse clicked text
 func (t *Text) OnClicked(fn func(entity *ecs.Entity, dt float32)) {
 	t.mouse.Clicked = fn

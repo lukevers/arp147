@@ -1,30 +1,20 @@
 package computer
 
 import (
-	"arp147/events/key"
-	"engo.io/engo"
-	"util/log"
+	"arp147/ui/text"
+	"engo.io/ecs"
 )
 
 type Computer struct {
-	keyListener *key.Listener
+	world  *ecs.World
+	entity *ecs.Entity
+	lines  map[int][]*text.Text
+	line   int
 }
 
-func New() *Computer {
-	c := &Computer{
-		keyListener: key.New(),
+func New(world *ecs.World) *Computer {
+	return &Computer{
+		world: world,
+		lines: make(map[int][]*text.Text),
 	}
-
-	c.registerKeys()
-	return c
-}
-
-func (c *Computer) registerKeys() {
-	c.keyListener.On(engo.A, func(key engo.Key) {
-		log.Stdout.Println(key)
-	})
-
-	c.keyListener.On(engo.B, func(key engo.Key) {
-		log.Stdout.Println(key)
-	})
 }
