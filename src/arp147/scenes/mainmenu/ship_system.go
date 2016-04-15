@@ -38,7 +38,8 @@ func (s *ShipSystem) UpdateEntity(entity *ecs.Entity, dt float32) {
 		return
 	}
 
-	var mod float32 = -0.05
+	sc.speed = sc.speed + 0.01
+	var mod float32 = -0.05 - sc.speed
 	if rc.Scale().X+mod <= 0 {
 		engo.SetScene(&newgame.Scene{}, true)
 		return
