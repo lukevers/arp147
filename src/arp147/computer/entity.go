@@ -92,7 +92,7 @@ func (c *Computer) printKey(key engo.Key) {
 	if len(c.lines) > 0 {
 		// Don't add any x offset if we're the first character of the line
 		if len(c.lines[c.line]) > 0 {
-			xoff = float32(len(c.lines[c.line])*size) * .7
+			xoff = float32(len(c.lines[c.line])*size) * .6
 		}
 
 		// Always create the y offset by the size of the font and the line
