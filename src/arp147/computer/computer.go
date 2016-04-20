@@ -8,13 +8,18 @@ import (
 type Computer struct {
 	world  *ecs.World
 	entity *ecs.Entity
-	lines  map[int][]*text.Text
+	lines  map[int]*line
 	line   int
+}
+
+type line struct {
+	text   []*text.Text
+	locked bool
 }
 
 func New(world *ecs.World) *Computer {
 	return &Computer{
 		world: world,
-		lines: make(map[int][]*text.Text),
+		lines: make(map[int]*line),
 	}
 }

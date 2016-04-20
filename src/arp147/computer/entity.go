@@ -66,10 +66,16 @@ func (c *Computer) printKey(key engo.Key) {
 	size := 16
 	var xoff, yoff float32
 
+	// Initialize struct if it doesn't exist yet
+	if c.lines[c.line] == nil {
+		c.lines[c.line] = &line{}
+	}
+
 	// Catch special keys
 	switch key {
 	case engo.Enter:
 		// An enter should advance us to the next line
+		c.lines[c.line].locked = true
 		c.line++
 		return
 	case engo.Tab:
@@ -80,19 +86,32 @@ func (c *Computer) printKey(key engo.Key) {
 		return
 	case engo.Backspace:
 		// A backspace should delete the last character
-		e := len(c.lines[c.line])
+		e := len(c.lines[c.line].text)
 		if e > 0 {
-			c.lines[c.line][e-1].Remove(c.world)
-			c.lines[c.line] = c.lines[c.line][:e-1]
+			c.lines[c.line].text[e-1].Remove(c.world)
+			c.lines[c.line].text = c.lines[c.line].text[:e-1]
+		} else {
+			if c.line > 0 && !c.lines[c.line-1].locked {
+				c.line--
+				e = len(c.lines[c.line].text)
+				c.lines[c.line].text[e-1].Remove(c.world)
+				c.lines[c.line].text = c.lines[c.line].text[:e-1]
+			}
 		}
+
 		return
 	}
 
 	// Don't add any offset if we're on the very first character
 	if len(c.lines) > 0 {
 		// Don't add any x offset if we're the first character of the line
-		if len(c.lines[c.line]) > 0 {
-			xoff = float32(len(c.lines[c.line])*size) * .6
+		if len(c.lines[c.line].text) > 0 {
+			xoff = float32(len(c.lines[c.line].text)*size) * .6
+			if xoff >= (engo.Width() - float32(ComputerPadding*2)) {
+				xoff = 0
+				c.lines[c.line].locked = false
+				c.line++
+			}
 		}
 
 		// Always create the y offset by the size of the font and the line
@@ -119,7 +138,11 @@ func (c *Computer) printKey(key engo.Key) {
 	})
 
 	// Add our character to the line
-	c.lines[c.line] = append(c.lines[c.line], char)
+	if c.lines[c.line] == nil {
+		c.lines[c.line] = &line{}
+	}
+
+	c.lines[c.line].text = append(c.lines[c.line].text, char)
 
 	// Add it to the world
 	c.world.AddEntity(char.Entity())

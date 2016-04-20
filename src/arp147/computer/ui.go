@@ -6,6 +6,8 @@ import (
 	"engo.io/engo"
 )
 
+var ComputerPadding = 42
+
 func (c *Computer) CreateEntityUI(world *ecs.World) {
 	width := engo.Width()
 	height := engo.Height()
