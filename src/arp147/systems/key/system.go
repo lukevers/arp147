@@ -26,8 +26,20 @@ func (k *KeySystem) UpdateEntity(entity *ecs.Entity, dt float32) {
 	for key, fns := range kc.keys {
 		if engo.Keys.Get(key).JustPressed() {
 			for _, fn := range fns {
-				fn(key)
+				fn(key, caps())
 			}
 		}
+	}
+}
+
+func caps() bool {
+	if engo.Keys.Get(engo.LeftShift).Down() {
+		return true
+	} else if engo.Keys.Get(engo.RightShift).Down() {
+		return true
+	} else if engo.Keys.Get(engo.CapsLock).Down() {
+		return true
+	} else {
+		return false
 	}
 }

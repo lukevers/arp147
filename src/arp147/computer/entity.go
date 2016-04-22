@@ -62,7 +62,7 @@ func (c *Computer) Entity() *ecs.Entity {
 	return c.entity
 }
 
-func (c *Computer) printKey(key engo.Key) {
+func (c *Computer) printKey(key engo.Key, caps bool) {
 	// If the computer is not active, don't continue with anything.
 	if !c.Active {
 		return
@@ -86,7 +86,7 @@ func (c *Computer) printKey(key engo.Key) {
 	case engo.Tab:
 		// A tab should be translated into four spaces
 		for i := 0; i < 4; i++ {
-			c.printKey(engo.Space)
+			c.printKey(engo.Space, caps)
 		}
 		return
 	case engo.Backspace:
@@ -121,6 +121,63 @@ func (c *Computer) printKey(key engo.Key) {
 
 		// Always create the y offset by the size of the font and the line
 		yoff = float32(c.line*size) * .9
+	}
+
+	if !caps {
+		// If the key we've pushed is [a-z], make it lowercase.
+		if key >= engo.A && key <= engo.Z {
+			key += 32
+		}
+	} else {
+		switch key {
+		// Numbers
+		case engo.One:
+			key = 33
+		case engo.Two:
+			key = 64
+		case engo.Three:
+			key = 35
+		case engo.Four:
+			key = 36
+		case engo.Five:
+			key = 37
+		case engo.Six:
+			key = 94
+		case engo.Seven:
+			key = 38
+		case engo.Eight:
+			key = 42
+		case engo.Nine:
+			key = 40
+		case engo.Zero:
+			key = 41
+
+		// Misc
+		case engo.Dash:
+			key = 95
+		case engo.Equals:
+			key = 43
+		case engo.LeftBracket:
+			key = 123
+		case engo.RightBracket:
+			key = 125
+		case engo.Backslash:
+			key = 124
+		case engo.Semicolon:
+			key = 58
+		case engo.Apostrophe:
+			key = 34
+		case engo.Comma:
+			key = 60
+		case engo.Period:
+			key = 62
+		case engo.Slash:
+			key = 63
+		}
+
+		if key >= engo.Zero && key <= engo.Nine {
+			key -= 16
+		}
 	}
 
 	// Create our character
