@@ -6,7 +6,10 @@ import (
 	"engo.io/engo"
 )
 
-var ComputerPadding = 42
+var (
+	padding  = 42
+	entities []*ecs.Entity
+)
 
 func (c *Computer) StartSession() {
 	// Set the computer session to active
@@ -41,6 +44,7 @@ func (c *Computer) StartSession() {
 			Height: h,
 		})
 
+		entities = append(entities, entity)
 		c.world.AddEntity(entity)
 
 		if x > width {
@@ -76,6 +80,7 @@ func (c *Computer) StartSession() {
 			Height: h,
 		})
 
+		entities = append(entities, entity)
 		c.world.AddEntity(entity)
 
 		if y > height {
@@ -103,6 +108,7 @@ func (c *Computer) StartSession() {
 		Height: texture.Height(),
 	})
 
+	entities = append(entities, entity)
 	c.world.AddEntity(entity)
 
 	// Top right corner
@@ -118,6 +124,7 @@ func (c *Computer) StartSession() {
 		Height: texture.Height(),
 	})
 
+	entities = append(entities, entity)
 	c.world.AddEntity(entity)
 
 	// Bottom left corner
@@ -133,6 +140,7 @@ func (c *Computer) StartSession() {
 		Height: texture.Height(),
 	})
 
+	entities = append(entities, entity)
 	c.world.AddEntity(entity)
 
 	// Bottom right corner
@@ -148,5 +156,28 @@ func (c *Computer) StartSession() {
 		Height: texture.Height(),
 	})
 
+	entities = append(entities, entity)
 	c.world.AddEntity(entity)
+}
+
+func (c *Computer) StopSession() {
+	// Set the computer to not active
+	c.Active = false
+
+	// Remove all text lines
+	for _, line := range c.lines {
+		for _, char := range line.text {
+			char.Remove(c.world)
+		}
+	}
+
+	c.lines = make(map[int]*line)
+	c.line = 0
+
+	// Remove all gui elements
+	for _, entity := range entities {
+		c.world.RemoveEntity(entity)
+	}
+
+	entities = *new([]*ecs.Entity)
 }

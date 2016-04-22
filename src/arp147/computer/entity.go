@@ -39,8 +39,8 @@ func (c *Computer) Entity() *ecs.Entity {
 	//kc.On(engo.CapsLock, c.printKey)
 	kc.On(engo.Space, c.printKey)
 	kc.On(engo.Enter, c.printKey)
-	/*kc.On(engo.Escape, c.printKey)
-	kc.On(engo.ArrowLeft, c.printKey)
+	kc.On(engo.Escape, c.printKey)
+	/*kc.On(engo.ArrowLeft, c.printKey)
 	kc.On(engo.ArrowRight, c.printKey)
 	kc.On(engo.ArrowDown, c.printKey)
 	kc.On(engo.ArrowUp, c.printKey)
@@ -78,6 +78,9 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 
 	// Catch special keys
 	switch key {
+	case engo.Escape:
+		c.StopSession()
+		return
 	case engo.Enter:
 		// An enter should advance us to the next line
 		c.lines[c.line].locked = true
@@ -112,7 +115,7 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 		// Don't add any x offset if we're the first character of the line
 		if len(c.lines[c.line].text) > 0 {
 			xoff = float32(len(c.lines[c.line].text)*size) * .6
-			if xoff >= (engo.Width() - float32(ComputerPadding*2)) {
+			if xoff >= (engo.Width() - float32(padding*2)) {
 				xoff = 0
 				c.lines[c.line].locked = false
 				c.line++
