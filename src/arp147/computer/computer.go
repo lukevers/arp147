@@ -7,6 +7,7 @@ import (
 )
 
 type Computer struct {
+	Active bool
 	world  *ecs.World
 	entity *ecs.Entity
 	lines  map[int]*line
@@ -41,11 +42,10 @@ func New(world *ecs.World) *Computer {
 	}
 
 	c := &Computer{
+		Active: false,
 		world:  world,
 		lines:  make(map[int]*line),
-		active: true,
 	}
 
-	c.createUI()
 	return c
 }

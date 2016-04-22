@@ -63,6 +63,11 @@ func (c *Computer) Entity() *ecs.Entity {
 }
 
 func (c *Computer) printKey(key engo.Key) {
+	// If the computer is not active, don't continue with anything.
+	if !c.Active {
+		return
+	}
+
 	size := 16
 	var xoff, yoff float32
 

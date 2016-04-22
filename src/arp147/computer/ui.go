@@ -8,7 +8,10 @@ import (
 
 var ComputerPadding = 42
 
-func (c *Computer) createUI() {
+func (c *Computer) StartSession() {
+	// Set the computer session to active
+	c.Active = true
+
 	width := engo.Width()
 	height := engo.Height()
 
