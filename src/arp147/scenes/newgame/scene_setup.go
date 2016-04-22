@@ -2,8 +2,6 @@ package newgame
 
 import (
 	"arp147/computer"
-	"arp147/systems/key"
-	"arp147/ui/text"
 	"engo.io/ecs"
 	"engo.io/engo"
 	"image/color"
@@ -18,8 +16,5 @@ func (s *Scene) Setup(w *ecs.World) {
 	// -- Computer
 
 	c := computer.New(w)
-	w.AddSystem(&key.KeySystem{})
-	w.AddSystem(&text.TextControlSystem{})
-	c.CreateEntityUI(w)
 	w.AddEntity(c.Entity())
 }

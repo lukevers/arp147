@@ -8,11 +8,11 @@ import (
 
 var ComputerPadding = 42
 
-func (c *Computer) CreateEntityUI(world *ecs.World) {
+func (c *Computer) createUI() {
 	width := engo.Width()
 	height := engo.Height()
 
-	background.TileWorld(world, background.Background{
+	background.TileWorld(c.world, background.Background{
 		Scale:   engo.Point{1, 1},
 		Texture: engo.Files.Image("computer_background.png"),
 	})
@@ -38,7 +38,7 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 			Height: h,
 		})
 
-		world.AddEntity(entity)
+		c.world.AddEntity(entity)
 
 		if x > width {
 			if y == (height - h) {
@@ -73,7 +73,7 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 			Height: h,
 		})
 
-		world.AddEntity(entity)
+		c.world.AddEntity(entity)
 
 		if y > height {
 			if x == (width - w) {
@@ -100,7 +100,7 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 		Height: texture.Height(),
 	})
 
-	world.AddEntity(entity)
+	c.world.AddEntity(entity)
 
 	// Top right corner
 	texture = engo.Files.Image("computer_corner_top_right.png")
@@ -115,7 +115,7 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 		Height: texture.Height(),
 	})
 
-	world.AddEntity(entity)
+	c.world.AddEntity(entity)
 
 	// Bottom left corner
 	texture = engo.Files.Image("computer_corner_bottom_left.png")
@@ -130,7 +130,7 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 		Height: texture.Height(),
 	})
 
-	world.AddEntity(entity)
+	c.world.AddEntity(entity)
 
 	// Bottom right corner
 	texture = engo.Files.Image("computer_corner_bottom_right.png")
@@ -145,5 +145,5 @@ func (c *Computer) CreateEntityUI(world *ecs.World) {
 		Height: texture.Height(),
 	})
 
-	world.AddEntity(entity)
+	c.world.AddEntity(entity)
 }
