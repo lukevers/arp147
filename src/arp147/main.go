@@ -1,10 +1,9 @@
 package main
 
 import (
-	"arp147/scenes/mainmenu"
+	//"arp147/scenes/mainmenu"
+	"arp147/scenes/newgame"
 	"engo.io/engo"
-	"net/http"
-	_ "net/http/pprof"
 )
 
 func main() {
@@ -18,6 +17,6 @@ func main() {
 		//FPSLimit: 120,
 	}
 
-	go http.ListenAndServe(":3030", http.DefaultServeMux)
-	engo.Run(options, &mainmenu.Scene{})
+	//engo.Run(options, &mainmenu.Scene{})
+	engo.Run(options, &newgame.Scene{})
 }
