@@ -122,7 +122,7 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 	if len(c.lines) > 0 {
 		// Don't add any x offset if we're the first character of the line
 		if len(c.lines[c.line].text) > 0 {
-			xoff = float32(len(c.lines[c.line].text)*size) * .6
+			xoff = float32(len(c.lines[c.line].text)*size) * .5
 			if xoff >= (engo.Width() - float32(padding*2)) {
 				xoff = 0
 				c.lines[c.line].locked = false
