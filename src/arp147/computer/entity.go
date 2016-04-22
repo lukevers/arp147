@@ -85,6 +85,14 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 		// An enter should advance us to the next line
 		c.lines[c.line].locked = true
 		c.line++
+
+		// Make sure that there was at least one character printed before
+		// parsing the line.
+		if len(c.lines[c.line-1].text) > 0 {
+			// Send the line to be parsed into commands and arguments and then
+			// dispatch the command and arguments to be run.
+			c.parseLine(c.lines[c.line-1])
+		}
 		return
 	case engo.Tab:
 		// A tab should be translated into four spaces
@@ -195,8 +203,8 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 		},
 		Position: position.Position{
 			Point: engo.Point{
-				X: 42 + xoff,
-				Y: 42 + yoff,
+				X: float32(padding) + xoff,
+				Y: float32(padding) + yoff,
 			},
 			Position: position.TOP_LEFT,
 		},

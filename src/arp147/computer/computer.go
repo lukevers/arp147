@@ -14,11 +14,6 @@ type Computer struct {
 	line   int
 }
 
-type line struct {
-	text   []*text.Text
-	locked bool
-}
-
 func New(world *ecs.World) *Computer {
 	// Check if the systems we want are already created
 	k, t := true, true
