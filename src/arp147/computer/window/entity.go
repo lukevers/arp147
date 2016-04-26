@@ -1,6 +1,7 @@
-package computer
+package window
 
 import (
+	"arp147/computer/line"
 	"arp147/systems/key"
 	"arp147/ui/fonts"
 	"arp147/ui/position"
@@ -10,61 +11,61 @@ import (
 	"image/color"
 )
 
-func (c *Computer) Entity() *ecs.Entity {
-	c.entity = ecs.NewEntity("RenderSystem", "KeySystem")
+func (w *Window) Entity() *ecs.Entity {
+	w.entity = ecs.NewEntity("RenderSystem", "KeySystem")
 
 	kc := &key.KeyComponent{}
 
 	// Alpha
 	for i := engo.A; i <= engo.Z; i++ {
-		kc.On(engo.Key(i), c.printKey)
+		kc.On(engo.Key(i), w.printKey)
 	}
 
 	// Numeric
 	for i := engo.Zero; i <= engo.Nine; i++ {
-		kc.On(engo.Key(i), c.printKey)
+		kc.On(engo.Key(i), w.printKey)
 	}
 
 	// Misc
-	kc.On(engo.Dash, c.printKey)
-	kc.On(engo.Apostrophe, c.printKey)
-	kc.On(engo.Semicolon, c.printKey)
-	kc.On(engo.Equals, c.printKey)
-	kc.On(engo.Comma, c.printKey)
-	kc.On(engo.Period, c.printKey)
-	kc.On(engo.Slash, c.printKey)
-	kc.On(engo.Backslash, c.printKey)
-	kc.On(engo.Backspace, c.printKey)
-	kc.On(engo.Tab, c.printKey)
-	//kc.On(engo.CapsLock, c.printKey)
-	kc.On(engo.Space, c.printKey)
-	kc.On(engo.Enter, c.printKey)
-	kc.On(engo.Escape, c.printKey)
-	/*kc.On(engo.ArrowLeft, c.printKey)
-	kc.On(engo.ArrowRight, c.printKey)
-	kc.On(engo.ArrowDown, c.printKey)
-	kc.On(engo.ArrowUp, c.printKey)
-	kc.On(engo.ArrowUp, c.printKey)*/
-	kc.On(engo.LeftBracket, c.printKey)
-	/*kc.On(engo.LeftShift, c.printKey)
-	kc.On(engo.LeftControl, c.printKey)
-	kc.On(engo.LeftSuper, c.printKey)
-	kc.On(engo.LeftAlt, c.printKey)*/
-	kc.On(engo.RightBracket, c.printKey)
-	/*kc.On(engo.RightShift, c.printKey)
-	kc.On(engo.RightControl, c.printKey)
-	kc.On(engo.RightSuper, c.printKey)
-	kc.On(engo.RightAlt, c.printKey)*/
+	kc.On(engo.Dash, w.printKey)
+	kc.On(engo.Apostrophe, w.printKey)
+	kc.On(engo.Semicolon, w.printKey)
+	kc.On(engo.Equals, w.printKey)
+	kc.On(engo.Comma, w.printKey)
+	kc.On(engo.Period, w.printKey)
+	kc.On(engo.Slash, w.printKey)
+	kc.On(engo.Backslash, w.printKey)
+	kc.On(engo.Backspace, w.printKey)
+	kc.On(engo.Tab, w.printKey)
+	//kc.On(engo.CapsLock, w.printKey)
+	kc.On(engo.Space, w.printKey)
+	kc.On(engo.Enter, w.printKey)
+	kc.On(engo.Escape, w.printKey)
+	/*kc.On(engo.ArrowLeft, w.printKey)
+	kc.On(engo.ArrowRight, w.printKey)
+	kc.On(engo.ArrowDown, w.printKey)
+	kc.On(engo.ArrowUp, w.printKey)
+	kc.On(engo.ArrowUp, w.printKey)*/
+	kc.On(engo.LeftBracket, w.printKey)
+	/*kc.On(engo.LeftShift, w.printKey)
+	kc.On(engo.LeftControl, w.printKey)
+	kc.On(engo.LeftSuper, w.printKey)
+	kc.On(engo.LeftAlt, w.printKey)*/
+	kc.On(engo.RightBracket, w.printKey)
+	/*kc.On(engo.RightShift, w.printKey)
+	kc.On(engo.RightControl, w.printKey)
+	kc.On(engo.RightSuper, w.printKey)
+	kc.On(engo.RightAlt, w.printKey)*/
 
 	// Add components
-	c.entity.AddComponent(kc)
-	c.entity.AddComponent(&engo.RenderComponent{})
-	return c.entity
+	w.entity.AddComponent(kc)
+	w.entity.AddComponent(&engo.RenderComponent{})
+	return w.entity
 }
 
-func (c *Computer) printKey(key engo.Key, caps bool) {
+func (w *Window) printKey(key engo.Key, caps bool) {
 	// If the computer is not active, don't continue with anything.
-	if !c.Active {
+	if !w.Active {
 		return
 	}
 
@@ -72,46 +73,49 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 	var xoff, yoff float32
 
 	// Initialize struct if it doesn't exist yet
-	if c.lines[c.line] == nil {
-		c.lines[c.line] = &line{}
+	if w.Lines[w.Line] == nil {
+		w.Lines[w.Line] = &line.Line{}
 	}
 
 	// Catch special keys
 	switch key {
 	case engo.Escape:
-		c.StopSession()
+		w.StopSession()
 		return
 	case engo.Enter:
 		// An enter should advance us to the next line
-		c.lines[c.line].locked = true
-		c.line++
+		w.Lines[w.Line].Locked = true
+		w.Line++
 
 		// Make sure that there was at least one character printed before
 		// parsing the line.
-		if len(c.lines[c.line-1].text) > 0 {
+		if len(w.Lines[w.Line-1].Text) > 0 {
 			// Send the line to be parsed into commands and arguments and then
 			// dispatch the command and arguments to be run.
-			c.parseLine(c.lines[c.line-1])
+			cargs := w.Lines[w.Line-1].ToCArgs()
+			if cargs != nil {
+				w.Write(cargs.Command)
+			}
 		}
 		return
 	case engo.Tab:
 		// A tab should be translated into four spaces
 		for i := 0; i < 4; i++ {
-			c.printKey(engo.Space, caps)
+			w.printKey(engo.Space, caps)
 		}
 		return
 	case engo.Backspace:
 		// A backspace should delete the last character
-		e := len(c.lines[c.line].text)
+		e := len(w.Lines[w.Line].Text)
 		if e > 0 {
-			c.lines[c.line].text[e-1].Remove(c.world)
-			c.lines[c.line].text = c.lines[c.line].text[:e-1]
+			w.Lines[w.Line].Text[e-1].Remove(w.world)
+			w.Lines[w.Line].Text = w.Lines[w.Line].Text[:e-1]
 		} else {
-			if c.line > 0 && !c.lines[c.line-1].locked {
-				c.line--
-				e = len(c.lines[c.line].text)
-				c.lines[c.line].text[e-1].Remove(c.world)
-				c.lines[c.line].text = c.lines[c.line].text[:e-1]
+			if w.Line > 0 && !w.Lines[w.Line-1].Locked {
+				w.Line--
+				e = len(w.Lines[w.Line].Text)
+				w.Lines[w.Line].Text[e-1].Remove(w.world)
+				w.Lines[w.Line].Text = w.Lines[w.Line].Text[:e-1]
 			}
 		}
 
@@ -119,19 +123,19 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 	}
 
 	// Don't add any offset if we're on the very first character
-	if len(c.lines) > 0 {
+	if len(w.Lines) > 0 {
 		// Don't add any x offset if we're the first character of the line
-		if len(c.lines[c.line].text) > 0 {
-			xoff = float32(len(c.lines[c.line].text)*size) * .5
+		if len(w.Lines[w.Line].Text) > 0 {
+			xoff = float32(len(w.Lines[w.Line].Text)*size) * .5
 			if xoff >= (engo.Width() - float32(padding*2)) {
 				xoff = 0
-				c.lines[c.line].locked = false
-				c.line++
+				w.Lines[w.Line].Locked = false
+				w.Line++
 			}
 		}
 
 		// Always create the y offset by the size of the font and the line
-		yoff = float32(c.line*size) * .9
+		yoff = float32(w.Line*size) * .9
 	}
 
 	if !caps {
@@ -211,12 +215,12 @@ func (c *Computer) printKey(key engo.Key, caps bool) {
 	})
 
 	// Add our character to the line
-	if c.lines[c.line] == nil {
-		c.lines[c.line] = &line{}
+	if w.Lines[w.Line] == nil {
+		w.Lines[w.Line] = &line.Line{}
 	}
 
-	c.lines[c.line].text = append(c.lines[c.line].text, char)
+	w.Lines[w.Line].Text = append(w.Lines[w.Line].Text, char)
 
 	// Add it to the world
-	c.world.AddEntity(char.Entity())
+	w.world.AddEntity(char.Entity())
 }

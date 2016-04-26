@@ -1,6 +1,7 @@
-package computer
+package window
 
 import (
+	"arp147/computer/line"
 	"arp147/ui/background"
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -11,22 +12,22 @@ var (
 	entities []*ecs.Entity
 )
 
-func (c *Computer) StartSession() {
-	// Set the computer session to active
-	c.Active = true
+func (w *Window) StartSession() {
+	// Set the window session to active
+	w.Active = true
 
 	width := engo.Width()
 	height := engo.Height()
 
-	background.TileWorld(c.world, background.Background{
+	background.TileWorld(w.world, background.Background{
 		Scale:   engo.Point{1, 1},
 		Texture: engo.Files.Image("computer_background.png"),
 	})
 
 	// Horizontal texture
 	texture := engo.Files.Image("computer_horizontal.png")
-	w := texture.Width()
-	h := texture.Height()
+	W := texture.Width()
+	H := texture.Height()
 
 	var x, y float32 = 0, 0
 	for {
@@ -40,29 +41,29 @@ func (c *Computer) StartSession() {
 				X: newx,
 				Y: newy,
 			},
-			Width:  w,
-			Height: h,
+			Width:  W,
+			Height: H,
 		})
 
 		entities = append(entities, entity)
-		c.world.AddEntity(entity)
+		w.world.AddEntity(entity)
 
 		if x > width {
-			if y == (height - h) {
+			if y == (height - H) {
 				break
 			} else {
 				x = 0
-				y = (height - h)
+				y = (height - H)
 			}
 		} else {
-			x += w
+			x += W
 		}
 	}
 
 	// Vertical texture
 	texture = engo.Files.Image("computer_vertical.png")
-	w = texture.Width()
-	h = texture.Height()
+	W = texture.Width()
+	H = texture.Height()
 
 	x, y = 0, 0
 	for {
@@ -76,22 +77,22 @@ func (c *Computer) StartSession() {
 				X: newx,
 				Y: newy,
 			},
-			Width:  w,
-			Height: h,
+			Width:  W,
+			Height: H,
 		})
 
 		entities = append(entities, entity)
-		c.world.AddEntity(entity)
+		w.world.AddEntity(entity)
 
 		if y > height {
-			if x == (width - w) {
+			if x == (width - W) {
 				break
 			} else {
-				x = (width - w)
+				x = (width - W)
 				y = 0
 			}
 		} else {
-			y += h
+			y += H
 		}
 	}
 
@@ -109,7 +110,7 @@ func (c *Computer) StartSession() {
 	})
 
 	entities = append(entities, entity)
-	c.world.AddEntity(entity)
+	w.world.AddEntity(entity)
 
 	// Top right corner
 	texture = engo.Files.Image("computer_corner_top_right.png")
@@ -125,7 +126,7 @@ func (c *Computer) StartSession() {
 	})
 
 	entities = append(entities, entity)
-	c.world.AddEntity(entity)
+	w.world.AddEntity(entity)
 
 	// Bottom left corner
 	texture = engo.Files.Image("computer_corner_bottom_left.png")
@@ -141,7 +142,7 @@ func (c *Computer) StartSession() {
 	})
 
 	entities = append(entities, entity)
-	c.world.AddEntity(entity)
+	w.world.AddEntity(entity)
 
 	// Bottom right corner
 	texture = engo.Files.Image("computer_corner_bottom_right.png")
@@ -157,26 +158,26 @@ func (c *Computer) StartSession() {
 	})
 
 	entities = append(entities, entity)
-	c.world.AddEntity(entity)
+	w.world.AddEntity(entity)
 }
 
-func (c *Computer) StopSession() {
-	// Set the computer to not active
-	c.Active = false
+func (w *Window) StopSession() {
+	// Set the window to not active
+	w.Active = false
 
 	// Remove all text lines
-	for _, line := range c.lines {
-		for _, char := range line.text {
-			char.Remove(c.world)
+	for _, line := range w.Lines {
+		for _, char := range line.Text {
+			char.Remove(w.world)
 		}
 	}
 
-	c.lines = make(map[int]*line)
-	c.line = 0
+	w.Lines = make(map[int]*line.Line)
+	w.Line = 0
 
 	// Remove all gui elements
 	for _, entity := range entities {
-		c.world.RemoveEntity(entity)
+		w.world.RemoveEntity(entity)
 	}
 
 	entities = *new([]*ecs.Entity)

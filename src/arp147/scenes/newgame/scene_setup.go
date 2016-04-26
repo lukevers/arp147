@@ -23,7 +23,6 @@ func (s *Scene) Setup(w *ecs.World) {
 	// -- Computer
 
 	c := computer.New(w)
-	w.AddEntity(c.Entity())
 	kcontrol.On(engo.C, func(key engo.Key, caps bool) {
 		if !c.Active {
 			c.StartSession()

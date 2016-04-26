@@ -1,6 +1,7 @@
-package computer
+package window
 
 import (
+	"arp147/computer/line"
 	"arp147/ui/fonts"
 	"arp147/ui/position"
 	"arp147/ui/text"
@@ -8,9 +9,9 @@ import (
 	"image/color"
 )
 
-func (c *Computer) write(str string) {
+func (w *Window) Write(str string) {
 	size := 16
-	yoff := float32(c.line*size) * .9
+	yoff := float32(w.Line*size) * .9
 
 	t := text.New(text.Text{
 		Text:  str,
@@ -30,13 +31,13 @@ func (c *Computer) write(str string) {
 		},
 	})
 
-	c.lines[c.line] = &line{
-		text:   []*text.Text{t},
-		locked: true,
+	w.Lines[w.Line] = &line.Line{
+		Text:   []*text.Text{t},
+		Locked: true,
 	}
 
-	c.world.AddEntity(t.Entity())
+	w.world.AddEntity(t.Entity())
 
 	// Increase the line number so we force a new line at the end of the output.
-	c.line++
+	w.Line++
 }

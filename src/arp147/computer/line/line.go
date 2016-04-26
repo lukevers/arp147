@@ -1,13 +1,20 @@
-package computer
+package line
 
 import (
+	"arp147/ui/text"
 	"strings"
 )
 
-func (c *Computer) parseLine(l *line) {
+type Line struct {
+	Text   []*text.Text
+	Locked bool
+}
+
+// Convert a line into a command and arguments
+func (l *Line) ToCArgs() *Command {
 	// Generate a string of text from the line
 	text := ""
-	for _, char := range l.text {
+	for _, char := range l.Text {
 		text += char.Text
 	}
 
@@ -19,7 +26,7 @@ func (c *Computer) parseLine(l *line) {
 
 	// If for some reason we don't have any text at this point, stop.
 	if len(arguments) < 1 {
-		return
+		return nil
 	}
 
 	// Split out command and arguments
@@ -30,5 +37,8 @@ func (c *Computer) parseLine(l *line) {
 		arguments = []string{}
 	}
 
-	c.write(command)
+	return &Command{
+		Command:   command,
+		Arguments: arguments,
+	}
 }
