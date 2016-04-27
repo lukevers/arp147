@@ -94,7 +94,10 @@ func (w *Window) printKey(key engo.Key, caps bool) {
 			// dispatch the command and arguments to be run.
 			cargs := w.Lines[w.Line-1].ToCArgs()
 			if cargs != nil {
-				w.Write(cargs.Command)
+				err := w.Terminal.Dispatch(cargs)
+				if err != nil {
+					w.Write(err.Error())
+				}
 			}
 		}
 		return

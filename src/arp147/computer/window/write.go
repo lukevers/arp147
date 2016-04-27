@@ -9,6 +9,17 @@ import (
 	"image/color"
 )
 
+// Write a new line to the window
+func (w *Window) NewLine() {
+	w.Lines[w.Line] = &line.Line{
+		Text:   []*text.Text{},
+		Locked: true,
+	}
+
+	w.Line++
+}
+
+// Write a block of text to the window
 func (w *Window) Write(str string) {
 	size := 16
 	yoff := float32(w.Line*size) * .9
