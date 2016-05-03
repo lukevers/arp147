@@ -17,7 +17,7 @@ func (t *Help) Description() string {
 }
 
 func (t *Help) Help() string {
-	return "abc"
+	return "The command `help` displays helpful information about builtin commands."
 }
 
 // This is done at the higher level of the terminal and should be left empty.
