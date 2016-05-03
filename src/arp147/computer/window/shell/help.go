@@ -16,10 +16,6 @@ func (t *Help) Description() string {
 	return "Show a list of commands available with short descriptions"
 }
 
-func (t *Help) Help() string {
-	return "The command `help` displays helpful information about builtin commands."
-}
-
 // This is done at the higher level of the terminal and should be left empty.
 // Nothing here will ever run.
 func (t *Help) Run(command *line.Command) error {

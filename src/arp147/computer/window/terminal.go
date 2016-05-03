@@ -56,7 +56,6 @@ func (t *Terminal) help(c *line.Command) error {
 	// registered commands.
 	if len(c.Arguments) < 1 {
 		t.window.Write("The commands listed below are are available for use.")
-		t.window.Write("Type `help name` to find out more about `name`")
 		t.window.NewLine()
 
 		for _, cmd := range t.commands {
@@ -65,7 +64,7 @@ func (t *Terminal) help(c *line.Command) error {
 		return nil
 	} else {
 		if cmd, ok := t.commands[c.Arguments[0]]; ok {
-			t.window.Write(cmd.Help())
+			t.window.Write(cmd.Description())
 			return nil
 		} else {
 			return fmt.Errorf("%s: command not found", c.Arguments[0])
