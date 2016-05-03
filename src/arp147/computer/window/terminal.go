@@ -9,6 +9,7 @@ import (
 
 type Terminal struct {
 	commands map[string]shell.Shell
+	cwd      string
 	world    *ecs.World
 	window   *Window
 }
@@ -16,6 +17,7 @@ type Terminal struct {
 func NewTerminal(world *ecs.World, w *Window) *Terminal {
 	t := &Terminal{
 		commands: make(map[string]shell.Shell),
+		cwd:      "/",
 		world:    world,
 		window:   w,
 	}
@@ -35,6 +37,9 @@ func (t *Terminal) RegisterCommand(cmd string, i shell.Shell) {
 
 func (t *Terminal) Dispatch(c *line.Command) error {
 	if cmd, ok := t.commands[c.Command]; ok {
+		// Add the current working directory to the command for use
+		c.Directory = t.cwd
+
 		// There are some special cases where we want to define commands at the
 		// highest level here, but otherwise we'll
 		switch c.Command {
