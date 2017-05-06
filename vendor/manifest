@@ -1,0 +1,108 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "engo.io/ecs",
+			"repository": "https://github.com/EngoEngine/ecs",
+			"revision": "524c6573d8cfe9db0b7ec871c629ee4f60419e4d",
+			"branch": "master"
+		},
+		{
+			"importpath": "engo.io/engo",
+			"repository": "https://github.com/EngoEngine/engo",
+			"revision": "7d0d7b6a78f13035977bf9b511a2c0bd16678ce7",
+			"branch": "master"
+		},
+		{
+			"importpath": "engo.io/gl",
+			"repository": "https://github.com/EngoEngine/gl",
+			"revision": "dbd3b277fe443f235d09dd4dd2fa7cfff49505a4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/cheekybits/genny/generic",
+			"repository": "https://github.com/cheekybits/genny",
+			"revision": "9127e812e1e9e501ce899a18121d316ecb52e4ba",
+			"branch": "master",
+			"path": "/generic"
+		},
+		{
+			"importpath": "github.com/engoengine/math",
+			"repository": "https://github.com/engoengine/math",
+			"revision": "afa637dd62b55bcb27f65fe1325d81bd79b32574",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-gl/gl/v2.1/gl",
+			"repository": "https://github.com/go-gl/gl",
+			"revision": "b303bcb3e83b7ef645a5104e1c2db7f8d9e8918a",
+			"branch": "master",
+			"path": "/v2.1/gl"
+		},
+		{
+			"importpath": "github.com/go-gl/glfw",
+			"repository": "https://github.com/go-gl/glfw",
+			"revision": "45517cf5568747f99bb4b0b4abae9fa3cd5f85ed",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-gl/mathgl/mgl32",
+			"repository": "https://github.com/go-gl/mathgl",
+			"revision": "9e3ea3e806141087fbb83a8a8e7038bf73eff120",
+			"branch": "master",
+			"path": "/mgl32"
+		},
+		{
+			"importpath": "github.com/golang/freetype",
+			"repository": "https://github.com/golang/freetype",
+			"revision": "bcfeb16b74e8aea9e2fe043406f2ef74b1cb0759",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/lukevers/storage",
+			"repository": "https://github.com/lukevers/storage",
+			"revision": "9c0ecefb2ea5024d42c26851eef786bc0098bc2b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/shibukawa/configdir",
+			"repository": "https://github.com/shibukawa/configdir",
+			"revision": "e180dbdc8da04c4fa04272e875ce64949f38bd3e",
+			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/image/font",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "f483456c9f61fd7c1e170033d58ef22ff5ffe291",
+			"branch": "master",
+			"path": "/font"
+		},
+		{
+			"importpath": "golang.org/x/image/math/f32",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "f483456c9f61fd7c1e170033d58ef22ff5ffe291",
+			"branch": "master",
+			"path": "/math/f32"
+		},
+		{
+			"importpath": "golang.org/x/image/math/fixed",
+			"repository": "https://go.googlesource.com/image",
+			"revision": "f483456c9f61fd7c1e170033d58ef22ff5ffe291",
+			"branch": "master",
+			"path": "/math/fixed"
+		},
+		{
+			"importpath": "golang.org/x/mobile/exp/audio/al",
+			"repository": "https://go.googlesource.com/mobile",
+			"revision": "0f3174026e2ab3ec13cad077d5a9f896936f354b",
+			"branch": "master",
+			"path": "/exp/audio/al"
+		},
+		{
+			"importpath": "gopkg.in/natefinch/lumberjack.v2",
+			"repository": "https://gopkg.in/natefinch/lumberjack.v2",
+			"revision": "dd45e6a67c53f673bb49ca8a001fd3a63ceb640e",
+			"branch": "v2.0"
+		}
+	]
+}
