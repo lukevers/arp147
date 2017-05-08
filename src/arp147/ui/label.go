@@ -54,18 +54,21 @@ func NewLabel(text, font string, size float64) *Label {
 }
 
 // SetForegroundColor allows you to set the foreground color of the Label.
-func (label *Label) SetForegroundColor(c color.Color) {
+func (label *Label) SetForegroundColor(c color.Color) *Label {
 	label.font.FG = c
+	return label
 }
 
 // SetBackgroundColor allows you to set the background color of the Label.
-func (label *Label) SetBackgroundColor(c color.Color) {
+func (label *Label) SetBackgroundColor(c color.Color) *Label {
 	label.font.BG = c
+	return label
 }
 
 // SetPosition allows you to set where on the screen it should be.
-func (label *Label) SetPosition(position engo.Point) {
+func (label *Label) SetPosition(position engo.Point) *Label {
 	label.SpaceComponent.Position = position
+	return label
 }
 
 // AddToWorld ...
