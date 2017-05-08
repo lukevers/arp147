@@ -24,4 +24,7 @@ func (scene *SandboxScene) Setup(world *ecs.World) {
 
 	// Tile the world background.
 	ui.TileWorld(world, "textures/space.png")
+
+	// Setup supported input for the scene
+	scene.SetupInput(world)
 }
