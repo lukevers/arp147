@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"arp147/logging"
+	"arp147/scenes/sandbox"
 	"arp147/ships"
 	"arp147/ui"
 	"engo.io/ecs"
@@ -79,7 +80,7 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	quit.AddToWorld(world)
 
 	// Create a label for starting a new game
-	start := ui.NewLabel("New Game", ui.PrimaryFont, 25)
+	start := ui.NewLabel("New Sandbox", ui.PrimaryFont, 25)
 	start.SetPosition(ui.Position{
 		engo.Point{50, 100},
 		ui.PositionBottomRight,
@@ -89,6 +90,9 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 		engo.SetCursor(engo.CursorHand)
 	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
 		engo.SetCursor(engo.CursorNone)
+	}).OnClicked(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorNone)
+		engo.SetScene(&sandbox.SandboxScene{}, true)
 	})
 
 	start.AddToWorld(world)
