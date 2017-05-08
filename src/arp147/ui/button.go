@@ -90,7 +90,7 @@ func (b *ButtonControlComponent) OnLeave(fn func(basic *ecs.BasicEntity, dt floa
 func (b *ButtonControlSystem) Update(dt float32) {
 	for _, e := range b.entities {
 		if e.MouseComponent.Clicked && e.ButtonControlComponent.Clicked != nil {
-			e.ButtonControlComponent.Enter(e.BasicEntity, dt)
+			e.ButtonControlComponent.Clicked(e.BasicEntity, dt)
 		} else if e.MouseComponent.Released && e.ButtonControlComponent.Released != nil {
 			e.ButtonControlComponent.Released(e.BasicEntity, dt)
 		} else if e.MouseComponent.Hovered && e.ButtonControlComponent.Hovered != nil {
