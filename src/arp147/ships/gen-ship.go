@@ -65,7 +65,6 @@ func (ship *TheGerschkin) AddToWorld(world *ecs.World, position engo.Point) {
 		Scale:    engo.Point{1, 1},
 	}
 
-sysadd:
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
 		case *common.RenderSystem:
@@ -74,8 +73,6 @@ sysadd:
 				&ship.RenderComponent,
 				&ship.SpaceComponent,
 			)
-
-			break sysadd
 		}
 	}
 }

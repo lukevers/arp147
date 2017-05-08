@@ -35,16 +35,16 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	// Add systems needed for the scene.
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&common.MouseSystem{})
-	world.AddSystem(&ui.TextControlSystem{})
+	world.AddSystem(&ui.ButtonControlSystem{})
 
 	// Tile the world background.
 	ui.TileWorld(world, "textures/space.png")
 
 	// ...
-	title := ui.NewText("Test", ui.PrimaryFont, 64)
+	title := ui.NewLabel("Test", ui.PrimaryFont, 64)
 	title.SetPosition(engo.Point{10, 10})
-	title.Enter(func(entity *ecs.BasicEntity, dt float32) {
-		logging.Stdout.Println("IN IT BITCHES")
+	title.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+		logging.Stdout.Println("Cool it works!")
 	})
 
 	title.AddToWorld(world)
