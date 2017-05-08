@@ -7,6 +7,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"image/color"
 )
 
 type DefaultScene struct {
@@ -40,14 +41,15 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	// Tile the world background.
 	ui.TileWorld(world, "textures/space.png")
 
-	// ...
+	// Create a label for the title
 	title := ui.NewLabel("Arp 147", ui.PrimaryFont, 64)
 	title.SetPosition(engo.Point{10, 10})
 
+	// Change the colors of the title label on enter/leave.
 	title.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
-		logging.Stdout.Println("in")
+		title.SetForegroundColor(color.Black).SetBackgroundColor(color.White)
 	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
-		logging.Stdout.Println("out")
+		title.SetForegroundColor(color.White).SetBackgroundColor(color.Transparent)
 	})
 
 	title.AddToWorld(world)
