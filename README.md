@@ -8,7 +8,7 @@
 
 `¯\_(ツ)_/¯`
 
-I'm just having fun. Feel free to make suggestions. I'll update this once there's any actual gameplay mechanics.
+I'm just having fun. Feel free to make suggestions. I'll update this once there's any actual gameplay mechanics. See [TODO](TODO.md) for more information.
 
 # Development
 
