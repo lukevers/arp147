@@ -3,7 +3,6 @@ package ui
 import (
 	"arp147/logging"
 	"engo.io/ecs"
-	"engo.io/engo"
 	"engo.io/engo/common"
 	"fmt"
 	"image/color"
@@ -66,8 +65,16 @@ func (label *Label) SetBackgroundColor(c color.Color) *Label {
 }
 
 // SetPosition allows you to set where on the screen it should be.
-func (label *Label) SetPosition(position engo.Point) *Label {
-	label.SpaceComponent.Position = position
+func (label *Label) SetPosition(position Position) *Label {
+	w, h, _ := label.font.TextDimensions(label.Text)
+	label.SpaceComponent.Width = float32(w)
+	label.SpaceComponent.Height = float32(h)
+
+	label.SpaceComponent.Position = position.Calculate(
+		label.SpaceComponent.Width,
+		label.SpaceComponent.Height,
+	)
+
 	return label
 }
 
@@ -77,10 +84,6 @@ func (label *Label) AddToWorld(world *ecs.World) {
 		Font: &label.font,
 		Text: label.Text,
 	}
-
-	w, h, _ := label.font.TextDimensions(label.Text)
-	label.SpaceComponent.Width = float32(w)
-	label.SpaceComponent.Height = float32(h)
 
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {

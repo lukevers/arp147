@@ -43,7 +43,10 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 
 	// Create a label for the title
 	title := ui.NewLabel("Arp 147", ui.PrimaryFont, 64)
-	title.SetPosition(engo.Point{10, 10})
+	title.SetPosition(ui.Position{
+		engo.Point{25, 25},
+		ui.PositionTopLeft,
+	})
 
 	// Change the colors of the title label on enter/leave.
 	title.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
@@ -53,6 +56,38 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	})
 
 	title.AddToWorld(world)
+
+	// Create a label for quitting the game
+	quit := ui.NewLabel("Quit", ui.PrimaryFont, 25)
+	quit.SetPosition(ui.Position{
+		engo.Point{50, 50},
+		ui.PositionBottomRight,
+	})
+
+	quit.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorHand)
+	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorNone)
+	}).OnClicked(func(entity *ecs.BasicEntity, dt float32) {
+		engo.Exit()
+	})
+
+	quit.AddToWorld(world)
+
+	// Create a label for starting a new game
+	start := ui.NewLabel("New Game", ui.PrimaryFont, 25)
+	start.SetPosition(ui.Position{
+		engo.Point{50, 100},
+		ui.PositionBottomRight,
+	})
+
+	start.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorHand)
+	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorNone)
+	})
+
+	start.AddToWorld(world)
 
 	// Add our ship to the world
 	scene.ship.AddToWorld(world, engo.Point{200, 200})
