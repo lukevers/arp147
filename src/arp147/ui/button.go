@@ -33,50 +33,58 @@ type buttonEntity struct {
 
 // OnClicked is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnClicked(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnClicked(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Clicked = fn
+	return b
 }
 
 // OnReleased is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnReleased(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnReleased(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Released = fn
+	return b
 }
 
 // OnHovered is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnHovered(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnHovered(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Hovered = fn
+	return b
 }
 
 // OnDragged is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnDragged(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnDragged(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Dragged = fn
+	return b
 }
 
 // OnRightClicked is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnRightClicked(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnRightClicked(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.RightClicked = fn
+	return b
 }
 
 // OnRightReleased is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnRightReleased(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnRightReleased(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.RightReleased = fn
+	return b
 }
 
 // OnEnter is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnEnter(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnEnter(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Enter = fn
+	return b
 }
 
-// OnLease is a function that is called when an entity with a
+// OnLeave is a function that is called when an entity with a
 // ButtonControlComponent on it.
-func (b *ButtonControlComponent) OnLease(fn func(basic *ecs.BasicEntity, dt float32)) {
+func (b *ButtonControlComponent) OnLeave(fn func(basic *ecs.BasicEntity, dt float32)) *ButtonControlComponent {
 	b.Leave = fn
+	return b
 }
 
 func (b *ButtonControlSystem) Update(dt float32) {

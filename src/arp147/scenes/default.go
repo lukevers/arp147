@@ -41,10 +41,13 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	ui.TileWorld(world, "textures/space.png")
 
 	// ...
-	title := ui.NewLabel("Test", ui.PrimaryFont, 64)
+	title := ui.NewLabel("Arp 147", ui.PrimaryFont, 64)
 	title.SetPosition(engo.Point{10, 10})
+
 	title.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
-		logging.Stdout.Println("Cool it works!")
+		logging.Stdout.Println("in")
+	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+		logging.Stdout.Println("out")
 	})
 
 	title.AddToWorld(world)
