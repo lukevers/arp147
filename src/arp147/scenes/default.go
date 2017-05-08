@@ -30,6 +30,10 @@ func (scene *DefaultScene) Preload() {
 
 	// Create a new Gerschkin ship for this scene.
 	scene.ship = ships.NewGerschkin()
+	scene.ship.Position = ui.Position{
+		engo.Point{0, 0},
+		ui.PositionCenterCenter,
+	}
 }
 
 func (scene *DefaultScene) Setup(world *ecs.World) {
@@ -90,5 +94,5 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	start.AddToWorld(world)
 
 	// Add our ship to the world
-	scene.ship.AddToWorld(world, engo.Point{200, 200})
+	scene.ship.AddToWorld(world)
 }

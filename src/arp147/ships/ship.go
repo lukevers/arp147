@@ -2,6 +2,7 @@ package ships
 
 import (
 	"arp147/logging"
+	"arp147/ui"
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
@@ -17,6 +18,7 @@ type TheGeneric struct {
 	common.RenderComponent
 	common.SpaceComponent
 
+	Position    ui.Position
 	Spritesheet *common.Spritesheet
 }
 
@@ -51,16 +53,21 @@ func NewGeneric() *TheGeneric {
 }
 
 // AddToWorld adds TheGeneric ship to the world passed to it.
-func (ship *TheGeneric) AddToWorld(world *ecs.World, position engo.Point) {
+func (ship *TheGeneric) AddToWorld(world *ecs.World) {
 	ship.BasicEntity = ecs.NewBasic()
+
+	texture := ship.Spritesheet.Drawable(0)
+	w := texture.Width()
+	h := texture.Height()
+
 	ship.SpaceComponent = common.SpaceComponent{
-		Position: position,
-		Width:    ship.Spritesheet.Width(),
-		Height:   ship.Spritesheet.Height(),
+		Position: ship.Position.Calculate(w, h),
+		Width:    w,
+		Height:   h,
 	}
 
 	ship.RenderComponent = common.RenderComponent{
-		Drawable: ship.Spritesheet.Drawable(0),
+		Drawable: texture,
 		Scale:    engo.Point{1, 1},
 	}
 

@@ -6,6 +6,7 @@ package ships
 
 import (
 	"arp147/logging"
+	"arp147/ui"
 
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -18,6 +19,7 @@ type TheGerschkin struct {
 	common.RenderComponent
 	common.SpaceComponent
 
+	Position    ui.Position
 	Spritesheet *common.Spritesheet
 }
 
@@ -52,16 +54,21 @@ func NewGerschkin() *TheGerschkin {
 }
 
 // AddToWorld adds TheGerschkin ship to the world passed to it.
-func (ship *TheGerschkin) AddToWorld(world *ecs.World, position engo.Point) {
+func (ship *TheGerschkin) AddToWorld(world *ecs.World) {
 	ship.BasicEntity = ecs.NewBasic()
+
+	texture := ship.Spritesheet.Drawable(0)
+	w := texture.Width()
+	h := texture.Height()
+
 	ship.SpaceComponent = common.SpaceComponent{
-		Position: position,
-		Width:    ship.Spritesheet.Width(),
-		Height:   ship.Spritesheet.Height(),
+		Position: ship.Position.Calculate(w, h),
+		Width:    w,
+		Height:   h,
 	}
 
 	ship.RenderComponent = common.RenderComponent{
-		Drawable: ship.Spritesheet.Drawable(0),
+		Drawable: texture,
 		Scale:    engo.Point{1, 1},
 	}
 
