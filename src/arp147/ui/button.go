@@ -87,6 +87,7 @@ func (b *ButtonControlComponent) OnLeave(fn func(basic *ecs.BasicEntity, dt floa
 	return b
 }
 
+// Update is called on each frame when the system is in use.
 func (b *ButtonControlSystem) Update(dt float32) {
 	for _, e := range b.entities {
 		if e.MouseComponent.Clicked && e.ButtonControlComponent.Clicked != nil {
@@ -109,10 +110,12 @@ func (b *ButtonControlSystem) Update(dt float32) {
 	}
 }
 
+// Add takes an entity and adds it to the system
 func (b *ButtonControlSystem) Add(basic *ecs.BasicEntity, mouse *common.MouseComponent, button *ButtonControlComponent) {
 	b.entities = append(b.entities, buttonEntity{basic, mouse, button})
 }
 
+// Remove takes an entity and removes it from the system
 func (b *ButtonControlSystem) Remove(basic ecs.BasicEntity) {
 	delete := -1
 	for index, e := range b.entities {

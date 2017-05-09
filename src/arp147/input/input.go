@@ -7,6 +7,7 @@ import (
 
 var registry *[]Key
 
+// InputSystem listens for key events.
 type InputSystem struct {
 	entities []inputEntity
 }
@@ -15,6 +16,8 @@ type inputEntity struct {
 	*ecs.BasicEntity
 }
 
+// Key contains the information needed for key events. It also contains three
+// functions that can be set on each type of key event.
 type Key struct {
 	Name string
 	Keys []engo.Key
@@ -24,6 +27,7 @@ type Key struct {
 	JustReleased func()
 }
 
+// RegisterButtons registers buttons with functions for the scene.
 func RegisterButtons(buttons []Key) {
 	// Store the button registry globally
 	registry = &buttons
@@ -37,10 +41,12 @@ func RegisterButtons(buttons []Key) {
 	}
 }
 
+// Add takes an entity and adds it to the system
 func (i *InputSystem) Add(basic *ecs.BasicEntity) {
 	i.entities = append(i.entities, inputEntity{basic})
 }
 
+// Remove takes an entity and removes it from the system
 func (i *InputSystem) Remove(basic ecs.BasicEntity) {
 	delete := -1
 	for index, e := range i.entities {
@@ -54,6 +60,7 @@ func (i *InputSystem) Remove(basic ecs.BasicEntity) {
 	}
 }
 
+// Update is called on each frame when the system is in use.
 func (i *InputSystem) Update(dt float32) {
 	for _, key := range *registry {
 		if btn := engo.Input.Button(key.Name); btn.Down() && key.Down != nil {
