@@ -1,15 +1,13 @@
 package sandbox
 
 import (
+	"arp147/clock"
 	"arp147/input"
 	"arp147/logging"
-	"engo.io/ecs"
 	"engo.io/engo"
 )
 
-func (scene *SandboxScene) SetupInput(world *ecs.World) {
-	world.AddSystem(&input.InputSystem{})
-
+func (scene *SandboxScene) SetupInput() {
 	input.RegisterButtons([]input.Key{
 		input.Key{
 			Name: "action",
@@ -18,7 +16,7 @@ func (scene *SandboxScene) SetupInput(world *ecs.World) {
 				logging.Stdout.Println("just pressed")
 			},
 			Down: func() {
-				logging.Stdout.Println("down")
+				logging.Stdout.Println("time:", clock.String())
 			},
 			JustReleased: func() {
 				logging.Stdout.Println("just released")

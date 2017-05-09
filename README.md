@@ -10,6 +10,10 @@
 
 I'm just having fun. Feel free to make suggestions. I'll update this once there's any actual gameplay mechanics. See [TODO](TODO.md) for more information.
 
+## Time / Clock
+
+The game starts out on `1 January, 6000 at 00:00`. A minute of game time is about a second in real life.
+
 # Development
 
 Arp 147 is written in [Go](https://golang.org/) with the [GB](https://getgb.io/) build tool. Code generation by [genny](https://github.com/cheekybits/genny). All code written in Go should be formatted properly.

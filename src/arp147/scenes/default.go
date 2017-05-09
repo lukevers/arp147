@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"arp147/clock"
 	"arp147/logging"
 	"arp147/scenes/sandbox"
 	"arp147/ships"
@@ -92,6 +93,7 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 		engo.SetCursor(engo.CursorNone)
 	}).OnClicked(func(entity *ecs.BasicEntity, dt float32) {
 		engo.SetCursor(engo.CursorNone)
+		clock.New()
 		engo.SetScene(&sandbox.SandboxScene{}, true)
 	})
 
