@@ -48,26 +48,35 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	ui.TileWorld(world, "textures/space.png")
 
 	// Create a label for the title
-	title := ui.NewLabel("Arp 147", ui.PrimaryFont, 64)
-	title.SetPosition(ui.Position{
-		engo.Point{25, 25},
-		ui.PositionTopLeft,
+	title := ui.NewLabel(ui.Label{
+		Text:     "Arp 147",
+		Position: ui.Position{engo.Point{25, 25}, ui.PositionTopLeft},
+		Font:     ui.PrimaryFont,
+		FgColor:  color.White,
+		BgColor:  color.Transparent,
+		Size:     64,
 	})
 
-	// Change the colors of the title label on enter/leave.
 	title.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
-		title.SetForegroundColor(color.Black).SetBackgroundColor(color.White)
+		title.FgColor = color.Black
+		title.BgColor = color.White
+		title.Render()
 	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
-		title.SetForegroundColor(color.White).SetBackgroundColor(color.Transparent)
+		title.FgColor = color.White
+		title.BgColor = color.Transparent
+		title.Render()
 	})
 
 	title.AddToWorld(world)
 
 	// Create a label for quitting the game
-	quit := ui.NewLabel("Quit", ui.PrimaryFont, 25)
-	quit.SetPosition(ui.Position{
-		engo.Point{50, 50},
-		ui.PositionBottomRight,
+	quit := ui.NewLabel(ui.Label{
+		Text:     "Quit",
+		Position: ui.Position{engo.Point{50, 50}, ui.PositionBottomRight},
+		Font:     ui.PrimaryFont,
+		FgColor:  color.White,
+		BgColor:  color.Transparent,
+		Size:     25,
 	})
 
 	quit.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
@@ -81,10 +90,13 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	quit.AddToWorld(world)
 
 	// Create a label for starting a new game
-	start := ui.NewLabel("New Sandbox", ui.PrimaryFont, 25)
-	start.SetPosition(ui.Position{
-		engo.Point{50, 100},
-		ui.PositionBottomRight,
+	start := ui.NewLabel(ui.Label{
+		Text:     "New",
+		Position: ui.Position{engo.Point{50, 100}, ui.PositionBottomRight},
+		Font:     ui.PrimaryFont,
+		FgColor:  color.White,
+		BgColor:  color.Transparent,
+		Size:     25,
 	})
 
 	start.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
@@ -95,6 +107,7 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 		engo.SetCursor(engo.CursorNone)
 		clock.New()
 		engo.SetScene(&sandbox.SandboxScene{}, true)
+
 	})
 
 	start.AddToWorld(world)

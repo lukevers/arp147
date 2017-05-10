@@ -8,6 +8,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"image/color"
 )
 
 type SandboxScene struct {
@@ -33,10 +34,22 @@ func (scene *SandboxScene) Setup(world *ecs.World) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&input.InputSystem{})
 	world.AddSystem(&clock.ClockSystem{})
+	world.AddSystem(&ui.LabelUpdateSystem{})
 
 	// Tile the world background.
 	ui.TileWorld(world, "textures/space.png")
 
 	// Setup supported input for the scene
 	scene.SetupInput()
+
+	// Add HUD
+	ui.NewLabel(ui.Label{
+		Text:      clock.String(),
+		Updatable: clock.String,
+		Position:  ui.Position{engo.Point{10, 10}, ui.PositionTopLeft},
+		Font:      ui.PrimaryFont,
+		FgColor:   color.White,
+		BgColor:   color.Transparent,
+		Size:      16,
+	}).AddToWorld(world)
 }

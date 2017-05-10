@@ -21,69 +21,74 @@ type Label struct {
 	common.MouseComponent
 	ButtonControlComponent
 
-	Text string
+	Text      string
+	Position  Position
+	Updatable func() string
+
+	Font string
+	Size float64
 	font common.Font
+
+	FgColor color.Color
+	BgColor color.Color
+}
+
+// LabelUpdateSystem is an extension of the
+type LabelUpdateSystem struct {
+	entities []labelEntity
+}
+
+type labelEntity struct {
+	*Label
 }
 
 // NewLabel creates a new label.
-func NewLabel(text, font string, size float64) *Label {
-	l := &Label{
-		BasicEntity:            ecs.NewBasic(),
-		RenderComponent:        common.RenderComponent{},
-		SpaceComponent:         common.SpaceComponent{},
-		MouseComponent:         common.MouseComponent{},
-		ButtonControlComponent: ButtonControlComponent{},
+func NewLabel(label Label) *Label {
+	label.BasicEntity = ecs.NewBasic()
+	label.RenderComponent = common.RenderComponent{}
+	label.SpaceComponent = common.SpaceComponent{}
+	label.MouseComponent = common.MouseComponent{}
+	label.ButtonControlComponent = ButtonControlComponent{}
 
-		Text: text,
-		font: common.Font{
-			URL:  fmt.Sprintf("fonts/%s.ttf", font),
-			FG:   color.White,
-			Size: size,
-		},
+	label.font = common.Font{
+		URL:  fmt.Sprintf("fonts/%s.ttf", label.Font),
+		FG:   label.FgColor,
+		BG:   label.BgColor,
+		Size: label.Size,
 	}
 
 	// Create the font.
-	if err := l.font.CreatePreloaded(); err != nil {
+	if err := label.font.CreatePreloaded(); err != nil {
 		logging.Stderr.Fatal("Could not create preloaded font: ", err)
 	}
 
 	// Set the shader to a basic
-	l.SetShader(common.HUDShader)
-	return l
+	label.SetShader(common.HUDShader)
+	return &label
 }
 
-// SetForegroundColor allows you to set the foreground color of the Label.
-func (label *Label) SetForegroundColor(c color.Color) *Label {
-	label.font.FG = c
-	return label
-}
+func (label *Label) Render() {
+	label.font.BG = label.BgColor
+	label.font.FG = label.FgColor
 
-// SetBackgroundColor allows you to set the background color of the Label.
-func (label *Label) SetBackgroundColor(c color.Color) *Label {
-	label.font.BG = c
-	return label
-}
-
-// SetPosition allows you to set where on the screen it should be.
-func (label *Label) SetPosition(position Position) *Label {
 	w, h, _ := label.font.TextDimensions(label.Text)
 	label.SpaceComponent.Width = float32(w)
 	label.SpaceComponent.Height = float32(h)
 
-	label.SpaceComponent.Position = position.Calculate(
+	label.SpaceComponent.Position = label.Position.Calculate(
 		label.SpaceComponent.Width,
 		label.SpaceComponent.Height,
 	)
 
-	return label
-}
-
-// AddToWorld ...
-func (label *Label) AddToWorld(world *ecs.World) {
 	label.RenderComponent.Drawable = common.Text{
 		Font: &label.font,
 		Text: label.Text,
 	}
+}
+
+// AddToWorld ...
+func (label *Label) AddToWorld(world *ecs.World) {
+	label.Render()
 
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
@@ -106,6 +111,40 @@ func (label *Label) AddToWorld(world *ecs.World) {
 				&label.MouseComponent,
 				&label.ButtonControlComponent,
 			)
+		case *LabelUpdateSystem:
+			sys.Add(label)
 		}
+	}
+}
+
+// Add takes an entity and adds it to the system
+func (l *LabelUpdateSystem) Add(label *Label) {
+	l.entities = append(l.entities, labelEntity{label})
+}
+
+// Remove takes an entity and removes it from the system
+func (l *LabelUpdateSystem) Remove(basic ecs.BasicEntity) {
+	delete := -1
+	for index, e := range l.entities {
+		if e.Label.BasicEntity.ID() == basic.ID() {
+			delete = index
+			break
+		}
+	}
+	if delete >= 0 {
+		l.entities = append(l.entities[:delete], l.entities[delete+1:]...)
+	}
+}
+
+// Update is called on each frame when the system is in use.
+func (l *LabelUpdateSystem) Update(dt float32) {
+	for _, e := range l.entities {
+		// Do nothing with this label if it doesn't have an updatable function.
+		if e.Label.Updatable == nil {
+			continue
+		}
+
+		e.Label.Text = e.Label.Updatable()
+		e.Label.Render()
 	}
 }
