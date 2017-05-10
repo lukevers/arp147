@@ -58,8 +58,8 @@ func (ship *TheGerschkin) AddToWorld(world *ecs.World) {
 	ship.BasicEntity = ecs.NewBasic()
 
 	texture := ship.Spritesheet.Drawable(0)
-	w := texture.Width()
-	h := texture.Height()
+	w := texture.Width() * TheGerschkinSpritesheetScale.X
+	h := texture.Height() * TheGerschkinSpritesheetScale.Y
 
 	ship.SpaceComponent = common.SpaceComponent{
 		Position: ship.Position.Calculate(w, h),
@@ -69,7 +69,7 @@ func (ship *TheGerschkin) AddToWorld(world *ecs.World) {
 
 	ship.RenderComponent = common.RenderComponent{
 		Drawable: texture,
-		Scale:    engo.Point{1, 1},
+		Scale:    TheGerschkinSpritesheetScale,
 	}
 
 	for _, system := range world.Systems() {
