@@ -4,6 +4,7 @@ import (
 	"arp147/clock"
 	"arp147/input"
 	"arp147/logging"
+	"arp147/ships"
 	"arp147/ui"
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -12,7 +13,7 @@ import (
 )
 
 type SandboxScene struct {
-	//
+	ship *ships.TheGerschkin
 }
 
 func (*SandboxScene) Type() string {
@@ -26,6 +27,13 @@ func (scene *SandboxScene) Preload() {
 		"textures/space.png",
 	); err != nil {
 		logging.Stderr.Fatal("Could not preload files: ", err)
+	}
+
+	// Create a new Gerschkin ship for this scene.
+	scene.ship = ships.NewGerschkin()
+	scene.ship.Position = ui.Position{
+		engo.Point{0, 0},
+		ui.PositionCenterCenter,
 	}
 }
 
@@ -52,4 +60,7 @@ func (scene *SandboxScene) Setup(world *ecs.World) {
 		BgColor:   color.Transparent,
 		Size:      16,
 	}).AddToWorld(world)
+
+	// Add our ship to the world
+	scene.ship.AddToWorld(world)
 }
