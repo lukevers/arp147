@@ -1,6 +1,7 @@
 # Folders
 /pkg
 /bin
+/vendor/pkg
 
 # Files
 .DS_Store
