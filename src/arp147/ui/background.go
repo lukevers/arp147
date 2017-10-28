@@ -7,6 +7,104 @@ import (
 	"engo.io/engo/common"
 )
 
+// TODO
+type Background struct {
+	ecs.BasicEntity
+	common.RenderComponent
+	common.SpaceComponent
+
+	Texture string
+}
+
+// TODO
+type BackgroundSystem struct {
+	entities []backgroundEntity
+}
+
+type backgroundEntity struct {
+	*Background
+}
+
+// TODO
+func NewBackground(background Background) *Background {
+	background.BasicEntity = ecs.NewBasic()
+	background.RenderComponent = common.RenderComponent{}
+	background.SpaceComponent = common.SpaceComponent{}
+
+	// TODO
+
+	return &background
+}
+
+// TODO
+func (b *Background) Render() {
+	// TODO
+}
+
+// TODO
+func (b *Background) AddToWorld(world *ecs.World) {
+	b.Render()
+
+	for _, system := range world.Systems() {
+		switch sys := system.(type) {
+		case *common.RenderSystem:
+			sys.Add(
+				&b.BasicEntity,
+				&b.RenderComponent,
+				&b.SpaceComponent,
+			)
+		case *BackgroundSystem:
+			sys.Add(b)
+		}
+	}
+
+}
+
+// Add takes an entity and adds it to the system
+func (b *BackgroundSystem) Add(background *Background) {
+	b.entities = append(b.entities, backgroundEntity{background})
+}
+
+// Remove takes an entity and removes it from the system
+func (b *BackgroundSystem) Remove(basic ecs.BasicEntity) {
+	delete := -1
+	for index, e := range b.entities {
+		if e.Background.BasicEntity.ID() == basic.ID() {
+			delete = index
+			break
+		}
+	}
+	if delete >= 0 {
+		b.entities = append(b.entities[:delete], b.entities[delete+1:]...)
+	}
+}
+
+// Update is called on each frame when the system is in use.
+func (b *BackgroundSystem) Update(dt float32) {
+	// TODO
+}
+
+// --- old, to be deleted soon
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 type background struct {
 	ecs.BasicEntity
 	common.RenderComponent

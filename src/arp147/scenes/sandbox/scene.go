@@ -43,9 +43,14 @@ func (scene *SandboxScene) Setup(world *ecs.World) {
 	world.AddSystem(&input.InputSystem{})
 	world.AddSystem(&clock.ClockSystem{})
 	world.AddSystem(&ui.LabelUpdateSystem{})
+	world.AddSystem(&ui.BackgroundSystem{})
 
 	// Tile the world background.
-	ui.TileWorld(world, "textures/space.png")
+	//ui.TileWorld(world, "textures/space.png")
+
+	ui.NewBackground(ui.Background{
+		Texture: "textures/space.png",
+	}).AddToWorld(world)
 
 	// Setup supported input for the scene
 	scene.SetupInput()
