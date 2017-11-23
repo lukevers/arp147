@@ -19,10 +19,14 @@ type Background struct {
 // TODO
 type BackgroundSystem struct {
 	entities []backgroundEntity
+	dt       float32
+	offset   float32
+	world    *ecs.World
 }
 
 type backgroundEntity struct {
 	*Background
+	*ecs.World
 }
 
 // TODO
@@ -47,22 +51,16 @@ func (b *Background) AddToWorld(world *ecs.World) {
 
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
-		case *common.RenderSystem:
-			sys.Add(
-				&b.BasicEntity,
-				&b.RenderComponent,
-				&b.SpaceComponent,
-			)
 		case *BackgroundSystem:
-			sys.Add(b)
+			sys.world = world
+			sys.Add(backgroundEntity{b, world})
 		}
 	}
-
 }
 
 // Add takes an entity and adds it to the system
-func (b *BackgroundSystem) Add(background *Background) {
-	b.entities = append(b.entities, backgroundEntity{background})
+func (b *BackgroundSystem) Add(background backgroundEntity) {
+	b.entities = append(b.entities, background)
 }
 
 // Remove takes an entity and removes it from the system
@@ -81,7 +79,13 @@ func (b *BackgroundSystem) Remove(basic ecs.BasicEntity) {
 
 // Update is called on each frame when the system is in use.
 func (b *BackgroundSystem) Update(dt float32) {
-	// TODO
+	b.dt += dt
+	if b.dt >= 1 {
+		b.dt = 0
+		b.offset++
+
+		TileWorld(b.world, "textures/space.png", 5*b.offset)
+	}
 }
 
 // --- old, to be deleted soon
@@ -112,7 +116,7 @@ type background struct {
 }
 
 // TileWorld is a helper function that tiles an image on the entire screen.
-func TileWorld(world *ecs.World, image string) {
+func TileWorld(world *ecs.World, image string, offset float32) {
 	texture, err := common.LoadedSprite(image)
 	if err != nil {
 		logging.Stderr.Fatal("Could not use loaded sprite: ", err)
@@ -124,7 +128,7 @@ func TileWorld(world *ecs.World, image string) {
 	w := texture.Width()
 	h := texture.Height()
 
-	var x, y float32 = 0, 0
+	var x, y float32 = offset, 0
 
 	for {
 		var x2 float32 = x
@@ -155,7 +159,7 @@ func TileWorld(world *ecs.World, image string) {
 		}
 
 		if x > width {
-			x = 0
+			x = offset
 			y += h
 		} else {
 			x += w

@@ -43,9 +43,14 @@ func (scene *DefaultScene) Setup(world *ecs.World) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&common.MouseSystem{})
 	world.AddSystem(&ui.ButtonControlSystem{})
+	world.AddSystem(&ui.BackgroundSystem{})
 
 	// Tile the world background.
-	ui.TileWorld(world, "textures/space.png")
+	bkg := ui.NewBackground(ui.Background{
+		Texture: "textures/space.png",
+	})
+
+	bkg.AddToWorld(world)
 
 	// Create a label for the title
 	title := ui.NewLabel(ui.Label{

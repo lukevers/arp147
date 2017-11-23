@@ -30,11 +30,13 @@ func (scene *SandboxScene) Preload() {
 	}
 
 	// Create a new Gerschkin ship for this scene.
-	scene.ship = ships.NewGerschkin()
-	scene.ship.Position = ui.Position{
-		engo.Point{0, 0},
-		ui.PositionCenterCenter,
-	}
+	/*
+		scene.ship = ships.NewGerschkin()
+		scene.ship.Position = ui.Position{
+			engo.Point{0, 0},
+			ui.PositionCenterCenter,
+		}
+	*/
 }
 
 func (scene *SandboxScene) Setup(world *ecs.World) {
@@ -65,7 +67,4 @@ func (scene *SandboxScene) Setup(world *ecs.World) {
 		BgColor:   color.Transparent,
 		Size:      16,
 	}).AddToWorld(world)
-
-	// Add our ship to the world
-	scene.ship.AddToWorld(world)
 }
