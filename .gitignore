@@ -1,7 +1,8 @@
 # Folders
-/pkg
-/bin
-/vendor/pkg
+/vendor
 
-# Files
+# macOS Files
 .DS_Store
+
+# Binaries
+arp147

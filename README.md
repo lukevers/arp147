@@ -16,11 +16,11 @@ The game starts out on `1 January, 6000 at 00:00`. A minute of game time is abou
 
 # Development
 
-Arp 147 is written in [Go](https://golang.org/) with the [GB](https://getgb.io/) build tool. Code generation by [genny](https://github.com/cheekybits/genny). All code written in Go should be formatted properly.
+Arp 147 is written in [Go](https://golang.org/), using [dep](https://github.com/golang/dep/) for dependency management. All code written in Go should be properly formatted and linted.
 
 ## Building
 
 ```bash
-gb generate
-gb build all
+dep ensure
+go build
 ```

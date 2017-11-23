@@ -10,7 +10,7 @@ This is just a shortlist of things that I want to do, in no particular order:
 - [ ] Figure out a "room" system for the ship (for example, there should be an engine room, a bridge, a server room for the computers).
 - [ ] Building off of the health system and room system, individual rooms can be damaged.
 - [ ] Humans? Aliens? Some sort of crew.
-- [x] Some sort of time/clock system.
+- [ ] Some sort of time/clock system.
 - [ ] Save/load games.
 - [ ] Pause the game with `esc` and have a paused menu screen show up.
 
