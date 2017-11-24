@@ -7,9 +7,10 @@ import (
 
 // ClockSystem updates the clock every frame.
 type ClockSystem struct {
-	entities []clockEntity
+	Clock *Clock
 
-	dt float32
+	entities []clockEntity
+	dt       float32
 }
 
 type clockEntity struct {
@@ -24,12 +25,14 @@ func (c *ClockSystem) Add(basic *ecs.BasicEntity) {
 // Remove takes an entity and removes it from the system
 func (c *ClockSystem) Remove(basic ecs.BasicEntity) {
 	delete := -1
+
 	for index, e := range c.entities {
 		if e.BasicEntity.ID() == basic.ID() {
 			delete = index
 			break
 		}
 	}
+
 	if delete >= 0 {
 		c.entities = append(c.entities[:delete], c.entities[delete+1:]...)
 	}
@@ -42,7 +45,6 @@ func (c *ClockSystem) Update(dt float32) {
 		c.dt = 0
 
 		// Advance the clock by a minute
-		t := Time.Add(time.Minute * 1)
-		Time = &t
+		c.Clock.Time = c.Clock.Time.Add(time.Minute * 1)
 	}
 }

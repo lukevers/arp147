@@ -121,12 +121,14 @@ func (l *LabelUpdateSystem) Add(label *Label) {
 // Remove takes an entity and removes it from the system
 func (l *LabelUpdateSystem) Remove(basic ecs.BasicEntity) {
 	delete := -1
+
 	for index, e := range l.entities {
 		if e.Label.BasicEntity.ID() == basic.ID() {
 			delete = index
 			break
 		}
 	}
+
 	if delete >= 0 {
 		l.entities = append(l.entities[:delete], l.entities[delete+1:]...)
 	}

@@ -5,33 +5,35 @@ import (
 	"time"
 )
 
-// Time contains the global time for the world.
-var Time *time.Time
+// TODO
+type Clock struct {
+	Time time.Time
+}
 
 // New creates a new global clock at the default starting time.
-func New() {
-	t := time.Date(
-		6000,
-		time.January,
-		1,
-		0,
-		0,
-		0,
-		0,
-		time.UTC,
-	)
-
-	Time = &t
+func New() *Clock {
+	return &Clock{
+		Time: time.Date(
+			6000,
+			time.January,
+			1,
+			0,
+			0,
+			0,
+			0,
+			time.UTC,
+		),
+	}
 }
 
 // String returns the current date and time in a string format.
-func String() string {
+func (c *Clock) String() string {
 	return fmt.Sprintf(
 		"%d %s, %d - %02d:%02d",
-		Time.Day(),
-		Time.Month().String(),
-		Time.Year(),
-		Time.Hour(),
-		Time.Minute(),
+		c.Time.Day(),
+		c.Time.Month().String(),
+		c.Time.Year(),
+		c.Time.Hour(),
+		c.Time.Minute(),
 	)
 }
