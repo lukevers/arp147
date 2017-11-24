@@ -7,6 +7,7 @@ import (
 	"github.com/lukevers/arp147/clock"
 	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/player"
+	"github.com/lukevers/arp147/scenes/terminal"
 	"github.com/lukevers/arp147/ui"
 	"image/color"
 )
@@ -33,10 +34,12 @@ func (s *Scene) Setup(world *ecs.World) {
 	p := player.New()
 
 	world.AddSystem(&common.RenderSystem{})
-	world.AddSystem(&clock.ClockSystem{Clock: p.Clock})
-	world.AddSystem(&ui.LabelUpdateSystem{})
+	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&common.MouseSystem{})
+	world.AddSystem(&clock.ClockSystem{Clock: p.Clock})
+	world.AddSystem(&input.InputSystem{})
 	world.AddSystem(&ui.ButtonControlSystem{})
+	world.AddSystem(&ui.LabelUpdateSystem{})
 
 	ui.NewLabel(ui.Label{
 		FgColor:   color.White,
@@ -55,7 +58,7 @@ func (s *Scene) Setup(world *ecs.World) {
 			Name: "??",
 			Keys: []engo.Key{engo.C},
 			JustReleased: func() {
-				p.Ship.Terminal.Show(world)
+				engo.SetScene(&terminal.Scene{Player: p}, false)
 			},
 		},
 	})
@@ -72,7 +75,7 @@ func (s *Scene) Setup(world *ecs.World) {
 	})
 
 	labelTerm.OnClicked(func(basic *ecs.BasicEntity, dt float32) {
-		p.Ship.Terminal.Show(world)
+		engo.SetScene(&terminal.Scene{Player: p}, false)
 	})
 
 	labelTerm.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
