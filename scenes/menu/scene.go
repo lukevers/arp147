@@ -35,6 +35,8 @@ func (s *Scene) Setup(world *ecs.World) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&clock.ClockSystem{Clock: p.Clock})
 	world.AddSystem(&ui.LabelUpdateSystem{})
+	world.AddSystem(&common.MouseSystem{})
+	world.AddSystem(&ui.ButtonControlSystem{})
 
 	ui.NewLabel(ui.Label{
 		FgColor:   color.White,
@@ -57,4 +59,29 @@ func (s *Scene) Setup(world *ecs.World) {
 			},
 		},
 	})
+
+	labelTerm := ui.NewLabel(ui.Label{
+		FgColor: color.White,
+		Font:    ui.FontPrimary,
+		Size:    16,
+		Text:    "Terminal",
+		Position: ui.Position{
+			Point:    engo.Point{10, 10},
+			Position: ui.PositionBottomLeft,
+		},
+	})
+
+	labelTerm.OnClicked(func(basic *ecs.BasicEntity, dt float32) {
+		p.Ship.Terminal.Show(world)
+	})
+
+	labelTerm.OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+		labelTerm.FgColor = color.Alpha16{0x6666}
+		labelTerm.Render()
+	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+		labelTerm.FgColor = color.White
+		labelTerm.Render()
+	})
+
+	labelTerm.AddToWorld(world)
 }
