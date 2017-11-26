@@ -53,11 +53,11 @@ func (s *Scene) Setup(world *ecs.World) {
 		},
 	}).AddToWorld(world)
 
-	input.RegisterButtons([]input.Key{
+	input.RegisterKeys([]input.Key{
 		input.Key{
 			Name: "??",
 			Keys: []engo.Key{engo.C},
-			JustReleased: func() {
+			JustPressed: func(mods *input.Modifiers) {
 				engo.SetScene(&terminal.Scene{Player: p}, false)
 			},
 		},

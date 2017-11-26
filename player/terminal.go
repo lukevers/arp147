@@ -5,7 +5,6 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/ui"
-	"log"
 )
 
 // TODO
@@ -41,9 +40,7 @@ func NewTerminal() *Terminal {
 }
 
 // TODO
-func (t *Terminal) Show(world *ecs.World) {
-	log.Println("x")
-
+func (t *Terminal) AddToWorld(world *ecs.World) {
 	t.drawUi(world)
 }
 

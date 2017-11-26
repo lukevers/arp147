@@ -37,13 +37,20 @@ func (i *InputSystem) Remove(basic ecs.BasicEntity) {
 
 // Update is called on each frame when the system is in use.
 func (i *InputSystem) Update(dt float32) {
-	for _, key := range *registry {
+	mods := &Modifiers{
+		Alt:     engo.Input.Button("alt").Down(),
+		Control: engo.Input.Button("control").Down(),
+		Shift:   engo.Input.Button("shift").Down(),
+		Super:   engo.Input.Button("super").Down(),
+	}
+
+	for _, key := range *sceneRegistry {
 		if btn := engo.Input.Button(key.Name); btn.Down() && key.Down != nil {
-			key.Down()
+			key.Down(mods)
 		} else if btn.JustPressed() && key.JustPressed != nil {
-			key.JustPressed()
+			key.JustPressed(mods)
 		} else if btn.JustReleased() && key.JustReleased != nil {
-			key.JustReleased()
+			key.JustReleased(mods)
 		}
 	}
 }

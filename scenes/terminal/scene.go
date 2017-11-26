@@ -5,7 +5,9 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/clock"
+	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/player"
+	"log"
 )
 
 // Scene defines a scene for the main menu
@@ -37,7 +39,21 @@ func (s *Scene) Preload() {
 func (s *Scene) Setup(world *ecs.World) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&clock.ClockSystem{Clock: s.Player.Clock})
+	world.AddSystem(&input.InputSystem{})
 
-	// ...
-	s.Player.Ship.Terminal.Show(world)
+	s.Player.Ship.Terminal.AddToWorld(world)
+
+	input.RegisterKeys([]input.Key{
+		input.Key{
+			Name: "Log Time",
+			Keys: []engo.Key{engo.D},
+			JustPressed: func(mods *input.Modifiers) {
+				log.Println("==========")
+				log.Println("ctl:\t", mods.Control)
+				log.Println("alt:\t", mods.Alt)
+				log.Println("sft:\t", mods.Shift)
+				log.Println("sup:\t", mods.Super)
+			},
+		},
+	})
 }
