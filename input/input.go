@@ -14,9 +14,8 @@ type Key struct {
 	Name string
 	Keys []engo.Key
 
-	Down         func(*Modifiers)
-	JustPressed  func(*Modifiers)
-	JustReleased func(*Modifiers)
+	OnPress   func(engo.Key, *Modifiers)
+	OnRelease func(engo.Key, *Modifiers)
 }
 
 // RegisterButtons registers buttons with functions for the scene. It also

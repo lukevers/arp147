@@ -57,7 +57,7 @@ func (s *Scene) Setup(world *ecs.World) {
 		input.Key{
 			Name: "??",
 			Keys: []engo.Key{engo.C},
-			JustPressed: func(mods *input.Modifiers) {
+			OnPress: func(key engo.Key, mods *input.Modifiers) {
 				engo.SetScene(&terminal.Scene{Player: p}, false)
 			},
 		},

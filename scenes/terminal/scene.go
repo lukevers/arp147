@@ -47,7 +47,7 @@ func (s *Scene) Setup(world *ecs.World) {
 		input.Key{
 			Name: "Log Time",
 			Keys: []engo.Key{engo.D},
-			JustPressed: func(mods *input.Modifiers) {
+			OnPress: func(key engo.Key, mods *input.Modifiers) {
 				log.Println("==========")
 				log.Println("ctl:\t", mods.Control)
 				log.Println("alt:\t", mods.Alt)

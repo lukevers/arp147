@@ -8,6 +8,13 @@ var (
 	hasRegisteredModifiers bool
 )
 
+const (
+	ModifierAlt     = "alt"
+	ModifierControl = "control"
+	ModifierShift   = "shift"
+	ModifierSuper   = "super"
+)
+
 // Modifiers contains a bool for every kind of modifier key that could be used
 // at the same time as the key being used.
 type Modifiers struct {
@@ -28,28 +35,28 @@ func registerModifiers() {
 
 	// Register the alt keys
 	engo.Input.RegisterButton(
-		"alt",
+		ModifierAlt,
 		engo.LeftAlt,
 		engo.RightAlt,
 	)
 
 	// Register the control keys
 	engo.Input.RegisterButton(
-		"control",
+		ModifierControl,
 		engo.LeftControl,
 		engo.RightControl,
 	)
 
 	// Register the shift keys
 	engo.Input.RegisterButton(
-		"shift",
+		ModifierShift,
 		engo.LeftShift,
 		engo.RightShift,
 	)
 
 	// Register the super keys
 	engo.Input.RegisterButton(
-		"super",
+		ModifierSuper,
 		engo.LeftSuper,
 		engo.RightSuper,
 	)
