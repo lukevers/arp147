@@ -3,6 +3,7 @@ package input
 import (
 	"engo.io/ecs"
 	"engo.io/engo"
+	"strconv"
 )
 
 // InputSystem listens for key events.
@@ -38,10 +39,12 @@ func (i *InputSystem) Remove(basic ecs.BasicEntity) {
 // Update is called on each frame when the system is in use.
 func (i *InputSystem) Update(dt float32) {
 	for _, key := range *sceneRegistry {
-		if btn := engo.Input.Button(key.Name); btn.JustPressed() && key.OnPress != nil {
-			key.OnPress(btn.Triggers[0], i.modifiers())
-		} else if btn.JustReleased() && key.OnRelease != nil {
-			key.OnRelease(btn.Triggers[0], i.modifiers())
+		for index, k := range key.Keys {
+			if btn := engo.Input.Button(key.Name + strconv.Itoa(index)); btn.JustPressed() && key.OnPress != nil {
+				key.OnPress(k, i.modifiers())
+			} else if btn.JustReleased() && key.OnRelease != nil {
+				key.OnRelease(k, i.modifiers())
+			}
 		}
 	}
 }

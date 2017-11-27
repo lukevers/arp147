@@ -2,6 +2,7 @@ package input
 
 import (
 	"engo.io/engo"
+	"strconv"
 )
 
 var (
@@ -27,10 +28,12 @@ func RegisterKeys(keys []Key) {
 
 	// Register all of the buttons
 	for _, key := range keys {
-		engo.Input.RegisterButton(
-			key.Name,
-			key.Keys...,
-		)
+		for index, k := range key.Keys {
+			engo.Input.RegisterButton(
+				key.Name+strconv.Itoa(index),
+				k,
+			)
+		}
 	}
 
 	registerModifiers()
