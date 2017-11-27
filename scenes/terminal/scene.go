@@ -7,7 +7,6 @@ import (
 	"github.com/lukevers/arp147/clock"
 	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/player"
-	"log"
 )
 
 // Scene defines a scene for the main menu
@@ -42,56 +41,4 @@ func (s *Scene) Setup(world *ecs.World) {
 	world.AddSystem(&input.InputSystem{})
 
 	s.Player.Ship.Terminal.AddToWorld(world)
-
-	input.RegisterKeys([]input.Key{
-		input.Key{
-			Name: "[a-z][0-9]",
-			Keys: []engo.Key{
-				engo.A,
-				engo.B,
-				engo.C,
-				engo.D,
-				engo.E,
-				engo.F,
-				engo.G,
-				engo.H,
-				engo.I,
-				engo.J,
-				engo.K,
-				engo.L,
-				engo.M,
-				engo.N,
-				engo.O,
-				engo.P,
-				engo.Q,
-				engo.R,
-				engo.S,
-				engo.T,
-				engo.U,
-				engo.V,
-				engo.W,
-				engo.X,
-				engo.Y,
-				engo.Z,
-				engo.Zero,
-				engo.One,
-				engo.Two,
-				engo.Three,
-				engo.Four,
-				engo.Five,
-				engo.Six,
-				engo.Seven,
-				engo.Eight,
-				engo.Nine,
-			},
-			OnPress: func(key engo.Key, mods *input.Modifiers) {
-				log.Println("==========")
-				log.Println("key:\t", key)
-				log.Println("ctl:\t", mods.Control)
-				log.Println("alt:\t", mods.Alt)
-				log.Println("sft:\t", mods.Shift)
-				log.Println("sup:\t", mods.Super)
-			},
-		},
-	})
 }
