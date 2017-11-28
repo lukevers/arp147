@@ -5,16 +5,12 @@ import (
 	"engo.io/engo"
 	"errors"
 	"github.com/lukevers/arp147/input"
-	"github.com/lukevers/arp147/ui"
 	"log"
 	"strings"
 )
 
 // TODO
 type line struct {
-	// TODO
-	Text []*ui.Label
-
 	text []string
 
 	// TODO
@@ -57,6 +53,13 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 		if err != nil {
 			// TODO: handle error
 			log.Println("ERROR! Program not found:", cmd)
+			break
+		}
+
+		// Handle UI based programs differently than headless programs.
+		if !program.Headless() {
+			// TODO: handle error
+			log.Println("ERROR! UI based programs not currently supported.")
 			break
 		}
 
