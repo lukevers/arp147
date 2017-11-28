@@ -3,7 +3,7 @@ package terminal
 import (
 	"engo.io/engo"
 	"github.com/lukevers/arp147/input"
-	"github.com/lukevers/arp147/player/terminal/programs"
+	"github.com/lukevers/arp147/terminal/programs"
 )
 
 var (

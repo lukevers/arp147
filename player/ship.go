@@ -1,7 +1,7 @@
 package player
 
 import (
-	"github.com/lukevers/arp147/player/terminal"
+	"github.com/lukevers/arp147/terminal"
 )
 
 type Ship struct {
