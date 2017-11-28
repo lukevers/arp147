@@ -3,12 +3,15 @@ package programs
 import (
 	"engo.io/engo"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/terminal/sdk/flag"
 	"strings"
 )
 
 type Echo struct {
 	err error
 	out string
+
+	flags *flag.Set
 }
 
 func (e *Echo) Name() string {
@@ -27,7 +30,25 @@ func (e *Echo) Output() string {
 	return e.out
 }
 
+func (e *Echo) Init() error {
+	e.flags = flag.Register([]flag.Flag{
+		flag.Flag{
+			Long:  "help",
+			Short: "h",
+		},
+	})
+
+	return nil
+}
+
 func (e *Echo) Run(args []string) uint {
+	// Parse arguments.
+	if e.err = e.flags.Parse(args); e.err != nil {
+		return 1
+	}
+
+	// TODO: use arguments
+
 	e.out = strings.Join(args, " ")
 	return 0
 }

@@ -80,6 +80,12 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 			break
 		}
 
+		if err := program.Init(); err != nil {
+			// TODO: handle error
+			log.Println("ERROR! Calling init:", err)
+			break
+		}
+
 		if code := program.Run(args); code > 0 {
 			// TODO: handle error
 			log.Println("ERROR:", program.Error())

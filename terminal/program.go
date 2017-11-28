@@ -25,6 +25,10 @@ type Program interface {
 	// Defines if a program is headless or UI based.
 	Headless() bool
 
+	// A function that's called before Run is called. All functions SHOULD
+	// implement this. If an error is returned, Run will not be called.
+	Init() error
+
 	// The callable name of the program.
 	Name() string
 
