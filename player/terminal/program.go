@@ -11,9 +11,11 @@ var (
 )
 
 type Program interface {
-	Name() string
-	Run([]string) int
+	Error() error
 	HandleKey(engo.Key, *input.Modifiers)
+	Name() string
+	Output() string
+	Run([]string) int
 }
 
 func init() {

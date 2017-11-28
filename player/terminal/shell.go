@@ -60,8 +60,13 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 			break
 		}
 
-		code := program.Run(args)
-		log.Println("EXIT CODE:", code)
+		if code := program.Run(args); code > 0 {
+			// TODO: handle error
+			log.Println("ERROR:", program.Error())
+			break
+		}
+
+		log.Println("output:", program.Output())
 	default:
 		var symbol string
 
