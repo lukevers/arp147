@@ -1,56 +1,38 @@
-package player
+package terminal
 
 import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
-	"github.com/lukevers/arp147/ui"
-	"log"
 )
 
 // TODO
-type Line struct {
-	// TODO
-	Text []*ui.Label
-
-	// TODO
-	Locked bool
-}
-
-// TODO
-type Buffer struct {
-	ecs.BasicEntity
-	common.RenderComponent
-	common.SpaceComponent
-
-	// TODO
-	Lines map[int]*Line
-
-	// TODO
-	Line int
-}
-
-// TODO
 type Terminal struct {
-	Buffers []*Buffer
+	Shell *Shell
 }
 
 // TODO
-func NewTerminal() *Terminal {
-	return &Terminal{}
+func New() *Terminal {
+	return &Terminal{
+		Shell: &Shell{
+			lines: make(map[int]*line),
+			line:  0,
+		},
+	}
 }
 
 // TODO
 func (t *Terminal) AddToWorld(world *ecs.World) {
 	t.drawUi(world)
 	t.registerKeys()
+	t.Shell.world = world
 }
 
 func (t *Terminal) registerKeys() {
 	input.RegisterKeys([]input.Key{
 		input.Key{
-			Name: "[a-z][0-9]",
+			Name: "terminal-keys",
 			Keys: []engo.Key{
 				engo.A,
 				engo.B,
@@ -78,6 +60,7 @@ func (t *Terminal) registerKeys() {
 				engo.X,
 				engo.Y,
 				engo.Z,
+
 				engo.Zero,
 				engo.One,
 				engo.Two,
@@ -88,40 +71,29 @@ func (t *Terminal) registerKeys() {
 				engo.Seven,
 				engo.Eight,
 				engo.Nine,
-			},
-			OnPress: func(key engo.Key, mods *input.Modifiers) {
-				log.Println("==========")
-				log.Println("key:\t", key)
-				log.Println("ctl:\t", mods.Control)
-				log.Println("alt:\t", mods.Alt)
-				log.Println("sft:\t", mods.Shift)
-				log.Println("sup:\t", mods.Super)
-			},
-		},
-		input.Key{
-			Name: "backspace",
-			Keys: []engo.Key{
+
 				engo.Backspace,
-			},
-			OnPress: func(key engo.Key, mods *input.Modifiers) {
-				log.Println("BACKSPACE")
-			},
-		},
-		input.Key{
-			Name: "enter",
-			Keys: []engo.Key{
 				engo.Enter,
+				engo.Space,
 			},
-			OnPress: func(key engo.Key, mods *input.Modifiers) {
-				log.Println("ENTER")
-			},
+			OnPress: t.delegateKeyPress,
 		},
 	})
+}
+
+func (t *Terminal) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
+	t.Shell.HandleKey(key, mods)
 }
 
 func (t *Terminal) drawUi(world *ecs.World) {
 	w := engo.GameWidth()
 	h := engo.GameHeight()
+
+	type Buffer struct {
+		ecs.BasicEntity
+		common.RenderComponent
+		common.SpaceComponent
+	}
 
 	var buffers []*Buffer
 	var x, y float32 = 25, 0
