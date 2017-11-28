@@ -37,6 +37,23 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 		s.lines[s.line] = &line{}
 	}
 
+	// TODO:
+	//   - signals
+	//     - ^C
+	//   - file system
+	//     - users
+	//     - permissions
+	//     - files
+	//     - executable files `./some-file` that run in shell
+	//   - Pipe output:
+	//     - >
+	//     - >>
+	//     - |
+	//   - SDK (for program development)
+	//     - flag/argument parsing
+	//     - os package for file system, ...
+	//     - ui toolsets
+
 	length := len(s.lines[s.line].text)
 
 	switch key {
