@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"engo.io/engo"
+	"github.com/lukevers/arp147/clock"
 	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/terminal/programs"
 )
@@ -45,8 +46,9 @@ type Program interface {
 	Run([]string) uint
 }
 
-func init() {
+func registerPrograms(clock *clock.Clock) {
 	registeredPrograms = []Program{
 		&programs.Echo{},
+		&programs.Date{Clock: clock},
 	}
 }

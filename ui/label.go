@@ -8,7 +8,7 @@ import (
 
 // TODO
 const (
-	FontPrimary = "fonts/CasaleTwo.ttf"
+	FontPrimary = "fonts/Primary.ttf"
 )
 
 // TODO
@@ -82,7 +82,7 @@ func (label *Label) Render() {
 	}
 }
 
-// AddToWorld ...
+// AddToWorld adds the label to the world
 func (label *Label) AddToWorld(world *ecs.World) {
 	label.Render()
 
@@ -111,6 +111,11 @@ func (label *Label) AddToWorld(world *ecs.World) {
 			sys.Add(label)
 		}
 	}
+}
+
+// RemoveFromWorld removes the label from the world
+func (label *Label) RemoveFromWorld(world *ecs.World) {
+	world.RemoveEntity(label.BasicEntity)
 }
 
 // Add takes an entity and adds it to the system

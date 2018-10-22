@@ -5,13 +5,16 @@ import (
 	"engo.io/engo"
 	"errors"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/ui"
+	"image/color"
 	"log"
 	"strings"
 )
 
 // TODO
 type line struct {
-	text []string
+	text  []string
+	chars []*ui.Label
 
 	// TODO
 	Locked bool
@@ -60,6 +63,8 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 	case engo.Backspace:
 		if length > 0 {
 			s.lines[s.line].text = s.lines[s.line].text[0 : length-1]
+			s.lines[s.line].chars[length-1].RemoveFromWorld(s.world)
+			s.lines[s.line].chars = s.lines[s.line].chars[0 : length-1]
 		}
 	case engo.Enter:
 		s.lines[s.line].Locked = true
@@ -104,16 +109,56 @@ func (s *Shell) HandleKey(key engo.Key, mods *input.Modifiers) {
 				symbol = string(key + 32)
 			}
 		} else {
-			symbol = string(key)
+			// Convert non [a-z] letters when shift is used
+			if mods.Shift {
+				// TODO
+				//   - see above
+				//   - will this be different for different keyboard layouts?
+				//     - we can't assume everyone uses US QWERTY
+				symbol = "*"
+			} else {
+				// Otherwise we just use the actual key here
+				symbol = string(key)
+			}
 		}
 
 		s.lines[s.line].text = append(s.lines[s.line].text, symbol)
+
+		size := 16
+		var xoffset, yoffset float32
+
+		xoffset = float32(len(s.lines[s.line].text)*size) * .6
+		yoffset = float32(s.line*size) * .9
+
+		char := ui.NewLabel(ui.Label{
+			FgColor: color.White,
+			Font:    ui.FontPrimary,
+			Size:    float64(size),
+			Text:    symbol,
+			Position: ui.Position{
+				Point: engo.Point{
+					X: 30 + xoffset,
+					Y: 30 + yoffset,
+				},
+				Position: ui.PositionTopLeft,
+			},
+		})
+
+		char.AddToWorld(s.world)
+		s.lines[s.line].chars = append(s.lines[s.line].chars, char)
 	}
 }
 
 func (s *Shell) Parse(text []string) (string, []string) {
 	long := strings.Join(text, "")
 	parts := strings.Split(long, " ")
+
+	// Example:
+	//
+	//    command arg0 arg1 ... argN | command2 arg0 arg1 ... argN
+	//    [{command, args, ...
+	//
+
 	return parts[0], parts[1:]
 }
 

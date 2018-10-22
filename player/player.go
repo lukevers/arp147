@@ -10,8 +10,9 @@ type Player struct {
 }
 
 func New() *Player {
+	clock := clock.New()
 	return &Player{
-		Ship:  NewShip(),
-		Clock: clock.New(),
+		Clock: clock,
+		Ship:  NewShip(clock),
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/lukevers/arp147/clock"
 	"github.com/lukevers/arp147/input"
 )
 
@@ -13,7 +14,9 @@ type Terminal struct {
 }
 
 // TODO
-func New() *Terminal {
+func New(clock *clock.Clock) *Terminal {
+	registerPrograms(clock)
+
 	return &Terminal{
 		Shell: &Shell{
 			lines: make(map[int]*line),
@@ -75,6 +78,8 @@ func (t *Terminal) registerKeys() {
 				engo.Backspace,
 				engo.Enter,
 				engo.Space,
+
+				engo.Dash,
 			},
 			OnPress: t.delegateKeyPress,
 		},
