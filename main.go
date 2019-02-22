@@ -28,8 +28,6 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world, _ := u.(*ecs.World)
 
 	world.AddSystem(&common.RenderSystem{})
-	world.AddSystem(&common.MouseSystem{})
-
 	world.AddSystem(&TerminalSystem{})
 
 	t := NewText("arp-sh1$")
