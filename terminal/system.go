@@ -13,8 +13,8 @@ import (
 
 // TerminalSystem is a scrollable, visual and text input-able system.
 type TerminalSystem struct {
-	lines map[int]*line
-	line  int
+	pages map[int]*page
+	page  int
 
 	world *ecs.World
 }
@@ -40,8 +40,7 @@ func (*TerminalSystem) Update(dt float32) {
 // New is the initialisation of the System.
 func (ts *TerminalSystem) New(w *ecs.World) {
 	ts.world = w
-	ts.lines = make(map[int]*line)
-	ts.line = 0
+	ts.pages = make(map[int]*page)
 
 	ts.registerKeys()
 	ts.addBackground(w)
@@ -181,28 +180,48 @@ func (ts *TerminalSystem) registerKeys() {
 func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 	log.Println(key, mods)
 
-	if ts.lines[ts.line] == nil {
-		ts.lines[ts.line] = &line{}
+	if ts.pages[ts.page] == nil {
+		ts.pages[ts.page] = &page{
+			lines: make(map[int]*line),
+			line:  0,
+		}
 	}
 
-	length := len(ts.lines[ts.line].text)
+	// ts.pages[ts.page].lines = make(map[int]*line)
+	// ts.pages[ts.page].line = 0
+
+	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
+		ts.pages[ts.page].lines[ts.pages[ts.page].line] = newLine()
+	}
+
+	length := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)
 	switch key {
 	case engo.KeyBackspace:
 		if length > 0 {
-			ts.lines[ts.line].text = ts.lines[ts.line].text[0 : length-1]
-			ts.lines[ts.line].chars[length-1].Remove(ts.world)
-			ts.lines[ts.line].chars = ts.lines[ts.line].chars[0 : length-1]
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0 : length-1]
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[length-1].Remove(ts.world)
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0 : length-1]
 		}
 	case engo.KeyEnter:
-		ts.lines[ts.line].locked = true
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = true
 
-		xoffset := float64(len(ts.lines[ts.line].text)*16) * .65
+		xoffset := ts.getXoffset()
 		if xoffset > 710 {
-			ts.line += int(math.Floor(xoffset/710)) + 1
+			ts.pages[ts.page].line += int(math.Floor(float64(xoffset)/710)) + 1
 		} else {
-			ts.line++
+			ts.pages[ts.page].line++
 		}
 
+		yoffset := float32(ts.pages[ts.page].line * int(16))
+		if yoffset > 704 {
+			for _, line := range ts.pages[ts.page].lines {
+				for _, char := range line.chars {
+					char.RenderComponent.Hidden = true
+				}
+			}
+
+			ts.page++
+		}
 	default:
 		var symbol string
 
@@ -228,23 +247,33 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			}
 		}
 
-		ts.lines[ts.line].text = append(ts.lines[ts.line].text, symbol)
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
 
 		char := ui.NewText(symbol)
 
 		var xoffset, yoffset float32
-		xoffset = float32(len(ts.lines[ts.line].text)*int(char.Font.Size)) * .65
-		yoffset = float32(ts.line * int(char.Font.Size))
+		xoffset = ts.getXoffset()
+		yoffset = float32(ts.pages[ts.page].line * int(16))
 
 		if xoffset >= 710 {
-			xoffset = xoffset - 710
-			yoffset += float32(char.Font.Size)
+			lines := int(math.Floor(float64(xoffset) / 710))
+
+			xoffset = xoffset - float32(707*lines)
+			yoffset += float32(16) * float32(lines)
 		}
 
 		char.X = 35 + xoffset
 		char.Y = 35 + yoffset
 
 		char.Insert(ts.world)
-		ts.lines[ts.line].chars = append(ts.lines[ts.line].chars, char)
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].chars, char)
 	}
+}
+
+func (ts *TerminalSystem) getXoffset() float32 {
+	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
+		return 0
+	}
+
+	return float32(len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)*int(16)) * .65
 }

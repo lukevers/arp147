@@ -10,3 +10,11 @@ type line struct {
 
 	locked bool
 }
+
+func newLine() *line {
+	l := &line{}
+
+	// TOOD: autofill with prefix
+
+	return l
+}

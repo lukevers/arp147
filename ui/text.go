@@ -8,6 +8,7 @@ import (
 	"engo.io/engo/common"
 )
 
+// Text represents a text label that can be added to the world.
 type Text struct {
 	ecs.BasicEntity
 	common.SpaceComponent
@@ -20,6 +21,7 @@ type Text struct {
 	Y float32
 }
 
+// NewText creates a text based on the string given with all of the defaults.
 func NewText(text string) *Text {
 	t := &Text{
 		BasicEntity: ecs.NewBasic(),
@@ -36,7 +38,7 @@ func NewText(text string) *Text {
 	return t
 }
 
-func (t *Text) Render() *Text {
+func (t *Text) render() *Text {
 	t.RenderComponent.Drawable = common.Text{
 		Font: t.Font,
 		Text: t.Text,
@@ -44,17 +46,14 @@ func (t *Text) Render() *Text {
 
 	t.SpaceComponent = common.SpaceComponent{
 		Position: engo.Point{X: t.X, Y: t.Y},
-		// Width:    float32(t.Font.Size),
-		// Height:   float32(t.Font.Size),
-		// Width:  0,
-		// Height: 0,
 	}
 
 	return t
 }
 
+// Insert adds a text entity to the world.
 func (t *Text) Insert(world *ecs.World) {
-	t.Render()
+	t.render()
 
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
@@ -64,7 +63,7 @@ func (t *Text) Insert(world *ecs.World) {
 	}
 }
 
-// Remove removes the text from the world.
+// Remove removes the text entity from the world.
 func (t *Text) Remove(world *ecs.World) {
 	world.RemoveEntity(t.BasicEntity)
 }
