@@ -187,9 +187,6 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		}
 	}
 
-	// ts.pages[ts.page].lines = make(map[int]*line)
-	// ts.pages[ts.page].line = 0
-
 	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = newLine()
 	}
@@ -214,13 +211,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 
 		yoffset := float32(ts.pages[ts.page].line * int(16))
 		if yoffset > 704 {
-			for _, line := range ts.pages[ts.page].lines {
-				for _, char := range line.chars {
-					char.RenderComponent.Hidden = true
-				}
-			}
-
-			ts.page++
+			ts.pages[ts.page].pushScreenUp()
 		}
 	default:
 		var symbol string
@@ -251,15 +242,20 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 
 		char := ui.NewText(symbol)
 
+		push := false
 		var xoffset, yoffset float32
 		xoffset = ts.getXoffset()
-		yoffset = float32(ts.pages[ts.page].line * int(16))
+		yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
 
 		if xoffset >= 710 {
 			lines := int(math.Floor(float64(xoffset) / 710))
 
 			xoffset = xoffset - float32(707*lines)
 			yoffset += float32(16) * float32(lines)
+
+			if yoffset > 704 {
+				push = true
+			}
 		}
 
 		char.X = 35 + xoffset
@@ -267,6 +263,10 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 
 		char.Insert(ts.world)
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].chars, char)
+
+		if push {
+			ts.pages[ts.page].pushScreenUp()
+		}
 	}
 }
 

@@ -38,6 +38,13 @@ func NewText(text string) *Text {
 	return t
 }
 
+func (t *Text) SetY(y float32) *Text {
+	t.Y = y
+	t.SpaceComponent.Position.Y = y
+
+	return t
+}
+
 func (t *Text) render() *Text {
 	t.RenderComponent.Drawable = common.Text{
 		Font: t.Font,
