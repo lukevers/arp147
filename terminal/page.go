@@ -23,3 +23,23 @@ func (p *page) pushScreenUp() {
 
 	p.enil++
 }
+
+// func (p *page) pushScreenDown() {
+// 	for i, line := range p.lines {
+// 		for _, char := range line.chars {
+// 			char.SetY(char.Y + 16)
+
+// 			if i >= p.enil {
+// 				char.RenderComponent.Hidden = false
+// 			}
+
+// 			// if i <= p.enil {
+// 			// 	char.RenderComponent.Hidden = false
+// 			// } else if i >= p.line {
+// 			// 	char.RenderComponent.Hidden = true
+// 			// }
+// 		}
+// 	}
+
+// 	p.enil--
+// }

@@ -171,6 +171,9 @@ func (ts *TerminalSystem) registerKeys() {
 				engo.KeyBackslash,
 				engo.KeyLeftBracket,
 				engo.KeyRightBracket,
+
+				engo.KeyArrowUp,
+				engo.KeyArrowDown,
 			},
 			OnPress: ts.delegateKeyPress,
 		},
@@ -199,6 +202,16 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[length-1].Remove(ts.world)
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0 : length-1]
 		}
+	case engo.KeyArrowUp:
+		// yoffset := float32(ts.pages[ts.page].line * int(16))
+		// if yoffset > 704 && ts.pages[ts.page].enil > 0 {
+		// 	ts.pages[ts.page].pushScreenDown()
+		// }
+	case engo.KeyArrowDown:
+		// yoffset := float32(ts.pages[ts.page].line * 16)
+		// if yoffset > 704 {
+		// 	ts.pages[ts.page].pushScreenUp()
+		// }
 	case engo.KeyEnter:
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = true
 
@@ -209,7 +222,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].line++
 		}
 
-		yoffset := float32(ts.pages[ts.page].line * int(16))
+		yoffset := float32(ts.pages[ts.page].line * 16)
 		if yoffset > 704 {
 			ts.pages[ts.page].pushScreenUp()
 		}
