@@ -4,6 +4,8 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/terminal"
 )
 
 type defaultScene struct{}
@@ -28,11 +30,8 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world, _ := u.(*ecs.World)
 
 	world.AddSystem(&common.RenderSystem{})
-	world.AddSystem(&TerminalSystem{})
-
-	t := NewText("arp-sh1$")
-	t.Render()
-	t.Insert(world)
+	world.AddSystem(&input.InputSystem{})
+	world.AddSystem(&terminal.TerminalSystem{})
 }
 
 func main() {

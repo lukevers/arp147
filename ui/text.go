@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	"image/color"
@@ -15,11 +15,15 @@ type Text struct {
 
 	Font *common.Font
 	Text string
+
+	X float32
+	Y float32
 }
 
 func NewText(text string) *Text {
 	t := &Text{
-		Text: text,
+		BasicEntity: ecs.NewBasic(),
+		Text:        text,
 		Font: &common.Font{
 			URL:  "fonts/Undefined.ttf",
 			FG:   color.White,
@@ -32,17 +36,21 @@ func NewText(text string) *Text {
 	return t
 }
 
-func (t *Text) Render() {
+func (t *Text) Render() *Text {
 	t.RenderComponent.Drawable = common.Text{
 		Font: t.Font,
 		Text: t.Text,
 	}
 
 	t.SpaceComponent = common.SpaceComponent{
-		Position: engo.Point{X: 45, Y: 45},
-		Width:    200,
-		Height:   200,
+		Position: engo.Point{X: t.X, Y: t.Y},
+		// Width:    float32(t.Font.Size),
+		// Height:   float32(t.Font.Size),
+		// Width:  0,
+		// Height: 0,
 	}
+
+	return t
 }
 
 func (t *Text) Insert(world *ecs.World) {
@@ -54,4 +62,9 @@ func (t *Text) Insert(world *ecs.World) {
 			sys.Add(&t.BasicEntity, &t.RenderComponent, &t.SpaceComponent)
 		}
 	}
+}
+
+// Remove removes the text from the world.
+func (t *Text) Remove(world *ecs.World) {
+	world.RemoveEntity(t.BasicEntity)
 }
