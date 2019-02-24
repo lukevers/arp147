@@ -1,77 +1,80 @@
 package terminal
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
+	"github.com/blang/vfs"
 	"github.com/rucuriousyet/gmoonscript"
 	lua "github.com/yuin/gopher-lua"
 )
 
-func command(str string) {
+func (ts *TerminalSystem) command(str string) {
 	args := strings.Split(str, " ")
 	if len(args) < 1 {
 		return
 	}
 
 	log.Println(args)
-	// state := newState(args)
 
-	// 	err := state.DoString(`
-	// local moonscript_code = [[
-	// class Echo
-	//     phrase: ""
-	//     say: => print @phrase
+	exts := []string{"moon", "lua"}
+	var f *vfs.File
+	var ftype string
+	for _, ext := range exts {
+		path := fmt.Sprintf("/bin/%s.%s", args[0], ext)
+		file, err := ts.vfs.FS.OpenFile(path, os.O_RDONLY, 0777)
 
-	// phrase = ""
-	// for argument in *arg
-	//     phrase ..= argument .. " "
+		if err != nil {
+			continue
+		} else {
+			f = &file
+			ftype = ext
+			break
+		}
+	}
 
-	// with Echo!
-	//     .phrase = phrase
-	//     \say!
-	// ]]
+	if f == nil {
+		// TODO: throw error in console
+		return
+	} else {
+		defer (*f).Close()
+	}
 
-	// local moonc = require("moonc")
+	state := newState(args)
+	bytes, err := ioutil.ReadAll(*f)
+	if err != nil {
+		log.Println(err)
+	}
 
-	// lua_code, err = moonc.compile(moonscript_code)
-	// if err ~= nil then
-	// 	print(err)
-	// else
-	// 	loadstring(lua_code)()
-	// end
-	// 		`)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
+	switch ftype {
+	case "moon":
+		// TODO: better import, not every time...
+		bridge, err := ioutil.ReadFile("terminal/moonscript-bridge.lua")
+		if err != nil {
+			log.Println(err)
+			// TODO ...
+			return
+		}
+
+		if err := state.DoString(
+			fmt.Sprintf(
+				string(bridge),
+				string(bytes),
+			),
+		); err != nil {
+			log.Println(err)
+		}
+	case "lua":
+		if err := state.DoString(
+			string(bytes),
+		); err != nil {
+			log.Println(err)
+		}
+	}
 }
-
-// 	err := state.DoString(`
-// local moonscript_code = [[
-// class Thing
-//   name: "unknown"
-
-// class Person extends Thing
-//   say_name: => print "Hello, I am #{@name}!"
-
-// with Person!
-//   .name = "MoonScript"
-//   \say_name!
-// ]]
-
-// local moonc = require("moonc")
-
-// lua_code, err = moonc.compile(moonscript_code)
-// if err ~= nil then
-// 	print(err)
-// else
-// 	loadstring(lua_code)()
-// end
-// 	`)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
 
 func newState(args []string) *lua.LState {
 	state := lua.NewState()

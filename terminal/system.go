@@ -8,6 +8,7 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/terminal/filesystem"
 	"github.com/lukevers/arp147/ui"
 )
 
@@ -17,6 +18,7 @@ type TerminalSystem struct {
 	page  int
 
 	world *ecs.World
+	vfs   *filesystem.VirtualFS
 }
 
 type TerminalViewer struct {
@@ -39,6 +41,7 @@ func (*TerminalSystem) Update(dt float32) {
 
 // New is the initialisation of the System.
 func (ts *TerminalSystem) New(w *ecs.World) {
+	ts.vfs = filesystem.New()
 	ts.world = w
 	ts.pages = make(map[int]*page)
 	ts.pages[ts.page] = &page{
@@ -237,7 +240,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		}
 
 		// TODO: run command
-		ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts.delegateKeyPress)
+		ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts)
 
 		// Add a new line after everything
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
