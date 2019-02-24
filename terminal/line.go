@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"strings"
+
 	"engo.io/engo"
 	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/ui"
@@ -26,4 +28,16 @@ func (l *line) prefix(delegateKeyPress func(key engo.Key, mods *input.Modifiers)
 	delegateKeyPress(engo.KeySpace, &input.Modifiers{})
 
 	l.prefixCount = 9
+}
+
+func (l *line) evaluate(delegateKeyPress func(key engo.Key, mods *input.Modifiers)) {
+	str := l.String()
+	command(str)
+}
+
+func (l *line) String() string {
+	return strings.Join(
+		l.text[l.prefixCount:],
+		"",
+	)
 }

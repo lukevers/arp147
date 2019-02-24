@@ -236,6 +236,10 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].pushScreenUp()
 		}
 
+		// TODO: run command
+		ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts.delegateKeyPress)
+
+		// Add a new line after everything
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 
