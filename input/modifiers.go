@@ -61,3 +61,74 @@ func registerModifiers() {
 		engo.KeyRightSuper,
 	)
 }
+
+func KeyToString(key engo.Key, mods *Modifiers) (symbol string) {
+	// If the key is [a-z] apply shift rules.
+	if key >= engo.KeyA && key <= engo.KeyZ {
+		if mods.Shift {
+			symbol = string(key)
+		} else {
+			symbol = string(key + 32)
+		}
+	} else {
+		// Convert non [a-z] letters when shift is used
+		if mods.Shift {
+			switch key {
+			case engo.KeyZero:
+				symbol = ")"
+			case engo.KeyOne:
+				symbol = "!"
+			case engo.KeyTwo:
+				symbol = "@"
+			case engo.KeyThree:
+				symbol = "#"
+			case engo.KeyFour:
+				symbol = "$"
+			case engo.KeyFive:
+				symbol = "%"
+			case engo.KeySix:
+				symbol = "^"
+			case engo.KeySeven:
+				symbol = "&"
+			case engo.KeyEight:
+				symbol = "*"
+			case engo.KeyNine:
+				symbol = "("
+
+			case engo.KeyDash:
+				symbol = "_"
+			case engo.KeyGrave:
+				symbol = "~"
+			case engo.KeyApostrophe:
+				symbol = "\""
+			case engo.KeySemicolon:
+				symbol = ":"
+			case engo.KeyEquals:
+				symbol = "+"
+			case engo.KeyComma:
+				symbol = "<"
+			case engo.KeyPeriod:
+				symbol = ">"
+			case engo.KeySlash:
+				symbol = "?"
+			case engo.KeyBackslash:
+				symbol = "|"
+			case engo.KeyLeftBracket:
+				symbol = "{"
+			case engo.KeyRightBracket:
+				symbol = "}"
+			}
+
+			// TODO
+			//   - see above
+			//   - will this be different for different keyboard layouts?
+			//     - we can't assume everyone uses US QWERTY
+			//	   - I should learn how other layouts work
+		} else {
+			// Otherwise we just use the actual key here
+			symbol = string(key)
+		}
+	}
+
+	return
+}

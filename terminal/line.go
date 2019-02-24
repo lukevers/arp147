@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"engo.io/engo"
+	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/ui"
 )
 
@@ -8,13 +10,20 @@ type line struct {
 	text  []string
 	chars []*ui.Text
 
-	locked bool
+	locked      bool
+	prefixCount int
 }
 
-func newLine() *line {
-	l := &line{}
+func (l *line) prefix(delegateKeyPress func(key engo.Key, mods *input.Modifiers)) {
+	delegateKeyPress(engo.KeyA, &input.Modifiers{})
+	delegateKeyPress(engo.KeyR, &input.Modifiers{})
+	delegateKeyPress(engo.KeyP, &input.Modifiers{})
+	delegateKeyPress(engo.KeyDash, &input.Modifiers{})
+	delegateKeyPress(engo.KeyS, &input.Modifiers{})
+	delegateKeyPress(engo.KeyH, &input.Modifiers{})
+	delegateKeyPress(engo.KeyOne, &input.Modifiers{})
+	delegateKeyPress(engo.KeyFour, &input.Modifiers{Shift: true})
+	delegateKeyPress(engo.KeySpace, &input.Modifiers{})
 
-	// TOOD: autofill with prefix
-
-	return l
+	l.prefixCount = 9
 }

@@ -41,6 +41,13 @@ func (*TerminalSystem) Update(dt float32) {
 func (ts *TerminalSystem) New(w *ecs.World) {
 	ts.world = w
 	ts.pages = make(map[int]*page)
+	ts.pages[ts.page] = &page{
+		lines: make(map[int]*line),
+		line:  0,
+	}
+
+	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+	ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 
 	ts.registerKeys()
 	ts.addBackground(w)
@@ -191,13 +198,15 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 	}
 
 	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
-		ts.pages[ts.page].lines[ts.pages[ts.page].line] = newLine()
+		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 	}
 
 	length := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)
+	prefixCount := ts.pages[ts.page].lines[ts.pages[ts.page].line].prefixCount
 	switch key {
 	case engo.KeyBackspace:
-		if length > 0 {
+		if (length - prefixCount) > 0 {
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0 : length-1]
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[length-1].Remove(ts.world)
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0 : length-1]
@@ -226,31 +235,12 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		if yoffset > 704 {
 			ts.pages[ts.page].pushScreenUp()
 		}
+
+		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+
 	default:
-		var symbol string
-
-		// If the key is [a-z] apply shift rules.
-		if key >= engo.KeyA && key <= engo.KeyZ {
-			if mods.Shift {
-				symbol = string(key)
-			} else {
-				symbol = string(key + 32)
-			}
-		} else {
-			// Convert non [a-z] letters when shift is used
-			if mods.Shift {
-				// TODO
-				//   - see above
-				//   - will this be different for different keyboard layouts?
-				//     - we can't assume everyone uses US QWERTY
-				//	   - I should learn how other layouts work
-				symbol = "*"
-			} else {
-				// Otherwise we just use the actual key here
-				symbol = string(key)
-			}
-		}
-
+		symbol := input.KeyToString(key, mods)
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
 
 		char := ui.NewText(symbol)
