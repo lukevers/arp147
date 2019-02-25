@@ -17,7 +17,7 @@ type VirtualFS struct {
 
 func New() *VirtualFS {
 	fs := &VirtualFS{
-		cwd: "/",
+		cwd: "/home",
 		FS:  memfs.Create(),
 	}
 

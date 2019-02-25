@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"fmt"
 	"log"
 
 	lua "github.com/yuin/gopher-lua"
@@ -32,13 +33,32 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 		},
 		"listdir": func(L *lua.LState) int {
 			dir := L.ToString(1)
-			info, err := fs.FS.ReadDir(dir)
+			fulldir := fmt.Sprintf("%s/%s", fs.cwd, dir)
+			info, err := fs.FS.ReadDir(fulldir)
+			if err != nil {
+				log.Println(err)
+				return 0
+			}
+
+			i, err := fs.FS.Stat(fulldir)
 			if err != nil {
 				log.Println(err)
 				return 0
 			}
 
 			directory := L.NewTable()
+			currentdir := L.NewTable()
+			currentdir.RawSetString("dir", lua.LBool(true))
+			currentdir.RawSetString("name", lua.LString("."))
+			directory.Append(currentdir)
+
+			if i.Name() != "/" {
+				prevdir := L.NewTable()
+				prevdir.RawSetString("dir", lua.LBool(true))
+				prevdir.RawSetString("name", lua.LString(".."))
+				directory.Append(prevdir)
+			}
+
 			for _, i := range info {
 				obj := L.NewTable()
 				obj.RawSetString("dir", lua.LBool(i.IsDir()))
