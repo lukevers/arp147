@@ -13,8 +13,8 @@ import (
 )
 
 func (ts *TerminalSystem) command(str string) {
-	args := strings.Split(str, " ")
-	if len(args) < 1 {
+	args := strings.Split(strings.Trim(str, " "), " ")
+	if len(args) < 1 || args[0] == "" {
 		return
 	}
 
@@ -37,7 +37,7 @@ func (ts *TerminalSystem) command(str string) {
 	}
 
 	if f == nil {
-		// TODO: throw error in console
+		ts.WriteLine(fmt.Sprintf("%s: command not found", args[0]))
 		return
 	} else {
 		defer (*f).Close()
@@ -47,6 +47,8 @@ func (ts *TerminalSystem) command(str string) {
 	bytes, err := ioutil.ReadAll(*f)
 	if err != nil {
 		log.Println(err)
+		ts.WriteLine("Could not read script")
+		return
 	}
 
 	switch ftype {
@@ -55,7 +57,7 @@ func (ts *TerminalSystem) command(str string) {
 		bridge, err := ioutil.ReadFile("terminal/moonscript-bridge.lua")
 		if err != nil {
 			log.Println(err)
-			// TODO ...
+			ts.WriteLine("Could not load lua-moon bridge")
 			return
 		}
 
@@ -66,12 +68,14 @@ func (ts *TerminalSystem) command(str string) {
 			),
 		); err != nil {
 			log.Println(err)
+			ts.WriteLine("Could not run moon script")
 		}
 	case "lua":
 		if err := state.DoString(
 			string(bytes),
 		); err != nil {
 			log.Println(err)
+			ts.WriteLine("Could not run lua script")
 		}
 	}
 }

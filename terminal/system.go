@@ -240,8 +240,9 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].pushScreenUp()
 		}
 
-		// TODO: run command
-		ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts)
+		if !mods.Ignore {
+			ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts)
+		}
 
 		// Add a new line after everything
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
@@ -297,5 +298,5 @@ func (ts *TerminalSystem) WriteLine(str string) {
 	}
 
 	// Force a newline
-	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{})
+	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true})
 }

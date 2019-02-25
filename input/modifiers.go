@@ -22,6 +22,8 @@ type Modifiers struct {
 	Control bool
 	Shift   bool
 	Super   bool
+
+	Ignore bool
 }
 
 func registerModifiers() {
