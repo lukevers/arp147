@@ -62,8 +62,22 @@ func registerModifiers() {
 	)
 }
 
+func StringToKey(str string) (engo.Key, *Modifiers) {
+	// Defaults
+	mods := &Modifiers{}
+	key := engo.KeySpace
+
+	bytes := []byte(str)
+	if len(bytes) < 1 {
+		return key, mods
+	}
+
+	key = engo.Key(bytes[0])
+	return key, mods
+}
+
 func KeyToString(key engo.Key, mods *Modifiers) (symbol string) {
-	// If the key is [a-z] apply shift rules.
+	// // If the key is [a-z] apply shift rules.
 	if key >= engo.KeyA && key <= engo.KeyZ {
 		if mods.Shift {
 			symbol = string(key)
@@ -117,6 +131,8 @@ func KeyToString(key engo.Key, mods *Modifiers) (symbol string) {
 				symbol = "{"
 			case engo.KeyRightBracket:
 				symbol = "}"
+			default:
+				symbol = string(key)
 			}
 
 			// TODO

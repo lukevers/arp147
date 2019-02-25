@@ -43,7 +43,7 @@ func (ts *TerminalSystem) command(str string) {
 		defer (*f).Close()
 	}
 
-	state := newState(args)
+	state := newState(args, ts)
 	bytes, err := ioutil.ReadAll(*f)
 	if err != nil {
 		log.Println(err)
@@ -76,14 +76,16 @@ func (ts *TerminalSystem) command(str string) {
 	}
 }
 
-func newState(args []string) *lua.LState {
+func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state := lua.NewState()
 	state.PreloadModule("moonc", gmoonscript.Loader)
 
 	// Re-define `print` to print to the screen
 	state.SetGlobal("print", state.NewFunction(func(L *lua.LState) int {
-		log.Println(L.ToString(1))
-		// TOOD: print to screen
+		str := L.ToString(1)
+
+		log.Println(str)
+		ts.WriteLine(str)
 		return 0
 	}))
 

@@ -17,15 +17,15 @@ type line struct {
 }
 
 func (l *line) prefix(delegateKeyPress func(key engo.Key, mods *input.Modifiers)) {
-	delegateKeyPress(engo.KeyA, &input.Modifiers{})
-	delegateKeyPress(engo.KeyR, &input.Modifiers{})
-	delegateKeyPress(engo.KeyP, &input.Modifiers{})
-	delegateKeyPress(engo.KeyDash, &input.Modifiers{})
-	delegateKeyPress(engo.KeyS, &input.Modifiers{})
-	delegateKeyPress(engo.KeyH, &input.Modifiers{})
-	delegateKeyPress(engo.KeyOne, &input.Modifiers{})
-	delegateKeyPress(engo.KeyFour, &input.Modifiers{Shift: true})
-	delegateKeyPress(engo.KeySpace, &input.Modifiers{})
+	delegateKeyPress(input.StringToKey("a"))
+	delegateKeyPress(input.StringToKey("r"))
+	delegateKeyPress(input.StringToKey("p"))
+	delegateKeyPress(input.StringToKey("-"))
+	delegateKeyPress(input.StringToKey("s"))
+	delegateKeyPress(input.StringToKey("h"))
+	delegateKeyPress(input.StringToKey("1"))
+	delegateKeyPress(input.StringToKey("$"))
+	delegateKeyPress(input.StringToKey(" "))
 
 	l.prefixCount = 9
 }

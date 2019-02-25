@@ -3,6 +3,7 @@ package terminal
 import (
 	"log"
 	"math"
+	"strings"
 
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -286,4 +287,15 @@ func (ts *TerminalSystem) getXoffset() float32 {
 	}
 
 	return float32(len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)*int(16)) * .65
+}
+
+func (ts *TerminalSystem) WriteLine(str string) {
+	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+
+	for _, char := range strings.Split(str, "") {
+		ts.delegateKeyPress(input.StringToKey(char))
+	}
+
+	// Force a newline
+	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{})
 }
