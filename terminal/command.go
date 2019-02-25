@@ -83,6 +83,7 @@ func (ts *TerminalSystem) command(str string) {
 func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state := lua.NewState()
 	state.PreloadModule("moonc", gmoonscript.Loader)
+	state.PreloadModule("fs", ts.vfs.ScriptLoader)
 
 	// Re-define `print` to print to the screen
 	state.SetGlobal("print", state.NewFunction(func(L *lua.LState) int {

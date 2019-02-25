@@ -246,8 +246,9 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 
 		// Add a new line after everything
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
-
+		if !mods.Ignore {
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+		}
 	default:
 		symbol := input.KeyToString(key, mods)
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
@@ -297,6 +298,5 @@ func (ts *TerminalSystem) WriteLine(str string) {
 		ts.delegateKeyPress(input.StringToKey(char))
 	}
 
-	// Force a newline
 	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true})
 }
