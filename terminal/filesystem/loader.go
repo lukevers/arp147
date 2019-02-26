@@ -25,6 +25,21 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 
 			return 0
 		},
+		"cd": func(L *lua.LState) int {
+			dir := L.ToString(1)
+			fulldir := fmt.Sprintf("%s/%s", fs.cwd, dir)
+			info, err := fs.FS.Stat(fulldir)
+			if err != nil {
+				return 0
+			}
+
+			if !info.IsDir() {
+				return 0
+			}
+
+			fs.cwd = info.Name()
+			return 0
+		},
 		"touch": func(L *lua.LState) int {
 			// dir := L.ToString(1)
 			// fs.FS.Mkdir(dir, 0777)
