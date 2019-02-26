@@ -1,2 +1,9 @@
 fs = require "fs"
-fs.cd  arg[1]
+
+dir = if arg[1] != nil
+    arg[1]
+else
+    "/home"
+
+err = fs.cd dir
+print err if err != nil

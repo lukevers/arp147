@@ -3,6 +3,7 @@ package filesystem
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	lua "github.com/yuin/gopher-lua"
 )
@@ -27,14 +28,21 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 		},
 		"cd": func(L *lua.LState) int {
 			dir := L.ToString(1)
-			fulldir := fmt.Sprintf("%s/%s", fs.cwd, dir)
+			fulldir := dir
+
+			if !strings.HasPrefix(dir, "/") {
+				fulldir = fmt.Sprintf("%s/%s", fs.cwd, dir)
+			}
+
 			info, err := fs.FS.Stat(fulldir)
 			if err != nil {
-				return 0
+				L.Push(lua.LString(fmt.Sprintf("%s: no such directory", dir)))
+				return 1
 			}
 
 			if !info.IsDir() {
-				return 0
+				L.Push(lua.LString(fmt.Sprintf("%s: not a directory", dir)))
+				return 1
 			}
 
 			fs.cwd = info.Name()
@@ -48,7 +56,12 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 		},
 		"listdir": func(L *lua.LState) int {
 			dir := L.ToString(1)
-			fulldir := fmt.Sprintf("%s/%s", fs.cwd, dir)
+			fulldir := dir
+
+			if !strings.HasPrefix(dir, "/") {
+				fulldir = fmt.Sprintf("%s/%s", fs.cwd, dir)
+			}
+
 			info, err := fs.FS.ReadDir(fulldir)
 			if err != nil {
 				log.Println(err)
