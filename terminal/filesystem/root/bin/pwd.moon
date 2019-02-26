@@ -1,2 +1,1 @@
-fs = require "fs"
-print fs.cwd()
+include "/bin/cwd.moon"

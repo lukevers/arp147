@@ -51,6 +51,10 @@ func (ts *TerminalSystem) command(str string) {
 		return
 	}
 
+	eval(ftype, bytes, state, ts)
+}
+
+func eval(ftype string, source []byte, state *lua.LState, ts *TerminalSystem) {
 	switch ftype {
 	case "moon":
 		// TODO: better import, not every time...
@@ -64,7 +68,7 @@ func (ts *TerminalSystem) command(str string) {
 		if err := state.DoString(
 			fmt.Sprintf(
 				string(bridge),
-				string(bytes),
+				string(source),
 			),
 		); err != nil {
 			log.Println(err)
@@ -72,7 +76,7 @@ func (ts *TerminalSystem) command(str string) {
 		}
 	case "lua":
 		if err := state.DoString(
-			string(bytes),
+			string(source),
 		); err != nil {
 			log.Println(err)
 			ts.WriteLine("Could not run lua script")
@@ -92,6 +96,23 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 		log.Println(str)
 		ts.WriteLine(str)
 		return 0
+	}))
+
+	state.SetGlobal("include", state.NewFunction(func(L *lua.LState) int {
+		str := L.ToString(1)
+
+		file, err := ts.vfs.FS.OpenFile(str, os.O_RDONLY, 0777)
+		bytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			log.Println(err)
+			ts.WriteLine("Could not read script")
+			return 0
+		}
+
+		ftype := strings.SplitAfterN(file.Name(), ".", 2)[1]
+		eval(ftype, bytes, state, ts)
+		state.Push(state.Get(1))
+		return 1
 	}))
 
 	// Re-define `arg` to add arguments
