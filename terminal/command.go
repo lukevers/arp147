@@ -51,10 +51,60 @@ func (ts *TerminalSystem) command(str string) {
 		return
 	}
 
-	eval(ftype, bytes, state, ts)
+	eval(ftype, preprocessBytes(bytes, ts), state, ts)
 }
 
-func eval(ftype string, source []byte, state *lua.LState, ts *TerminalSystem) {
+func preprocessBytes(bytes []byte, ts *TerminalSystem) (source string) {
+	lines := strings.Split(string(bytes), "\n")
+
+	for _, line := range lines {
+		if !strings.Contains(line, "use ") {
+			source += fmt.Sprintf(
+				"%s\n",
+				line,
+			)
+
+			continue
+		}
+
+		parts := strings.Split(line, "=")
+		parts[0] = strings.TrimSpace(parts[0])
+		declarations := strings.Split(parts[1], "use")
+		file := strings.Trim(strings.TrimSpace(declarations[1]), "\"")
+
+		f, err := ts.vfs.FS.OpenFile(file, os.O_RDONLY, 0777)
+		bytes, err := ioutil.ReadAll(f)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		source += fmt.Sprintf(
+			"%s = ->\n",
+			parts[0],
+		)
+
+		for _, fline := range strings.Split(string(bytes), "\n") {
+			source += fmt.Sprintf(
+				"\t%s\n",
+				fline,
+			)
+		}
+
+		// Self invoke function for result
+		source += fmt.Sprintf(
+			"%s = %s()\n",
+			parts[0],
+			parts[0],
+		)
+	}
+
+	log.Println(source)
+
+	return
+}
+
+func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 	switch ftype {
 	case "moon":
 		// TODO: better import, not every time...
@@ -85,7 +135,11 @@ func eval(ftype string, source []byte, state *lua.LState, ts *TerminalSystem) {
 }
 
 func newState(args []string, ts *TerminalSystem) *lua.LState {
-	state := lua.NewState()
+	state := lua.NewState(lua.Options{
+		CallStackSize: 1024,
+		RegistrySize:  1024 * 20,
+	})
+
 	state.PreloadModule("moonc", gmoonscript.Loader)
 	state.PreloadModule("fs", ts.vfs.ScriptLoader)
 
@@ -110,7 +164,7 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 		}
 
 		ftype := strings.SplitAfterN(file.Name(), ".", 2)[1]
-		eval(ftype, bytes, state, ts)
+		eval(ftype, string(bytes), state, ts)
 		state.Push(state.Get(1))
 		return 1
 	}))

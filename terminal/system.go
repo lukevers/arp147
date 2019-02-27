@@ -192,7 +192,7 @@ func (ts *TerminalSystem) registerKeys() {
 }
 
 func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
-	log.Println(key, mods)
+	log.Println(string(key), key, mods)
 
 	if ts.pages[ts.page] == nil {
 		ts.pages[ts.page] = &page{
