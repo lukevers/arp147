@@ -75,3 +75,21 @@ func (fs *VirtualFS) initialize() *VirtualFS {
 
 	return fs
 }
+
+func (fs *VirtualFS) DirSize(root string) (size int64) {
+	info, err := fs.FS.ReadDir(root)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for _, file := range info {
+		if file.IsDir() {
+			size += fs.DirSize(file.Name())
+		} else {
+			size += file.Size()
+		}
+	}
+
+	return
+}

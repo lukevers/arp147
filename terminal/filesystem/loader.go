@@ -3,6 +3,7 @@ package filesystem
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	lua "github.com/yuin/gopher-lua"
@@ -91,8 +92,31 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 				obj := L.NewTable()
 				obj.RawSetString("dir", lua.LBool(i.IsDir()))
 				obj.RawSetString("name", lua.LString(i.Name()))
+				obj.RawSetString("size", lua.LNumber(i.Size()))
+
 				directory.Append(obj)
 			}
+
+			L.Push(directory)
+			return 1
+		},
+		"volumes": func(L *lua.LState) int {
+			// TODO: support /mnt and not hard-coded
+			info, err := fs.FS.Stat("/")
+			if err != nil {
+				log.Println(err)
+				return 0
+			}
+
+			log.Println(info.Size())
+
+			directory := L.NewTable()
+			dir := L.NewTable()
+			dir.RawSetString("dir", lua.LBool(true))
+			dir.RawSetString("name", lua.LString("/"))
+			dir.RawSetString("size", lua.LString(strconv.Itoa(int(fs.DirSize("/")))))
+			dir.RawSetString("max", lua.LString("16384")) // 16kb
+			directory.Append(dir)
 
 			L.Push(directory)
 			return 1
