@@ -1,0 +1,25 @@
+                   ARP-SH1 GENERAL LIBRARY MANUAL
+
+NAME
+    screen -- Screen management
+
+SYNOPSIS
+    screen = require "screen"
+    screen.push!
+    screen.readonly!
+
+DESCRIPTION
+    Create, alter, and manage terminal screens.
+
+    FUNCTIONS
+
+        push!
+            Create a new screen that is pushed on top of the
+            previous screen.
+        pop!
+            Delete the screen on top.
+        count!
+            Return the number of active screens.
+        readonly!
+            Set the screen to readonly so the user cannot add any
+            characters.

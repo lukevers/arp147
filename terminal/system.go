@@ -208,6 +208,10 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 	prefixCount := ts.pages[ts.page].lines[ts.pages[ts.page].line].prefixCount
 	switch key {
 	case engo.KeyBackspace:
+		if ts.pages[ts.page].readonly && !mods.Output {
+			break
+		}
+
 		if (length - prefixCount) > 0 {
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0 : length-1]
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[length-1].Remove(ts.world)
@@ -223,7 +227,21 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		// if yoffset > 704 {
 		// 	ts.pages[ts.page].pushScreenUp()
 		// }
+	case engo.KeyEscape:
+		if ts.pages[ts.page].escapable {
+			ts.pages[ts.page].hide()
+			delete(ts.pages, ts.page)
+			ts.page--
+			ts.pages[ts.page].show()
+
+			ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+		}
 	case engo.KeyEnter:
+		if ts.pages[ts.page].readonly && !mods.Output {
+			break
+		}
+
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = true
 
 		xoffset := ts.getXoffset()
@@ -248,6 +266,10 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 		}
 	default:
+		if ts.pages[ts.page].readonly && !mods.Output {
+			break
+		}
+
 		symbol := input.KeyToString(key, mods)
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
 
@@ -297,14 +319,14 @@ func (ts *TerminalSystem) WriteLine(str string) {
 			char = " "
 
 			for i := 0; i < 3; i++ {
-				ts.delegateKeyPress(input.StringToKey(char))
+				ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Output: true}))
 			}
 		}
 
-		ts.delegateKeyPress(input.StringToKey(char))
+		ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Output: true}))
 	}
 
-	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true})
+	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true, Output: true})
 }
 
 func (ts *TerminalSystem) WriteError(err error) {

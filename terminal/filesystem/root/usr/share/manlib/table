@@ -1,0 +1,22 @@
+                   ARP-SH1 GENERAL LIBRARY MANUAL
+
+NAME
+    lib/table.moon -- Generate ASCII tables
+
+SYNOPSIS
+    Table = use "lib/table.moon"
+    Table\addHeader("header")
+    Table\addRow({"col"})
+
+DESCRIPTION
+    Generate ASCII tables dynamically. The size of the columns are
+    determined by the longest string in each column.
+
+    FUNCTIONS
+
+        addHeaders(string)
+            Add a header to the table. The only parameter is the
+            name of the header to be displayed.
+        addRow(table)
+            Add a new row to the table. The only parameter is the
+            table of strings to display.

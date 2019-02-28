@@ -138,6 +138,43 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state.PreloadModule("moonc", gmoonscript.Loader)
 	state.PreloadModule("fs", ts.vfs.ScriptLoader)
 
+	state.PreloadModule("screen", func(state *lua.LState) int {
+		mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
+			"push": func(L *lua.LState) int {
+				ts.pages[ts.page].hide()
+
+				ts.page++
+				ts.pages[ts.page] = &page{
+					lines:     make(map[int]*line),
+					line:      0,
+					escapable: true,
+				}
+
+				return 0
+			},
+			"pop": func(L *lua.LState) int {
+				ts.pages[ts.page].hide()
+				delete(ts.pages, ts.page)
+				ts.page--
+				ts.pages[ts.page].show()
+				ts.WriteLine("")
+
+				return 0
+			},
+			"readonly": func(L *lua.LState) int {
+				ts.pages[ts.page].readonly = true
+				return 0
+			},
+			"count": func(L *lua.LState) int {
+				L.Push(lua.LNumber(len(ts.pages)))
+				return 1
+			},
+		})
+
+		state.Push(mod)
+		return 1
+	})
+
 	// Re-define `print` to print to the screen
 	state.SetGlobal("print", state.NewFunction(func(L *lua.LState) int {
 		str := L.ToString(1)

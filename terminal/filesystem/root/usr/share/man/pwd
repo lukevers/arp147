@@ -1,0 +1,14 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    pwd -- print working directory name
+
+SYNOPSIS
+    pwd
+
+DESCRIPTION
+    The `pwd` utility writes the absolute pathname of the current
+    working directory.
+
+SEE ALSO
+    cwd

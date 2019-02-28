@@ -24,6 +24,7 @@ type Modifiers struct {
 	Super   bool
 
 	Ignore bool
+	Output bool
 }
 
 func registerModifiers() {
@@ -64,10 +65,14 @@ func registerModifiers() {
 	)
 }
 
-func StringToKey(str string) (engo.Key, *Modifiers) {
+func StringToKey(str string, setmods ...*Modifiers) (engo.Key, *Modifiers) {
 	// Defaults
-	mods := &Modifiers{}
 	key := engo.KeySpace
+	mods := &Modifiers{}
+
+	if len(setmods) > 0 {
+		mods = setmods[0]
+	}
 
 	bytes := []byte(str)
 	if len(bytes) < 1 {
