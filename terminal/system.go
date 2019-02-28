@@ -192,7 +192,7 @@ func (ts *TerminalSystem) registerKeys() {
 }
 
 func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
-	log.Println(string(key), key, mods)
+	// log.Println(string(key), key, mods)
 
 	if ts.pages[ts.page] == nil {
 		ts.pages[ts.page] = &page{
@@ -295,8 +295,22 @@ func (ts *TerminalSystem) WriteLine(str string) {
 	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
 
 	for _, char := range strings.Split(str, "") {
+		if char == "\t" {
+			char = " "
+
+			for i := 0; i < 3; i++ {
+				ts.delegateKeyPress(input.StringToKey(char))
+			}
+		}
+
 		ts.delegateKeyPress(input.StringToKey(char))
 	}
 
 	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true})
+}
+
+func (ts *TerminalSystem) WriteError(err error) {
+	for _, line := range strings.Split(err.Error(), "\n") {
+		ts.WriteLine(line)
+	}
 }

@@ -121,23 +121,23 @@ func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 				string(source),
 			),
 		); err != nil {
-			log.Println(err)
-			ts.WriteLine("Could not run moon script")
+			ts.WriteLine("Could not run moon script:")
+			ts.WriteError(err)
 		}
 	case "lua":
 		if err := state.DoString(
 			string(source),
 		); err != nil {
-			log.Println(err)
-			ts.WriteLine("Could not run lua script")
+			ts.WriteLine("Could not run lua script:")
+			ts.WriteError(err)
 		}
 	}
 }
 
 func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state := lua.NewState(lua.Options{
-		CallStackSize: 1024,
-		RegistrySize:  1024 * 20,
+		CallStackSize: 40960,
+		RegistrySize:  40960 * 20,
 	})
 
 	state.PreloadModule("moonc", gmoonscript.Loader)
