@@ -2,7 +2,6 @@ package filesystem
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -65,13 +64,13 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 
 			info, err := fs.FS.ReadDir(fulldir)
 			if err != nil {
-				log.Println(err)
+				fs.WriteError(err)
 				return 0
 			}
 
 			i, err := fs.FS.Stat(fulldir)
 			if err != nil {
-				log.Println(err)
+				fs.WriteError(err)
 				return 0
 			}
 
@@ -102,13 +101,11 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 		},
 		"volumes": func(L *lua.LState) int {
 			// TODO: support /mnt and not hard-coded
-			info, err := fs.FS.Stat("/")
+			_, err := fs.FS.Stat("/")
 			if err != nil {
-				log.Println(err)
+				fs.WriteError(err)
 				return 0
 			}
-
-			log.Println(info.Size())
 
 			directory := L.NewTable()
 			dir := L.NewTable()
@@ -121,21 +118,6 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 			L.Push(directory)
 			return 1
 		},
-
-		// "compile": func(L *lua.LState) int {
-		// 	code := L.CheckString(1)
-
-		// 	luaCode, err := Compile(L, code)
-		// 	if err != nil {
-		// 		state.Push(lua.LNil)
-		// 		state.Push(lua.LString(err.Error()))
-
-		// 		return 2
-		// 	}
-
-		// 	L.Push(lua.LString(luaCode))
-		// 	return 1
-		// },
 	})
 
 	state.Push(mod)

@@ -3,7 +3,6 @@ package terminal
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 
@@ -17,8 +16,6 @@ func (ts *TerminalSystem) command(str string) {
 	if len(args) < 1 || args[0] == "" {
 		return
 	}
-
-	log.Println(args)
 
 	exts := []string{"moon", "lua"}
 	var f *vfs.File
@@ -46,8 +43,8 @@ func (ts *TerminalSystem) command(str string) {
 	state := newState(args, ts)
 	bytes, err := ioutil.ReadAll(*f)
 	if err != nil {
-		log.Println(err)
-		ts.WriteLine("Could not read script")
+		ts.WriteLine("Could not read script:")
+		ts.WriteError(err)
 		return
 	}
 
@@ -75,7 +72,7 @@ func preprocessBytes(bytes []byte, ts *TerminalSystem) (source string) {
 		f, err := ts.vfs.FS.OpenFile(file, os.O_RDONLY, 0777)
 		bytes, err := ioutil.ReadAll(f)
 		if err != nil {
-			log.Println(err)
+			ts.WriteError(err)
 			continue
 		}
 
@@ -99,8 +96,6 @@ func preprocessBytes(bytes []byte, ts *TerminalSystem) (source string) {
 		)
 	}
 
-	log.Println(source)
-
 	return
 }
 
@@ -110,8 +105,8 @@ func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 		// TODO: better import, not every time...
 		bridge, err := ioutil.ReadFile("terminal/moonscript-bridge.lua")
 		if err != nil {
-			log.Println(err)
-			ts.WriteLine("Could not load lua-moon bridge")
+			ts.WriteLine("Could not load lua-moon bridge:")
+			ts.WriteError(err)
 			return
 		}
 
@@ -146,8 +141,6 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 	// Re-define `print` to print to the screen
 	state.SetGlobal("print", state.NewFunction(func(L *lua.LState) int {
 		str := L.ToString(1)
-
-		log.Println(str)
 		ts.WriteLine(str)
 		return 0
 	}))
@@ -158,8 +151,8 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 		file, err := ts.vfs.FS.OpenFile(str, os.O_RDONLY, 0777)
 		bytes, err := ioutil.ReadAll(file)
 		if err != nil {
-			log.Println(err)
-			ts.WriteLine("Could not read script")
+			ts.WriteLine("Could not read script:")
+			ts.WriteError(err)
 			return 0
 		}
 

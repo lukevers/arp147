@@ -42,7 +42,7 @@ func (*TerminalSystem) Update(dt float32) {
 
 // New is the initialisation of the System.
 func (ts *TerminalSystem) New(w *ecs.World) {
-	ts.vfs = filesystem.New()
+	ts.vfs = filesystem.New(ts.WriteError)
 	ts.world = w
 	ts.pages = make(map[int]*page)
 	ts.pages[ts.page] = &page{
@@ -192,8 +192,6 @@ func (ts *TerminalSystem) registerKeys() {
 }
 
 func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
-	// log.Println(string(key), key, mods)
-
 	if ts.pages[ts.page] == nil {
 		ts.pages[ts.page] = &page{
 			lines: make(map[int]*line),

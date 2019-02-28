@@ -13,12 +13,16 @@ import (
 type VirtualFS struct {
 	cwd string
 	FS  *memfs.MemFS
+
+	WriteError func(err error)
 }
 
-func New() *VirtualFS {
+func New(WriteError func(err error)) *VirtualFS {
 	fs := &VirtualFS{
 		cwd: "/home",
 		FS:  memfs.Create(),
+
+		WriteError: WriteError,
 	}
 
 	return fs.initialize()
@@ -79,7 +83,7 @@ func (fs *VirtualFS) initialize() *VirtualFS {
 func (fs *VirtualFS) DirSize(root string) (size int64) {
 	info, err := fs.FS.ReadDir(root)
 	if err != nil {
-		log.Println(err)
+		fs.WriteError(err)
 		return
 	}
 
