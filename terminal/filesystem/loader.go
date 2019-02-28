@@ -2,6 +2,8 @@ package filesystem
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -116,6 +118,40 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 			directory.Append(dir)
 
 			L.Push(directory)
+			return 1
+		},
+		"cat": func(L *lua.LState) int {
+			dir := L.ToString(1)
+			fulldir := dir
+
+			if !strings.HasPrefix(dir, "/") {
+				fulldir = fmt.Sprintf("%s/%s", fs.cwd, dir)
+			}
+
+			_, err := fs.FS.Stat(fulldir)
+			if err != nil {
+				fs.WriteError(err)
+				return 0
+			}
+
+			file, err := fs.FS.OpenFile(fulldir, os.O_RDONLY, 0777)
+			if err != nil {
+				fs.WriteError(err)
+				return 0
+			}
+
+			bytes, err := ioutil.ReadAll(file)
+			if err != nil {
+				fs.WriteError(err)
+				return 0
+			}
+
+			lines := L.NewTable()
+			for _, str := range strings.Split(string(bytes), "\n") {
+				lines.Append(lua.LString(str))
+			}
+
+			L.Push(lines)
 			return 1
 		},
 	})
