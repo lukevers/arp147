@@ -207,6 +207,8 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 	length := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)
 	prefixCount := ts.pages[ts.page].lines[ts.pages[ts.page].line].prefixCount
 	switch key {
+	case engo.KeyTab:
+		// TODO: auto-completion?
 	case engo.KeyBackspace:
 		if ts.pages[ts.page].readonly && !mods.Output {
 			break
