@@ -1,0 +1,14 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    cat - print files
+
+SYNOPSIS
+    cat [file]
+
+DESCRIPTION
+    The `cat` utility reads the file from the disc and prints out
+    the contents to the screen.
+
+SEE ALSO
+    ls

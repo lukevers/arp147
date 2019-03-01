@@ -1,0 +1,17 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    manlib - display the manual pages for script libraries
+
+SYNOPSIS
+    manlib [manual]
+
+DESCRIPTION
+    The `manlib` command allows you to view the manual page for any
+    supported libraries.
+
+    Manual library files are stored on the filesystem at
+    `/usr/share/manlib`.
+
+SEE ALSO
+    man

@@ -1,0 +1,18 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    df - display free disc space
+
+SYNOPSIS
+    df
+
+DESCRIPTION
+    The `df` command prints out a table with the following
+    information per mount location:
+        - Used space (in bytes)
+        - Available space (in bytes)
+        - Max space (in bytes)
+        - Mount location
+
+SEE ALSO
+    touch, mkdir, mv, rm, ls

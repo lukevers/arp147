@@ -1,0 +1,19 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    screen
+
+SYNOPSIS
+    screen
+
+DESCRIPTION
+    The `screen` command allows you to open a new terminal session
+    with a blank page log.
+
+    You must exit with the `exit` command, or through a script
+    using the screen manipulation library to get back to the
+    previous screen. Once exited, the closed session is not able
+    to be brought back.
+
+SEE ALSO
+    exit

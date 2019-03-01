@@ -1,0 +1,18 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    man - display the manual pages
+
+SYNOPSIS
+    man [manual]
+
+DESCRIPTION
+    The `man` command allows you to view the manual page for any
+    supported command.
+
+    You should know that though, as you're using it right now.
+
+    Manual files are stored on the filesystem at `/usr/share/man`.
+
+SEE ALSO
+    manlib

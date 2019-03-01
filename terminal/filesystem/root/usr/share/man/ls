@@ -1,0 +1,18 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    ls - list directory contents
+
+SYNOPSIS
+    ls
+    ls [directory]
+    ls .
+    ls ..
+
+DESCRIPTION
+    The `ls` command allows you to list the files and directories
+    in the curernt working directory, or in an arbitrary directory
+    based on the arguemnt given.
+
+SEE ALSO
+    cd, mkdir, mv, rm, touch

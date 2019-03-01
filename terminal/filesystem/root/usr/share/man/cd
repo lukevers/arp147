@@ -1,0 +1,17 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    cd - change directories
+
+SYNOPSIS
+    cd [dir]
+    cd .
+    cd ..
+
+DESCRIPTION
+    The `cd` command changes the current working directory to the
+    specified directory. Both absolute and relative paths are
+    supported.
+
+SEE ALSO
+    mkdir, cwd, pwd, rm

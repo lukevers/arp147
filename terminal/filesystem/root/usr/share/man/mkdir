@@ -1,0 +1,13 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    mkdir - create a directory
+
+SYNOPSIS
+    mkdir [directory ...]
+
+DESCRIPTION
+    The `mkdir` command allows you to create new directories.
+
+SEE ALSO
+    cd, ls, mv, rm, touch

@@ -1,0 +1,14 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    echo - print the same thing
+
+SYNOPSIS
+    echo [phrase ...]
+
+DESCRIPTION
+    The `echo` command allows you to print whatever phrases you
+    want to the screen.
+
+SEE ALSO
+    cat

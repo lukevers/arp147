@@ -1,0 +1,13 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    rm - remove a file or directory
+
+SYNOPSIS
+    rm [source ...]
+
+DESCRIPTION
+    The `rm` command allows you to delete files or directories.
+
+SEE ALSO
+    cd, ls, mkdir, mv, touch

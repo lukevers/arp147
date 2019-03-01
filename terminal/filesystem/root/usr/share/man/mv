@@ -1,0 +1,13 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    mv - move a file or directory
+
+SYNOPSIS
+    mv [source] [target]
+
+DESCRIPTION
+    The `mv` command allows you to move files or directories.
+
+SEE ALSO
+    cd, ls, mkdir, rm, touch

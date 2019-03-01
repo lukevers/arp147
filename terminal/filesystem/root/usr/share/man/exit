@@ -1,0 +1,16 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    exit - close the active terminal session
+
+SYNOPSIS
+    exit
+
+DESCRIPTION
+    The `exit` command allows you to close the active terminal
+    session. Multiple terminal sessions may be active due to the
+    use of the screen command, or the screen management library
+    through scripting.
+
+SEE ALSO
+    screen
