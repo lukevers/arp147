@@ -270,9 +270,14 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			break
 		}
 
-		symbol := input.KeyToString(key, mods)
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
+		symbol := ""
+		if mods.Line == nil {
+			symbol = input.KeyToString(key, mods)
+		} else {
+			symbol = *mods.Line
+		}
 
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
 		char := ui.NewText(symbol)
 
 		push := false
@@ -314,18 +319,16 @@ func (ts *TerminalSystem) getXoffset() float32 {
 func (ts *TerminalSystem) WriteLine(str string) {
 	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
 
+	line := ""
 	for _, char := range strings.Split(str, "") {
 		if char == "\t" {
-			char = " "
-
-			for i := 0; i < 3; i++ {
-				ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Output: true}))
-			}
+			char = "    "
 		}
 
-		ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Output: true}))
+		line += char
 	}
 
+	ts.delegateKeyPress(engo.Key(-1), &input.Modifiers{Output: true, Line: &line})
 	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true, Output: true})
 }
 
