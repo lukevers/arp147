@@ -50,11 +50,12 @@ func (ts *TerminalSystem) New(w *ecs.World) {
 		line:  0,
 	}
 
-	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-	ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
-
 	ts.registerKeys()
 	ts.addBackground(w)
+	ts.loginScript()
+
+	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+	ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 
 	log.Println("TerminalSystem initialized")
 }

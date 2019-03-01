@@ -11,6 +11,25 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+func (ts *TerminalSystem) loginScript() {
+	file, err := ts.vfs.FS.OpenFile("/home/login.moon", os.O_RDONLY, 0777)
+
+	if err != nil {
+		// No login script. Nothing to do
+		return
+	}
+
+	state := newState([]string{}, ts)
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		ts.WriteLine("Could not read script:")
+		ts.WriteError(err)
+		return
+	}
+
+	eval("moon", preprocessBytes(bytes, ts), state, ts)
+}
+
 func (ts *TerminalSystem) command(str string) {
 	args := strings.Split(strings.Trim(str, " "), " ")
 	if len(args) < 1 || args[0] == "" {
