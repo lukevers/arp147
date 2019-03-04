@@ -7,6 +7,7 @@ import (
 	"github.com/lukevers/arp147/input"
 	"github.com/lukevers/arp147/opposition"
 	"github.com/lukevers/arp147/terminal"
+	"github.com/lukevers/arp147/ui"
 	"github.com/lukevers/arp147/user"
 )
 
@@ -20,9 +21,12 @@ func (*defaultScene) Type() string { return "defaultScene" }
 func (*defaultScene) Preload() {
 	engo.Files.Load(
 		"fonts/Undefined.ttf",
+
 		"textures/bkg_t1.jpg",
 		"textures/bkg_t2.jpg",
 		"textures/bkg_t3.jpg",
+
+		"textures/usership_1.png",
 	)
 }
 
@@ -33,6 +37,8 @@ func (*defaultScene) Setup(u engo.Updater) {
 
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&input.InputSystem{})
+	world.AddSystem(&ui.TextUpdateSystem{})
+
 	world.AddSystem(&terminal.TerminalSystem{})
 	world.AddSystem(&opposition.OppositionSystem{})
 	world.AddSystem(&user.UserSystem{})

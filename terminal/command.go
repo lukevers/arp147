@@ -212,7 +212,7 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state.PreloadModule("user", func(state *lua.LState) int {
 		mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
 			"login": func(L *lua.LState) int {
-				login := false
+				login := true
 
 				// TODO: load saved game
 				if false {
@@ -222,7 +222,7 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 				time.Sleep(2 * time.Second)
 
 				L.Push(lua.LBool(login))
-				return 0
+				return 1
 			},
 			"new": func(L *lua.LState) int {
 				// TODO

@@ -20,6 +20,6 @@ else
     print "Login ... FAILURE!"
     print "Could not load saved game."
     print "Initiating..."
-    user.new!
+    user.new! -- TODO
 
 print ""
