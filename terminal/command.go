@@ -5,13 +5,14 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/blang/vfs"
 	"github.com/rucuriousyet/gmoonscript"
 	lua "github.com/yuin/gopher-lua"
 )
 
-func (ts *TerminalSystem) loginScript() {
+func (ts *TerminalSystem) loginScript(result *chan bool) {
 	file, err := ts.vfs.FS.OpenFile("/home/login.moon", os.O_RDONLY, 0777)
 
 	if err != nil {
@@ -28,6 +29,7 @@ func (ts *TerminalSystem) loginScript() {
 	}
 
 	eval("moon", preprocessBytes(bytes, ts), state, ts)
+	*result <- true
 }
 
 func (ts *TerminalSystem) command(str string) {
@@ -137,6 +139,7 @@ func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 		); err != nil {
 			ts.WriteLine("Could not run moon script:")
 			ts.WriteError(err)
+			return
 		}
 	case "lua":
 		if err := state.DoString(
@@ -144,6 +147,7 @@ func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 		); err != nil {
 			ts.WriteLine("Could not run lua script:")
 			ts.WriteError(err)
+			return
 		}
 	}
 }
@@ -184,6 +188,10 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 				ts.pages[ts.page].readonly = true
 				return 0
 			},
+			"writable": func(L *lua.LState) int {
+				ts.pages[ts.page].readonly = false
+				return 0
+			},
 			"count": func(L *lua.LState) int {
 				L.Push(lua.LNumber(len(ts.pages)))
 				return 1
@@ -198,6 +206,20 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 	state.SetGlobal("print", state.NewFunction(func(L *lua.LState) int {
 		str := L.ToString(1)
 		ts.WriteLine(str)
+		return 0
+	}))
+
+	state.SetGlobal("login", state.NewFunction(func(L *lua.LState) int {
+		login := false
+
+		// TODO: load saved game
+		if false {
+			login = true
+		}
+
+		time.Sleep(2 * time.Second)
+
+		L.Push(lua.LBool(login))
 		return 0
 	}))
 

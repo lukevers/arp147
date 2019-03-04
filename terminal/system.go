@@ -46,16 +46,22 @@ func (ts *TerminalSystem) New(w *ecs.World) {
 	ts.world = w
 	ts.pages = make(map[int]*page)
 	ts.pages[ts.page] = &page{
-		lines: make(map[int]*line),
-		line:  0,
+		lines:    make(map[int]*line),
+		line:     0,
+		readonly: true,
 	}
 
 	ts.registerKeys()
 	ts.addBackground(w)
-	ts.loginScript()
 
-	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-	ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+	result := make(chan bool)
+	go ts.loginScript(&result)
+
+	go (func() {
+		<-result
+		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+	})()
 
 	log.Println("TerminalSystem initialized")
 }
