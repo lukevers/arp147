@@ -209,20 +209,30 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 		return 0
 	}))
 
-	state.SetGlobal("login", state.NewFunction(func(L *lua.LState) int {
-		login := false
+	state.PreloadModule("user", func(state *lua.LState) int {
+		mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
+			"login": func(L *lua.LState) int {
+				login := false
 
-		// TODO: load saved game
-		if false {
-			login = true
-		}
+				// TODO: load saved game
+				if false {
+					login = true
+				}
 
-		time.Sleep(2 * time.Second)
+				time.Sleep(2 * time.Second)
 
-		L.Push(lua.LBool(login))
-		return 0
-	}))
+				L.Push(lua.LBool(login))
+				return 0
+			},
+			"new": func(L *lua.LState) int {
+				// TODO
+				return 0
+			},
+		})
 
+		state.Push(mod)
+		return 1
+	})
 	state.SetGlobal("include", state.NewFunction(func(L *lua.LState) int {
 		str := L.ToString(1)
 

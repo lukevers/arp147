@@ -5,7 +5,9 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/opposition"
 	"github.com/lukevers/arp147/terminal"
+	"github.com/lukevers/arp147/user"
 )
 
 type defaultScene struct{}
@@ -32,6 +34,8 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&input.InputSystem{})
 	world.AddSystem(&terminal.TerminalSystem{})
+	world.AddSystem(&opposition.OppositionSystem{})
+	world.AddSystem(&user.UserSystem{})
 }
 
 func main() {

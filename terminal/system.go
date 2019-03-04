@@ -67,64 +67,28 @@ func (ts *TerminalSystem) New(w *ecs.World) {
 }
 
 func (ts *TerminalSystem) addBackground(w *ecs.World) {
-	bkg1 := &TerminalViewer{BasicEntity: ecs.NewBasic()}
-	bkg2 := &TerminalViewer{BasicEntity: ecs.NewBasic()}
-	bkg3 := &TerminalViewer{BasicEntity: ecs.NewBasic()}
+	bkg := &TerminalViewer{BasicEntity: ecs.NewBasic()}
 
-	bkg1.SpaceComponent = common.SpaceComponent{
+	bkg.SpaceComponent = common.SpaceComponent{
 		Position: engo.Point{X: 0, Y: 0},
 		Width:    800,
 		Height:   800,
 	}
 
-	tbkg1, err := common.LoadedSprite("textures/bkg_t1.jpg")
+	tbkg, err := common.LoadedSprite("textures/bkg_t1.jpg")
 	if err != nil {
 		log.Fatal("Unable to load texture: " + err.Error())
 	}
 
-	bkg1.RenderComponent = common.RenderComponent{
-		Drawable: tbkg1,
-		Scale:    engo.Point{X: 1, Y: 1},
-	}
-
-	bkg2.SpaceComponent = common.SpaceComponent{
-		Position: engo.Point{X: 800, Y: 0},
-		Width:    400,
-		Height:   400,
-	}
-
-	tbkg2, err := common.LoadedSprite("textures/bkg_t2.jpg")
-	if err != nil {
-		log.Fatal("Unable to load texture: " + err.Error())
-	}
-
-	bkg2.RenderComponent = common.RenderComponent{
-		Drawable: tbkg2,
-		Scale:    engo.Point{X: 1, Y: 1},
-	}
-
-	bkg3.SpaceComponent = common.SpaceComponent{
-		Position: engo.Point{X: 800, Y: 400},
-		Width:    400,
-		Height:   400,
-	}
-
-	tbkg3, err := common.LoadedSprite("textures/bkg_t3.jpg")
-	if err != nil {
-		log.Fatal("Unable to load texture: " + err.Error())
-	}
-
-	bkg3.RenderComponent = common.RenderComponent{
-		Drawable: tbkg3,
+	bkg.RenderComponent = common.RenderComponent{
+		Drawable: tbkg,
 		Scale:    engo.Point{X: 1, Y: 1},
 	}
 
 	for _, system := range w.Systems() {
 		switch sys := system.(type) {
 		case *common.RenderSystem:
-			sys.Add(&bkg1.BasicEntity, &bkg1.RenderComponent, &bkg1.SpaceComponent)
-			sys.Add(&bkg2.BasicEntity, &bkg2.RenderComponent, &bkg2.SpaceComponent)
-			sys.Add(&bkg3.BasicEntity, &bkg3.RenderComponent, &bkg3.SpaceComponent)
+			sys.Add(&bkg.BasicEntity, &bkg.RenderComponent, &bkg.SpaceComponent)
 		}
 	}
 }
