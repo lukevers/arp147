@@ -55,6 +55,8 @@ func (us *OppositionSystem) addBackground(w *ecs.World) {
 		Scale:    engo.Point{X: 1, Y: 1},
 	}
 
+	bkg.RenderComponent.SetZIndex(0)
+
 	for _, system := range w.Systems() {
 		switch sys := system.(type) {
 		case *common.RenderSystem:
