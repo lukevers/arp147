@@ -13,10 +13,18 @@ func (s *Ship) HudShieldLevel() string {
 }
 
 func (s *Ship) HudShipHealth() string {
+	spaces := ""
+	if s.Health.Level < 10 {
+		spaces = "  "
+	} else if s.Health.Level < 100 {
+		spaces = " "
+	}
+
 	return fmt.Sprintf(
-		"%d/%d - SHIP HEALTH",
+		"%d/%d %s- SHIP HEALTH",
 		s.Health.Level,
 		HealthLevelMax,
+		spaces,
 	)
 }
 
