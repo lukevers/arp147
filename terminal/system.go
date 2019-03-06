@@ -9,6 +9,7 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/ship"
 	"github.com/lukevers/arp147/terminal/filesystem"
 	"github.com/lukevers/arp147/ui"
 )
@@ -20,6 +21,8 @@ type TerminalSystem struct {
 
 	world *ecs.World
 	vfs   *filesystem.VirtualFS
+
+	ship *ship.Ship
 }
 
 type TerminalViewer struct {
@@ -62,6 +65,15 @@ func (ts *TerminalSystem) New(w *ecs.World) {
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
 		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 	})()
+
+	engo.Mailbox.Listen("NewShipMessage", func(message engo.Message) {
+		msg, ok := message.(ship.NewShipMessage)
+		if !ok {
+			return
+		}
+
+		ts.ship = msg.Ship
+	})
 
 	log.Println("TerminalSystem initialized")
 }

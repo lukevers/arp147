@@ -26,3 +26,13 @@ func (s *Shield) Decrease(ship *Ship) {
 		ship.SetSpriteCell(int(s.Level))
 	}
 }
+
+func (s *Shield) Max(ship *Ship) {
+	s.Level = SheldLevelMax
+	ship.SetSpriteCell(int(SheldLevelMax))
+}
+
+func (s *Shield) Min(ship *Ship) {
+	s.Level = SheldLevelMin
+	ship.SetSpriteCell(int(SheldLevelMin))
+}

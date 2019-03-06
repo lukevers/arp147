@@ -7,7 +7,7 @@ import (
 func (s *Ship) HudShieldLevel() string {
 	return fmt.Sprintf(
 		"%d/%d - SHIELD STRENGTH",
-		s.shield.Level,
+		s.Shield.Level,
 		SheldLevelMax,
 	)
 }
@@ -15,7 +15,7 @@ func (s *Ship) HudShieldLevel() string {
 func (s *Ship) HudShipHealth() string {
 	return fmt.Sprintf(
 		"%d/%d - SHIP HEALTH",
-		s.health.Level,
+		s.Health.Level,
 		HealthLevelMax,
 	)
 }
@@ -23,7 +23,7 @@ func (s *Ship) HudShipHealth() string {
 func (s *Ship) HudEnergySolarLevel() string {
 	return fmt.Sprintf(
 		"SOLAR LEVEL - %d/%d",
-		s.energy.Solar,
+		s.Energy.Solar,
 		EnergyLevelMax,
 	)
 }
@@ -31,7 +31,7 @@ func (s *Ship) HudEnergySolarLevel() string {
 func (s *Ship) HudFuelLevel() string {
 	return fmt.Sprintf(
 		"FUEL  LEVEL - %d/%d",
-		s.engine.Fuel,
+		s.Engine.Fuel,
 		int(FuelLevelMax),
 	)
 }

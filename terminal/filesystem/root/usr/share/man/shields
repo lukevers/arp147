@@ -1,0 +1,14 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    shields - alter shield level
+
+SYNOPSIS
+    shields [up|down|max|min]
+
+DESCRIPTION
+    The `shields` command allows you to change the level of the
+    shields on the ship.
+
+    The higher level the shields are, the more solar energy
+    required to power them is used.

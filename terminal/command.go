@@ -233,6 +233,31 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 		state.Push(mod)
 		return 1
 	})
+
+	state.PreloadModule("shields", func(state *lua.LState) int {
+		mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
+			"up": func(L *lua.LState) int {
+				ts.ship.Shield.Increase(ts.ship)
+				return 0
+			},
+			"down": func(L *lua.LState) int {
+				ts.ship.Shield.Decrease(ts.ship)
+				return 0
+			},
+			"max": func(L *lua.LState) int {
+				ts.ship.Shield.Max(ts.ship)
+				return 0
+			},
+			"min": func(L *lua.LState) int {
+				ts.ship.Shield.Min(ts.ship)
+				return 0
+			},
+		})
+
+		state.Push(mod)
+		return 1
+	})
+
 	state.SetGlobal("include", state.NewFunction(func(L *lua.LState) int {
 		str := L.ToString(1)
 

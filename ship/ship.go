@@ -11,23 +11,29 @@ type Ship struct {
 	common.RenderComponent
 	common.SpaceComponent
 
-	shield *Shield
-	engine *Engine
-	energy *Energy
-	health *Health
+	Shield *Shield
+	Engine *Engine
+	Energy *Energy
+	Health *Health
 
 	spriteSheet *common.Spritesheet
 }
 
 func New() *Ship {
-	ship := Ship{BasicEntity: ecs.NewBasic()}
+	s := Ship{BasicEntity: ecs.NewBasic()}
 
-	ship.engine = &Engine{Fuel: 80}
-	ship.shield = &Shield{Level: 0}
-	ship.energy = &Energy{Solar: 80}
-	ship.health = &Health{Level: 100}
+	s.Engine = &Engine{Fuel: 80}
+	s.Shield = &Shield{Level: 0}
+	s.Energy = &Energy{Solar: 80}
+	s.Health = &Health{Level: 100}
 
-	return &ship
+	ship := &s
+
+	engo.Mailbox.Dispatch(NewShipMessage{
+		Ship: ship,
+	})
+
+	return ship
 }
 
 func (s *Ship) SetPosition(pos engo.Point) {
