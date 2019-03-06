@@ -6,6 +6,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/lukevers/arp147/ui"
 )
 
 type OppositionSystem struct {
@@ -33,6 +34,7 @@ func (*OppositionSystem) Update(dt float32) {
 // New is the initialisation of the System.
 func (us *OppositionSystem) New(w *ecs.World) {
 	us.addBackground(w)
+	us.addDefaultOpposition(w)
 	log.Println("OppositionSystem initialized")
 }
 
@@ -63,4 +65,10 @@ func (us *OppositionSystem) addBackground(w *ecs.World) {
 			sys.Add(&bkg.BasicEntity, &bkg.RenderComponent, &bkg.SpaceComponent)
 		}
 	}
+}
+
+func (us *OppositionSystem) addDefaultOpposition(w *ecs.World) {
+	text := ui.NewText("Nothing around.") // 240
+	text.SetX(933).SetY(197)
+	text.Insert(w)
 }
