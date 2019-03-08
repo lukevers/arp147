@@ -5,10 +5,10 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
-	"github.com/lukevers/arp147/opposition"
 	"github.com/lukevers/arp147/terminal"
 	"github.com/lukevers/arp147/ui"
-	"github.com/lukevers/arp147/user"
+	"github.com/lukevers/arp147/viewers/opposition"
+	"github.com/lukevers/arp147/viewers/user"
 )
 
 type defaultScene struct{}
@@ -24,7 +24,6 @@ func (*defaultScene) Preload() {
 
 		"textures/bkg_t1.jpg",
 		"textures/bkg_t2.jpg",
-		"textures/bkg_t3.jpg",
 
 		"textures/usership_1.png",
 	)
@@ -36,8 +35,11 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world, _ := u.(*ecs.World)
 
 	world.AddSystem(&common.RenderSystem{})
+	world.AddSystem(&common.MouseSystem{})
+
 	world.AddSystem(&input.InputSystem{})
 	world.AddSystem(&ui.TextUpdateSystem{})
+	world.AddSystem(&ui.ButtonControlSystem{})
 
 	world.AddSystem(&terminal.TerminalSystem{})
 	world.AddSystem(&opposition.OppositionSystem{})

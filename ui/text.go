@@ -13,6 +13,8 @@ type Text struct {
 	ecs.BasicEntity
 	common.SpaceComponent
 	common.RenderComponent
+	common.MouseComponent
+	ButtonControlComponent
 
 	Font      *common.Font
 	Text      string
@@ -25,8 +27,10 @@ type Text struct {
 // NewText creates a text based on the string given with all of the defaults.
 func NewText(text string) *Text {
 	t := &Text{
-		BasicEntity: ecs.NewBasic(),
-		Text:        text,
+		BasicEntity:            ecs.NewBasic(),
+		ButtonControlComponent: ButtonControlComponent{},
+		MouseComponent:         common.MouseComponent{},
+		Text:                   text,
 		Font: &common.Font{
 			URL:  "fonts/Undefined.ttf",
 			FG:   color.White,
@@ -53,7 +57,7 @@ func (t *Text) SetX(x float32) *Text {
 	return t
 }
 
-func (t *Text) render() *Text {
+func (t *Text) Render() *Text {
 	t.RenderComponent.Drawable = common.Text{
 		Font: t.Font,
 		Text: t.Text,
@@ -61,6 +65,8 @@ func (t *Text) render() *Text {
 
 	t.SpaceComponent = common.SpaceComponent{
 		Position: engo.Point{X: t.X, Y: t.Y},
+		Width:    float32(t.Font.Size) * float32(len(t.Text)),
+		Height:   float32(t.Font.Size),
 	}
 
 	return t
@@ -68,14 +74,31 @@ func (t *Text) render() *Text {
 
 // Insert adds a text entity to the world.
 func (t *Text) Insert(world *ecs.World) {
-	t.render()
+	t.Render()
 
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
 		case *common.RenderSystem:
-			sys.Add(&t.BasicEntity, &t.RenderComponent, &t.SpaceComponent)
+			sys.Add(
+				&t.BasicEntity,
+				&t.RenderComponent,
+				&t.SpaceComponent,
+			)
+		case *common.MouseSystem:
+			sys.Add(
+				&t.BasicEntity,
+				&t.MouseComponent,
+				&t.SpaceComponent,
+				&t.RenderComponent,
+			)
 		case *TextUpdateSystem:
 			sys.Add(t)
+		case *ButtonControlSystem:
+			sys.Add(
+				&t.BasicEntity,
+				&t.MouseComponent,
+				&t.ButtonControlComponent,
+			)
 		}
 	}
 }
@@ -123,6 +146,6 @@ func (t *TextUpdateSystem) Update(dt float32) {
 		}
 
 		e.Updatable(e.Text)
-		e.render()
+		e.Render()
 	}
 }
