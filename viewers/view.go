@@ -4,6 +4,7 @@ import (
 	"image/color"
 
 	"engo.io/ecs"
+	"engo.io/engo"
 	"github.com/lukevers/arp147/ui"
 )
 
@@ -76,12 +77,14 @@ func (v *View) RegisterButton(button *ui.Text) {
 		v.SetActivePane(panes[button.Text])
 		v.GetActivePane().Show()
 	}).OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorHand)
 		if v.GetActiveTab() == button {
 			return
 		}
 
 		button.Font.FG = color.Alpha16{0xAAAF}
 	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+		engo.SetCursor(engo.CursorArrow)
 		if v.GetActiveTab() == button {
 			return
 		}
