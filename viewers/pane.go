@@ -1,13 +1,11 @@
 package viewers
 
 import (
-	"image/color"
 	"log"
 
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
-	"github.com/lukevers/arp147/ui"
 )
 
 type Pane struct {
@@ -78,39 +76,4 @@ func (pane *Pane) AddBackground(point engo.Point) {
 			)
 		}
 	}
-}
-
-func RegisterButton(button *ui.Text, viewer Viewer) {
-	button.OnClicked(func(entity *ecs.BasicEntity, dt float32) {
-		panes := viewer.GetPanes()
-		if viewer.GetActiveTab() == button {
-			return
-		}
-
-		for _, tab := range viewer.GetTabs() {
-			tab.Font.FG = color.Alpha16{0x666F}
-		}
-
-		for _, pane := range panes {
-			pane.Hide()
-		}
-
-		button.Font.FG = color.White
-
-		viewer.SetActiveTab(button)
-		viewer.SetActivePane(panes[button.Text])
-		viewer.GetActivePane().Show()
-	}).OnEnter(func(entity *ecs.BasicEntity, dt float32) {
-		if viewer.GetActiveTab() == button {
-			return
-		}
-
-		button.Font.FG = color.Alpha16{0xAAAF}
-	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
-		if viewer.GetActiveTab() == button {
-			return
-		}
-
-		button.Font.FG = color.Alpha16{0x666F}
-	})
 }
