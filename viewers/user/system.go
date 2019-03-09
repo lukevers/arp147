@@ -46,6 +46,30 @@ func (us *UserSystem) New(w *ecs.World) {
 	log.Println("UserSystem initialized")
 }
 
+func (us *UserSystem) SetActiveTab(tab *ui.Text) {
+	us.tab = tab
+}
+
+func (us *UserSystem) GetActiveTab() *ui.Text {
+	return us.tab
+}
+
+func (us *UserSystem) GetTabs() []*ui.Text {
+	return us.tabs
+}
+
+func (us *UserSystem) GetActivePane() *viewers.Pane {
+	return us.pane
+}
+
+func (us *UserSystem) SetActivePane(pane *viewers.Pane) {
+	us.pane = pane
+}
+
+func (us *UserSystem) GetPanes() map[string]*viewers.Pane {
+	return us.panes
+}
+
 func (us *UserSystem) addShip(pane *viewers.Pane) {
 	us.ship = ship.New()
 	us.ship.SetSpritesheet("textures/usership_1.png", 108, 126)
@@ -93,7 +117,7 @@ func (us *UserSystem) addButtons() {
 	tlocal.SetX(820).SetY(416)
 	us.tabs = append(us.tabs, tlocal)
 	us.tab = tlocal
-	us.registerButton(tlocal)
+	viewers.RegisterButton(tlocal, us)
 	tlocal.Insert(us.world)
 
 	tmap := ui.NewText("FLOOR")
@@ -101,7 +125,7 @@ func (us *UserSystem) addButtons() {
 	tmap.Font.FG = color.Alpha16{0x666F}
 	tmap.SetX(870).SetY(416)
 	us.tabs = append(us.tabs, tmap)
-	us.registerButton(tmap)
+	viewers.RegisterButton(tmap, us)
 	tmap.Insert(us.world)
 }
 

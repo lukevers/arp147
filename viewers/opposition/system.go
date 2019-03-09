@@ -33,82 +33,108 @@ func (*OppositionSystem) Update(dt float32) {
 }
 
 // New is the initialisation of the System.
-func (us *OppositionSystem) New(w *ecs.World) {
-	us.world = w
-	us.panes = make(map[string]*viewers.Pane)
+func (os *OppositionSystem) New(w *ecs.World) {
+	os.world = w
+	os.panes = make(map[string]*viewers.Pane)
 
-	us.addButtons()
-	us.createPanes()
+	os.addButtons()
+	os.createPanes()
 
 	log.Println("OppositionSystem initialized")
 }
 
-func (us *OppositionSystem) addButtons() {
+func (os *OppositionSystem) SetActiveTab(tab *ui.Text) {
+	os.tab = tab
+}
+
+func (os *OppositionSystem) GetActiveTab() *ui.Text {
+	return os.tab
+}
+
+func (os *OppositionSystem) GetTabs() []*ui.Text {
+	return os.tabs
+}
+
+func (os *OppositionSystem) GetActivePane() *viewers.Pane {
+	return os.pane
+}
+
+func (os *OppositionSystem) SetActivePane(pane *viewers.Pane) {
+	os.pane = pane
+}
+
+func (os *OppositionSystem) GetPanes() map[string]*viewers.Pane {
+	return os.panes
+}
+
+func (os *OppositionSystem) addButtons() {
 	tlocal := ui.NewText("LOCAL")
 	tlocal.Font.Size = 12
 	tlocal.SetX(820).SetY(16)
-	us.tabs = append(us.tabs, tlocal)
-	us.tab = tlocal
-	us.registerButton(tlocal)
-	tlocal.Insert(us.world)
+	os.tabs = append(os.tabs, tlocal)
+	os.tab = tlocal
+	// os.registerButton(tlocal)
+	viewers.RegisterButton(tlocal, os)
+	tlocal.Insert(os.world)
 
 	tmap := ui.NewText("MAP")
 	tmap.Font.Size = 12
 	tmap.Font.FG = color.Alpha16{0x666F}
 	tmap.SetX(870).SetY(16)
-	us.tabs = append(us.tabs, tmap)
-	us.registerButton(tmap)
-	tmap.Insert(us.world)
+	os.tabs = append(os.tabs, tmap)
+	viewers.RegisterButton(tmap, os)
+	// os.registerButton(tmap)
+	tmap.Insert(os.world)
 }
 
-func (us *OppositionSystem) createPanes() {
-	panelocal := viewers.NewPane(us.world)
+func (os *OppositionSystem) createPanes() {
+	panelocal := viewers.NewPane(os.world)
 	panelocal.AddBackground(engo.Point{X: 800, Y: 0})
-	us.addDefaultOpposition(panelocal)
-	us.pane = panelocal
-	us.panes["LOCAL"] = panelocal
+	os.addDefaultOpposition(panelocal)
+	os.pane = panelocal
+	os.panes["LOCAL"] = panelocal
 
-	panemap := viewers.NewPane(us.world)
+	panemap := viewers.NewPane(os.world)
 	panemap.AddBackground(engo.Point{X: 800, Y: 0})
-	us.panes["MAP"] = panemap
+	os.panes["MAP"] = panemap
 	panemap.Hide()
 }
 
-func (us *OppositionSystem) registerButton(t *ui.Text) {
-	t.OnClicked(func(entity *ecs.BasicEntity, dt float32) {
-		if us.tab == t {
-			return
-		}
+// func (os *OppositionSystem) registerButton(t *ui.Text) {
+// 	t.OnClicked(func(entity *ecs.BasicEntity, dt float32) {
+// 		if os.tab == t {
+// 			return
+// 		}
 
-		for _, tab := range us.tabs {
-			tab.Font.FG = color.Alpha16{0x666F}
-		}
+// 		for _, tab := range os.tabs {
+// 			tab.Font.FG = color.Alpha16{0x666F}
+// 		}
 
-		for _, pane := range us.panes {
-			pane.Hide()
-		}
+// 		for _, pane := range os.panes {
+// 			pane.Hide()
+// 		}
 
-		t.Font.FG = color.White
+// 		t.Font.FG = color.White
 
-		us.tab = t
-		us.pane = us.panes[t.Text]
-		us.pane.Show()
-	}).OnEnter(func(entity *ecs.BasicEntity, dt float32) {
-		if us.tab == t {
-			return
-		}
+// 		os.tab = t
+// 		os.pane = os.panes[t.Text]
+// 		os.pane.Show()
+// 	}).OnEnter(func(entity *ecs.BasicEntity, dt float32) {
+// 		if os.tab == t {
+// 			return
+// 		}
 
-		t.Font.FG = color.Alpha16{0xAAAF}
-	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
-		if us.tab == t {
-			return
-		}
+// 		t.Font.FG = color.Alpha16{0xAAAF}
+// 	}).OnLeave(func(entity *ecs.BasicEntity, dt float32) {
+// 		if os.tab == t {
+// 			return
+// 		}
 
-		t.Font.FG = color.Alpha16{0x666F}
-	})
-}
+// 		t.Font.FG = color.Alpha16{0x666F}
+// 	})
+// }
 
-func (us *OppositionSystem) addDefaultOpposition(pane *viewers.Pane) {
+func (os *OppositionSystem) addDefaultOpposition(pane *viewers.Pane) {
 	text := ui.NewText("Nothing around.") // 240
 	text.SetX(933).SetY(197)
 	text.Insert(pane.World)
