@@ -92,7 +92,7 @@ func (us *UserSystem) addButtons() {
 	tmap := ui.NewText("FLOOR")
 	tmap.Font.Size = 12
 	tmap.Font.FG = color.Alpha16{0x666F}
-	tmap.SetX(870).SetY(416)
+	tmap.SetX(865).SetY(416)
 	us.viewer.RegisterButton(tmap)
 	tmap.Insert(us.world)
 }
