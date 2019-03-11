@@ -66,10 +66,3 @@ func (os *OppositionSystem) createPanes() {
 	os.viewer.AddPane("MAP", panemap)
 	panemap.Hide()
 }
-
-func (os *OppositionSystem) addDefaultOpposition(pane *viewers.Pane) {
-	text := ui.NewText("Nothing around.") // 240
-	text.SetX(933).SetY(197)
-	text.Insert(pane.World)
-	pane.RegisterEntity(&text.BasicEntity, &text.RenderComponent)
-}
