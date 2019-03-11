@@ -1,6 +1,7 @@
 package planet
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -24,9 +25,12 @@ const (
 type Planet struct {
 	seed int64
 	size float64
+
+	main  image.Image
+	moons []image.Image
 }
 
-func New(size float64, t Type) *Planet {
+func New(size float64) *Planet {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
@@ -40,9 +44,23 @@ func randInt(min, max int) uint8 {
 	return uint8(min + rand.Intn(max-min))
 }
 
-func (p *Planet) Generate() {
-	dc := gg.NewContext(int(p.size*2), int(p.size*2))
-	dc.DrawCircle(p.size, p.size, p.size)
+func (p *Planet) Generate(t Type) {
+	p.main = p.generate(p.size, t)
+	saveImage("out.png", p.main)
+
+	if t == TypePlanet {
+		for i := 0; i < int(randInt(0, 5)); i++ {
+			moon := p.generate(float64(randInt(int(p.size/16), int(p.size/4))), TypeMoon)
+			p.moons = append(p.moons, moon)
+
+			saveImage(fmt.Sprintf("moon-%d.png", i), moon)
+		}
+	}
+}
+
+func (p *Planet) generate(size float64, t Type) image.Image {
+	dc := gg.NewContext(int(size*2), int(size*2))
+	dc.DrawCircle(size, size, size)
 
 	grad := gg.NewLinearGradient(20, 320, 400, 20)
 	grad.AddColorStop(0, color.RGBA{randInt(0, 255), randInt(0, 255), randInt(0, 255), 255})
@@ -53,42 +71,15 @@ func (p *Planet) Generate() {
 	dc.SetFillStyle(grad)
 	dc.Fill()
 
-	dc.SavePNG("out.png")
+	img := dc.Image()
 
-	filters := map[string]gift.Filter{
-		"color_balance": gift.ColorBalance(3, 5, -10),
-		"color_func": gift.ColorFunc(
-			func(r0, g0, b0, a0 float32) (r, g, b, a float32) {
-				r = 1 - r0
-				g = g0 + 0.5
-				b = b0 + .3
-				a = a0
-				return r, g, b, a
-			},
-		),
-		"pixelate":     gift.Pixelate(int(p.size / 10)),
-		"unsharp_mask": gift.UnsharpMask(1, 20, 0),
-	}
-
-	for _, filter := range filters {
-		src := loadImage("out.png")
+	for _, filter := range p.filters(t, size) {
 		g := gift.New(filter)
-		dst := image.NewNRGBA(g.Bounds(src.Bounds()))
-		g.Draw(dst, src)
-		saveImage("out.png", dst)
+		dst := image.NewNRGBA(g.Bounds(img.Bounds()))
+		g.Draw(dst, img)
+		img = dst
 	}
 
-}
-
-func loadImage(filename string) image.Image {
-	f, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("os.Open failed: %v", err)
-	}
-	img, _, err := image.Decode(f)
-	if err != nil {
-		log.Fatalf("image.Decode failed: %v", err)
-	}
 	return img
 }
 
@@ -100,5 +91,24 @@ func saveImage(filename string, img image.Image) {
 	err = png.Encode(f, img)
 	if err != nil {
 		log.Fatalf("png.Encode failed: %v", err)
+	}
+}
+
+func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
+	// TODO: different set of filters per Type
+
+	return map[string]gift.Filter{
+		"color_balance": gift.ColorBalance(3, 5, -10),
+		"color_func": gift.ColorFunc(
+			func(r0, g0, b0, a0 float32) (r, g, b, a float32) {
+				r = 1 - r0
+				g = g0 + 0.5
+				b = b0 + .3
+				a = a0
+				return r, g, b, a
+			},
+		),
+		"pixelate":     gift.Pixelate(int(size / 10.0)),
+		"unsharp_mask": gift.UnsharpMask(1, 20, 0),
 	}
 }

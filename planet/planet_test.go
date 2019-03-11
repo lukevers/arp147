@@ -5,6 +5,6 @@ import (
 )
 
 func TestPlanetCreate(t *testing.T) {
-	p := New(64, TypePlanet)
-	p.Generate()
+	p := New(64)
+	p.Generate(TypePlanet)
 }
