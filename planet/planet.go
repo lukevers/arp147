@@ -19,7 +19,7 @@ type Type int
 const (
 	TypePlanet Type = iota
 	TypeMoon
-	TypeSun
+	TypeStar
 )
 
 type Planet struct {
