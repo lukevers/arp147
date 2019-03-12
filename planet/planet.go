@@ -3,10 +3,7 @@ package planet
 import (
 	"image"
 	"image/color"
-	"image/png"
-	"log"
 	"math/rand"
-	"os"
 	"time"
 
 	"engo.io/ecs"
@@ -100,18 +97,6 @@ func (p *Planet) generate(size float64, t Type) image.Image {
 	}
 
 	return img
-}
-
-// for testing
-func saveImage(filename string, img image.Image) {
-	f, err := os.Create(filename)
-	if err != nil {
-		log.Fatalf("os.Create failed: %v", err)
-	}
-	err = png.Encode(f, img)
-	if err != nil {
-		log.Fatalf("png.Encode failed: %v", err)
-	}
 }
 
 func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
