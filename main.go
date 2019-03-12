@@ -25,7 +25,14 @@ func (*defaultScene) Preload() {
 		"textures/bkg_t1.jpg",
 		"textures/bkg_t2.jpg",
 
-		"textures/usership_1.png",
+		"textures/user_01.png",
+
+		"textures/enemy_01.png",
+		"textures/enemy_02.png",
+		"textures/enemy_03.png",
+		"textures/enemy_04.png",
+		"textures/enemy_05.png",
+		"textures/enemy_06.png",
 	)
 }
 

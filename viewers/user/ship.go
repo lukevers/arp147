@@ -9,7 +9,11 @@ import (
 
 func (us *UserSystem) addShip(pane *viewers.Pane) {
 	us.ship = ship.New()
-	us.ship.SetSpritesheet("textures/usership_1.png", 108, 126)
+	// us.ship.SetSpritesheet("textures/usership_1.png", 108, 126)
+
+	us.ship.SetSpritesheet("textures/user_01.png", 100, 124)
+	// us.ship.SetSpritesheet("textures/enemy_01.png", 120, 160)
+	// us.ship.SetSpritesheet("textures/enemy_02.png", 172, 226)
 	us.ship.SetPosition(engo.Point{X: 1000, Y: 600})
 	us.ship.AddToWorld(pane.World)
 	pane.RegisterEntity(&us.ship.BasicEntity, &us.ship.RenderComponent)
