@@ -1,7 +1,6 @@
 package planet
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -46,15 +45,19 @@ func randInt(min, max int) uint8 {
 
 func (p *Planet) Generate(t Type) {
 	p.main = p.generate(p.size, t)
-	saveImage("out.png", p.main)
+	// saveImage("out.png", p.main)
 
 	if t == TypePlanet {
-		for i := 0; i < int(randInt(0, 5)); i++ {
+		for i := 0; i < int(randInt(2, 4)); i++ {
 			moon := p.generate(float64(randInt(int(p.size/16), int(p.size/4))), TypeMoon)
 			p.moons = append(p.moons, moon)
 
-			saveImage(fmt.Sprintf("moon-%d.png", i), moon)
+			// saveImage(fmt.Sprintf("moon-%d.png", i), moon)
 		}
+	}
+
+	if len(p.moons) > 0 {
+		saveImage("out.png", p.patchMoons())
 	}
 }
 
@@ -95,7 +98,12 @@ func saveImage(filename string, img image.Image) {
 }
 
 func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
-	// TODO: different set of filters per Type
+	// Make changes before applying filters if TypeMoon
+	if t == TypeMoon {
+		// Double the "size" when applying filters related to sizing to
+		// increase the pixelate filter.
+		size *= 2
+	}
 
 	return map[string]gift.Filter{
 		"color_balance": gift.ColorBalance(3, 5, -10),
@@ -109,6 +117,55 @@ func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
 			},
 		),
 		"pixelate":     gift.Pixelate(int(size / 10.0)),
-		"unsharp_mask": gift.UnsharpMask(1, 20, 0),
+		"unsharp_mask": gift.UnsharpMask(1, 32, 0),
 	}
+}
+
+func (p *Planet) patchMoons() image.Image {
+	size := int(p.size * 4)
+	dc := gg.NewContext(size, size)
+	dc.DrawImageAnchored(p.main, p.main.Bounds().Size().X, p.main.Bounds().Size().Y, .5, .5)
+
+	var x, y int
+	var ax, ay float64
+
+	for i, moon := range p.moons {
+		xoffset := int(p.size/4) + moon.Bounds().Size().X
+		yoffset := int(p.size/4) + moon.Bounds().Size().Y
+
+		log.Println(moon.Bounds().Size().X)
+
+		if moon.Bounds().Size().X <= 12 {
+			xoffset *= 2
+			yoffset *= 2
+		}
+
+		switch i {
+		case 0:
+			x = 0 + xoffset
+			y = 0 + yoffset
+			ax = 0
+			ay = 0
+		case 1:
+			x = size - xoffset
+			y = 0 + yoffset
+			ax = 1
+			ay = 0
+		case 2:
+			x = 0 + xoffset
+			y = size - yoffset
+			ax = 0
+			ay = 1
+
+		case 3:
+			x = size - xoffset
+			y = size - yoffset
+			ax = 1
+			ay = 1
+		}
+
+		dc.DrawImageAnchored(moon, x, y, ax, ay)
+	}
+
+	return dc.Image()
 }
