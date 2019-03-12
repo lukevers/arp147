@@ -45,20 +45,15 @@ func randInt(min, max int) uint8 {
 
 func (p *Planet) Generate(t Type) {
 	p.main = p.generate(p.size, t)
-	// saveImage("out.png", p.main)
 
 	if t == TypePlanet {
-		for i := 0; i < int(randInt(2, 4)); i++ {
+		for i := 0; i < int(randInt(0, 4)); i++ {
 			moon := p.generate(float64(randInt(int(p.size/16), int(p.size/4))), TypeMoon)
 			p.moons = append(p.moons, moon)
-
-			// saveImage(fmt.Sprintf("moon-%d.png", i), moon)
 		}
 	}
 
-	if len(p.moons) > 0 {
-		saveImage("out.png", p.patchMoons())
-	}
+	saveImage("out.png", p.patchMoons())
 }
 
 func (p *Planet) generate(size float64, t Type) image.Image {
