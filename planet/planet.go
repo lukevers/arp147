@@ -133,12 +133,13 @@ func (p *Planet) patchMoons() image.Image {
 		xoffset := int(p.size/4) + moon.Bounds().Size().X
 		yoffset := int(p.size/4) + moon.Bounds().Size().Y
 
-		log.Println(moon.Bounds().Size().X)
-
 		if moon.Bounds().Size().X <= 12 {
 			xoffset *= 2
 			yoffset *= 2
 		}
+
+		xoffset -= int(randInt(0, int(p.size/6)))
+		yoffset -= int(randInt(0, int(p.size/6)))
 
 		switch i {
 		case 0:
