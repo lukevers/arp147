@@ -57,7 +57,8 @@ func (os *OppositionSystem) addButtons() {
 func (os *OppositionSystem) createPanes() {
 	panelocal := viewers.NewPane(os.world)
 	panelocal.AddBackground(engo.Point{X: 800, Y: 0})
-	os.addDefaultOpposition(panelocal)
+	// os.addDefaultOpposition(panelocal)
+	os.addRandomPlanet(panelocal)
 	os.viewer.AddPane("LOCAL", panelocal)
 	os.viewer.SetActivePane(panelocal)
 

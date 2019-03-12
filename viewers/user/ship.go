@@ -9,7 +9,6 @@ import (
 
 func (us *UserSystem) addShip(pane *viewers.Pane) {
 	us.ship = ship.New()
-	// us.ship.SetSpritesheet("textures/planet.png", 128, 128)
 	us.ship.SetSpritesheet("textures/usership_1.png", 108, 126)
 	us.ship.SetPosition(engo.Point{X: 1000, Y: 600})
 	us.ship.AddToWorld(pane.World)

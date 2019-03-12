@@ -9,6 +9,9 @@ import (
 	"os"
 	"time"
 
+	"engo.io/ecs"
+	"engo.io/engo"
+	"engo.io/engo/common"
 	"github.com/disintegration/gift"
 	"github.com/fogleman/gg"
 )
@@ -21,22 +24,40 @@ const (
 	TypeStar
 )
 
+const (
+	SizeViewer = 64
+)
+
 type Planet struct {
 	seed int64
 	size float64
 
+	full  image.Image
 	main  image.Image
 	moons []image.Image
+
+	ecs.BasicEntity
+	common.RenderComponent
+	common.SpaceComponent
+
+	spriteSheet *common.Spritesheet
 }
 
-func New(size float64) *Planet {
+func New(size float64, t Type, initalize bool) *Planet {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
-	return &Planet{
+	p := &Planet{
 		seed: seed,
 		size: size,
 	}
+
+	if initalize {
+		p.Generate(t)
+		p.SetSpritesheet()
+	}
+
+	return p
 }
 
 func randInt(min, max int) uint8 {
@@ -53,7 +74,7 @@ func (p *Planet) Generate(t Type) {
 		}
 	}
 
-	saveImage("out.png", p.patchMoons())
+	p.full = p.patchMoons()
 }
 
 func (p *Planet) generate(size float64, t Type) image.Image {
@@ -81,6 +102,7 @@ func (p *Planet) generate(size float64, t Type) image.Image {
 	return img
 }
 
+// for testing
 func saveImage(filename string, img image.Image) {
 	f, err := os.Create(filename)
 	if err != nil {
@@ -164,4 +186,46 @@ func (p *Planet) patchMoons() image.Image {
 	}
 
 	return dc.Image()
+}
+
+func (p *Planet) AddToWorld(world *ecs.World) {
+	for _, system := range world.Systems() {
+		switch sys := system.(type) {
+		case *common.RenderSystem:
+			sys.Add(&p.BasicEntity, &p.RenderComponent, &p.SpaceComponent)
+		}
+	}
+
+}
+
+func (p *Planet) SetPosition(pos engo.Point) {
+	pos.X -= p.SpaceComponent.Width / 2
+	pos.Y -= p.SpaceComponent.Height / 2
+	p.SpaceComponent.Position = pos
+}
+
+func (p *Planet) SetSpritesheet() {
+	g := gift.New()
+	dst := image.NewNRGBA(g.Bounds(p.full.Bounds()))
+	g.Draw(dst, p.full)
+
+	width := dst.Bounds().Size().X
+	height := dst.Bounds().Size().Y
+
+	texture := common.NewTextureResource(common.NewImageObject(dst))
+	p.spriteSheet = common.NewSpritesheetFromTexture(
+		&texture,
+		width,
+		height,
+	)
+
+	p.SpaceComponent = common.SpaceComponent{
+		Width:  float32(width),
+		Height: float32(height),
+	}
+
+	p.RenderComponent = common.RenderComponent{
+		Drawable: p.spriteSheet.Cell(0),
+		Scale:    engo.Point{1, 1},
+	}
 }
