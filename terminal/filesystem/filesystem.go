@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -47,7 +48,7 @@ func (fs *VirtualFS) initialize() *VirtualFS {
 			if info.IsDir() {
 				if vpath != "" {
 					fs.FS.Mkdir(vpath, 0777)
-					log.Println("Creating:", vpath)
+					log.Println("Creating directory:", vpath)
 				}
 			} else {
 				file, err := fs.FS.OpenFile(vpath, os.O_CREATE|os.O_RDWR, 0777)
@@ -66,7 +67,7 @@ func (fs *VirtualFS) initialize() *VirtualFS {
 				}
 
 				file.Close()
-				log.Println("Creating:", vpath)
+				log.Println("Creating file:", vpath)
 			}
 
 			return nil
@@ -89,7 +90,7 @@ func (fs *VirtualFS) DirSize(root string) (size int64) {
 
 	for _, file := range info {
 		if file.IsDir() {
-			size += fs.DirSize(file.Name())
+			size += fs.DirSize(fmt.Sprintf("%s/%s", root, file.Name()))
 		} else {
 			size += file.Size()
 		}

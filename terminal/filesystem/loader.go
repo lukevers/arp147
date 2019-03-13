@@ -47,7 +47,7 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 				return 1
 			}
 
-			fs.cwd = info.Name()
+			fs.cwd = fulldir
 			return 0
 		},
 		"touch": func(L *lua.LState) int {
@@ -114,7 +114,7 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 			dir.RawSetString("dir", lua.LBool(true))
 			dir.RawSetString("name", lua.LString("/"))
 			dir.RawSetString("size", lua.LString(strconv.Itoa(int(fs.DirSize("/")))))
-			dir.RawSetString("max", lua.LString("16384")) // 16kb
+			dir.RawSetString("max", lua.LString("128000"))
 			directory.Append(dir)
 
 			L.Push(directory)
