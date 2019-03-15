@@ -65,5 +65,6 @@ func (os *OppositionSystem) createPanes() {
 	panemap := viewers.NewPane(os.world)
 	panemap.AddBackground(engo.Point{X: 800, Y: 0})
 	os.viewer.AddPane("MAP", panemap)
+	os.addMap(panemap)
 	panemap.Hide()
 }

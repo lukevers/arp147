@@ -8,7 +8,7 @@ func (s *Ship) HudShieldLevel() string {
 	return fmt.Sprintf(
 		"%d/%d - SHIELD STRENGTH",
 		s.Shield.Level,
-		SheldLevelMax,
+		s.defined.GetShieldLevelMax(),
 	)
 }
 

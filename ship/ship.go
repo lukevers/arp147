@@ -17,15 +17,31 @@ type Ship struct {
 	Health *Health
 
 	spriteSheet *common.Spritesheet
+	defined     Defined
 }
 
-func New() *Ship {
-	s := Ship{BasicEntity: ecs.NewBasic()}
+func New(d Defined) *Ship {
+	s := Ship{
+		BasicEntity: ecs.NewBasic(),
+		Engine:      &Engine{Fuel: 80},
+		Shield:      &Shield{Level: 0},
+		Energy:      &Energy{Solar: 80},
+		Health:      &Health{Level: 100},
+		defined:     d,
+	}
 
-	s.Engine = &Engine{Fuel: 80}
-	s.Shield = &Shield{Level: 0}
-	s.Energy = &Energy{Solar: 80}
-	s.Health = &Health{Level: 100}
+	texture, width, height := s.defined.GetSpritesheet()
+	s.spriteSheet = common.NewSpritesheetFromFile(texture, width, height)
+
+	s.SpaceComponent = common.SpaceComponent{
+		Width:  float32(width),
+		Height: float32(height),
+	}
+
+	s.RenderComponent = common.RenderComponent{
+		Drawable: s.spriteSheet.Cell(0),
+		Scale:    engo.Point{1, 1},
+	}
 
 	ship := &s
 
@@ -40,20 +56,6 @@ func (s *Ship) SetPosition(pos engo.Point) {
 	pos.X -= s.SpaceComponent.Width / 2
 	pos.Y -= s.SpaceComponent.Height / 2
 	s.SpaceComponent.Position = pos
-}
-
-func (s *Ship) SetSpritesheet(sheet string, width, height float32) {
-	s.spriteSheet = common.NewSpritesheetFromFile(sheet, int(width), int(height))
-
-	s.SpaceComponent = common.SpaceComponent{
-		Width:  width,
-		Height: height,
-	}
-
-	s.RenderComponent = common.RenderComponent{
-		Drawable: s.spriteSheet.Cell(0),
-		Scale:    engo.Point{1, 1},
-	}
 }
 
 func (s *Ship) AddToWorld(world *ecs.World) {

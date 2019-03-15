@@ -1,20 +1,15 @@
 package ship
 
 const (
-	SheldLevelMin SheldLevel = 0
-	SheldLevelMax SheldLevel = 3
-)
-
-type (
-	SheldLevel int
+	SheldLevelMin int = 0
 )
 
 type Shield struct {
-	Level SheldLevel
+	Level int
 }
 
 func (s *Shield) Increase(ship *Ship) {
-	if s.Level < SheldLevelMax {
+	if s.Level < ship.defined.GetShieldLevelMax() {
 		s.Level++
 		ship.SetSpriteCell(int(s.Level))
 	}
@@ -28,8 +23,8 @@ func (s *Shield) Decrease(ship *Ship) {
 }
 
 func (s *Shield) Max(ship *Ship) {
-	s.Level = SheldLevelMax
-	ship.SetSpriteCell(int(SheldLevelMax))
+	s.Level = ship.defined.GetShieldLevelMax()
+	ship.SetSpriteCell(ship.defined.GetShieldLevelMax())
 }
 
 func (s *Shield) Min(ship *Ship) {
