@@ -6,12 +6,15 @@ import (
 
 	"engo.io/ecs"
 	"engo.io/engo"
+	"github.com/lukevers/arp147/navigator"
 	"github.com/lukevers/arp147/ship"
 	"github.com/lukevers/arp147/ui"
 	"github.com/lukevers/arp147/viewers"
 )
 
 type UserSystem struct {
+	Map *navigator.Map
+
 	ship   *ship.Ship
 	viewer *viewers.View
 	world  *ecs.World

@@ -9,6 +9,7 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/navigator"
 	"github.com/lukevers/arp147/ship"
 	"github.com/lukevers/arp147/terminal/filesystem"
 	"github.com/lukevers/arp147/ui"
@@ -16,6 +17,8 @@ import (
 
 // TerminalSystem is a scrollable, visual and text input-able system.
 type TerminalSystem struct {
+	Map *navigator.Map
+
 	pages map[int]*page
 	page  int
 

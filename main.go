@@ -5,6 +5,7 @@ import (
 	"engo.io/engo"
 	"engo.io/engo/common"
 	"github.com/lukevers/arp147/input"
+	"github.com/lukevers/arp147/navigator"
 	"github.com/lukevers/arp147/terminal"
 	"github.com/lukevers/arp147/ui"
 	"github.com/lukevers/arp147/viewers/opposition"
@@ -24,6 +25,7 @@ func (*defaultScene) Preload() {
 
 		"textures/bkg_t1.jpg",
 		"textures/bkg_t2.jpg",
+		"textures/bkg_t2_grid.png",
 
 		"textures/user_01.png",
 
@@ -48,24 +50,27 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world.AddSystem(&ui.TextUpdateSystem{})
 	world.AddSystem(&ui.ButtonControlSystem{})
 
-	world.AddSystem(&terminal.TerminalSystem{})
-	world.AddSystem(&opposition.OppositionSystem{})
-	world.AddSystem(&user.UserSystem{})
+	m := navigator.NewMap()
+	world.AddSystem(&terminal.TerminalSystem{Map: m})
+	world.AddSystem(&opposition.OppositionSystem{Map: m})
+	world.AddSystem(&user.UserSystem{Map: m})
 }
 
 func main() {
-	opts := engo.RunOptions{
-		AssetsRoot:     "assets",
-		FPSLimit:       60,
-		Fullscreen:     false,
-		Height:         800,
-		MSAA:           1,
-		NotResizable:   false,
-		ScaleOnResize:  true,
-		Title:          "Arp 147",
-		VSync:          false,
-		Width:          1200,
-		StandardInputs: true,
-	}
-	engo.Run(opts, &defaultScene{})
+	engo.Run(
+		engo.RunOptions{
+			AssetsRoot:     "assets",
+			FPSLimit:       60,
+			Fullscreen:     false,
+			Height:         800,
+			MSAA:           1,
+			NotResizable:   false,
+			ScaleOnResize:  true,
+			Title:          "Arp 147",
+			VSync:          false,
+			Width:          1200,
+			StandardInputs: true,
+		},
+		&defaultScene{},
+	)
 }

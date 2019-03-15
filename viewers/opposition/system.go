@@ -6,11 +6,14 @@ import (
 
 	"engo.io/ecs"
 	"engo.io/engo"
+	"github.com/lukevers/arp147/navigator"
 	"github.com/lukevers/arp147/ui"
 	"github.com/lukevers/arp147/viewers"
 )
 
 type OppositionSystem struct {
+	Map *navigator.Map
+
 	viewer *viewers.View
 	world  *ecs.World
 }
