@@ -1,6 +1,7 @@
 package opposition
 
 import (
+	"fmt"
 	"log"
 
 	"engo.io/ecs"
@@ -75,10 +76,29 @@ func (os *OppositionSystem) addGrid(pane *viewers.Pane) {
 		y.Insert(pane.World)
 		pane.RegisterEntity(&y.BasicEntity, &y.RenderComponent)
 
+		etext := "NIL"
 		if cell.Planet != nil {
-			cell.Planet.Icon.SetPosition(engo.Point{X: 875 + xoffset, Y: 65 + yoffset})
+			if yoffset == 0 {
+				yoffset = 10
+			}
+
+			cell.Planet.Icon.SetPosition(engo.Point{X: 875 + xoffset, Y: 70 + yoffset})
 			cell.Planet.Icon.AddToWorld(pane.World)
 			pane.RegisterEntity(&cell.Planet.Icon.BasicEntity, &cell.Planet.Icon.RenderComponent)
+			etext = "PLANET"
 		}
+
+		var e float32 = 35
+		if i >= 3 && i <= 5 {
+			e = 143
+		} else if i >= 6 && i <= 9 {
+			e = 264
+		}
+
+		entity := ui.NewText(fmt.Sprintf("E: %s", etext))
+		entity.Font.Size = 12
+		entity.SetX(820 + xoffset).SetY(e)
+		entity.Insert(pane.World)
+		pane.RegisterEntity(&entity.BasicEntity, &entity.RenderComponent)
 	}
 }

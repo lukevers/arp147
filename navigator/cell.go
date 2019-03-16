@@ -3,6 +3,7 @@ package navigator
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/lukevers/arp147/planet"
 )
@@ -44,8 +45,10 @@ func (c *Cell) HudY() string {
 }
 
 func (c *Cell) initialize() {
-	// ....
-	if true {
+	seed := time.Now().UTC().UnixNano()
+	rand.Seed(seed)
+
+	if randInt(0, 12)%12 == 0 {
 		c.Planet = planet.New(planet.SizeViewer, planet.TypePlanet, true)
 	}
 }
