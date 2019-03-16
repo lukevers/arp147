@@ -49,11 +49,15 @@ func (c *Cell) initialize() {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
-	if randInt(0, 12)%12 == 0 {
+	if chance(12) {
 		c.Planet = planet.New(planet.SizeViewer, planet.TypePlanet, true)
 	}
 }
 
 func randInt(min, max int64) int64 {
 	return min + rand.Int63n(max-min)
+}
+
+func chance(r int64) bool {
+	return randInt(0, r)%12 == 0
 }
