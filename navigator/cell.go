@@ -12,7 +12,8 @@ type Cell struct {
 	X int64
 	Y int64
 
-	Planet *planet.Planet
+	Planet     *planet.Planet
+	Discovered bool
 }
 
 func NewCell(cell *Cell) *Cell {

@@ -5,9 +5,12 @@ type Map struct {
 }
 
 func NewMap() *Map {
-	return &Map{
+	m := &Map{
 		Center: NewCell(nil),
 	}
+
+	m.Center.Discovered = true
+	return m
 }
 
 func (m *Map) GetVisibleCells() []*Cell {
