@@ -10,6 +10,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/gopherjs/gopherjs v0.0.0-20190309154008-847fc94819f9 // indirect
 	github.com/hajimehoshi/oto v0.3.1 // indirect
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/rucuriousyet/gmoonscript v0.0.0-20180228162650-5dabbc2588b0
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20190206043414-8bfc7677f583

@@ -74,5 +74,11 @@ func (os *OppositionSystem) addGrid(pane *viewers.Pane) {
 		y.SetX(820 + xoffset).SetY(119 + yoffset)
 		y.Insert(pane.World)
 		pane.RegisterEntity(&y.BasicEntity, &y.RenderComponent)
+
+		if cell.Planet != nil {
+			cell.Planet.Icon.SetPosition(engo.Point{X: 875 + xoffset, Y: 65 + yoffset})
+			cell.Planet.Icon.AddToWorld(pane.World)
+			pane.RegisterEntity(&cell.Planet.Icon.BasicEntity, &cell.Planet.Icon.RenderComponent)
+		}
 	}
 }

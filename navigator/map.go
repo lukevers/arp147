@@ -1,49 +1,49 @@
 package navigator
 
 type Map struct {
-	Center Cell
+	Center *Cell
 }
 
 func NewMap() *Map {
 	return &Map{
-		Center: NewCell(),
+		Center: NewCell(nil),
 	}
 }
 
-func (m *Map) GetVisibleCells() []Cell {
-	return []Cell{
-		Cell{
+func (m *Map) GetVisibleCells() []*Cell {
+	return []*Cell{
+		NewCell(&Cell{
 			X: m.Center.X - 1,
 			Y: m.Center.Y - 1,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X,
 			Y: m.Center.Y - 1,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X + 1,
 			Y: m.Center.Y - 1,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X - 1,
 			Y: m.Center.Y,
-		},
+		}),
 		m.Center,
-		Cell{
+		NewCell(&Cell{
 			X: m.Center.X + 1,
 			Y: m.Center.Y,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X - 1,
 			Y: m.Center.Y + 1,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X,
 			Y: m.Center.Y + 1,
-		},
-		Cell{
+		}),
+		NewCell(&Cell{
 			X: m.Center.X + 1,
 			Y: m.Center.Y + 1,
-		},
+		}),
 	}
 }

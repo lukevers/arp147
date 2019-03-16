@@ -26,8 +26,11 @@ const (
 )
 
 type Planet struct {
-	seed int64
+	Seed int64
 	size float64
+	t    Type
+
+	Icon *Icon
 
 	full  image.Image
 	main  image.Image
@@ -45,12 +48,14 @@ func New(size float64, t Type, initalize bool) *Planet {
 	rand.Seed(seed)
 
 	p := &Planet{
-		seed: seed,
-		size: size,
+		Seed:        seed,
+		size:        size,
+		t:           t,
+		BasicEntity: ecs.NewBasic(),
 	}
 
 	if initalize {
-		p.Generate(t)
+		p.Generate()
 		p.SetSpritesheet()
 	}
 
@@ -61,10 +66,10 @@ func randInt(min, max int) uint8 {
 	return uint8(min + rand.Intn(max-min))
 }
 
-func (p *Planet) Generate(t Type) {
-	p.main = p.generate(p.size, t)
+func (p *Planet) Generate() {
+	p.main = p.generate(p.size, p.t)
 
-	if t == TypePlanet {
+	if p.t == TypePlanet {
 		for i := 0; i < int(randInt(0, 4)); i++ {
 			moon := p.generate(float64(randInt(int(p.size/16), int(p.size/4))), TypeMoon)
 			p.moons = append(p.moons, moon)
@@ -72,6 +77,11 @@ func (p *Planet) Generate(t Type) {
 	}
 
 	p.full = p.patchMoons()
+	p.generateIcon()
+}
+
+func (p *Planet) generateIcon() {
+	p.Icon = newIcon(p.full, p.size/2)
 }
 
 func (p *Planet) generate(size float64, t Type) image.Image {
@@ -180,7 +190,6 @@ func (p *Planet) AddToWorld(world *ecs.World) {
 			sys.Add(&p.BasicEntity, &p.RenderComponent, &p.SpaceComponent)
 		}
 	}
-
 }
 
 func (p *Planet) SetPosition(pos engo.Point) {
@@ -211,6 +220,6 @@ func (p *Planet) SetSpritesheet() {
 
 	p.RenderComponent = common.RenderComponent{
 		Drawable: p.spriteSheet.Cell(0),
-		Scale:    engo.Point{1, 1},
+		Scale:    engo.Point{X: 1, Y: 1},
 	}
 }
