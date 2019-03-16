@@ -14,18 +14,18 @@ func (us *UserSystem) addShip(pane *viewers.Pane) {
 	us.ship.AddToWorld(pane.World)
 	pane.RegisterEntity(&us.ship.BasicEntity, &us.ship.RenderComponent)
 
-	hudX := ui.NewText(us.Map.HudX())
+	hudX := ui.NewText(us.Map.Center.HudX())
 	pane.RegisterEntity(&hudX.BasicEntity, &hudX.RenderComponent)
 	hudX.SetX(820).SetY(435)
 	hudX.Updatable = func(t *ui.Text) {
-		t.Text = us.Map.HudX()
+		t.Text = us.Map.Center.HudX()
 	}
 
-	hudY := ui.NewText(us.Map.HudY())
+	hudY := ui.NewText(us.Map.Center.HudY())
 	pane.RegisterEntity(&hudY.BasicEntity, &hudY.RenderComponent)
 	hudY.SetX(820).SetY(451)
 	hudY.Updatable = func(t *ui.Text) {
-		t.Text = us.Map.HudY()
+		t.Text = us.Map.Center.HudY()
 	}
 
 	hudShieldLevel := ui.NewText(us.ship.HudShieldLevel())

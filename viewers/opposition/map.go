@@ -6,6 +6,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/lukevers/arp147/ui"
 	"github.com/lukevers/arp147/viewers"
 )
 
@@ -49,4 +50,29 @@ func (os *OppositionSystem) addGrid(pane *viewers.Pane) {
 	}
 
 	pane.RegisterEntity(&g.BasicEntity, &g.RenderComponent)
+
+	for i, cell := range os.Map.GetVisibleCells() {
+		var xoffset, yoffset float32
+		if i%3 != 0 {
+			xoffset = float32((i % 3) * 125)
+		}
+
+		if i >= 3 && i <= 5 {
+			yoffset = 125
+		} else if i >= 6 && i <= 9 {
+			yoffset = 250
+		}
+
+		x := ui.NewText(cell.HudX())
+		x.Font.Size = 12
+		x.SetX(820 + xoffset).SetY(107 + yoffset)
+		x.Insert(pane.World)
+		pane.RegisterEntity(&x.BasicEntity, &x.RenderComponent)
+
+		y := ui.NewText(cell.HudY())
+		y.Font.Size = 12
+		y.SetX(820 + xoffset).SetY(119 + yoffset)
+		y.Insert(pane.World)
+		pane.RegisterEntity(&y.BasicEntity, &y.RenderComponent)
+	}
 }
