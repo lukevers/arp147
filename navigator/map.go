@@ -1,6 +1,8 @@
 package navigator
 
 import (
+	"errors"
+
 	"engo.io/engo"
 )
 
@@ -19,10 +21,27 @@ func NewMap() *Map {
 	return m
 }
 
-func (m *Map) GoTo(x, y int64) {
+func (m *Map) GoTo(x, y int64, force bool) error {
+	if !force {
+		if !m.InRange(x, y) {
+			return errors.New("Could not jump: coordinates out of range.")
+		}
+	}
+
 	m.Center = m.GetCell(x, y)
 	m.Center.Discovered = true
 	engo.Mailbox.Dispatch(MoveMessage{})
+	return nil
+}
+
+func (m *Map) InRange(x, y int64) bool {
+	for _, cell := range m.GetVisibleCells() {
+		if cell.X == x && cell.Y == y {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m *Map) GetCell(x, y int64) *Cell {

@@ -276,7 +276,10 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 					return 0
 				}
 
-				ts.Map.GoTo(x, y)
+				if err := ts.Map.GoTo(x, y, false); err != nil {
+					ts.WriteError(err)
+				}
+
 				return 0
 			},
 		})
