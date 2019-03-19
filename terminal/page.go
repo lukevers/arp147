@@ -1,6 +1,9 @@
 package terminal
 
 type page struct {
+	commands []string
+	cmdindex int
+
 	lines map[int]*line
 	line  int
 	enil  int

@@ -208,15 +208,47 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0 : length-1]
 		}
 	case engo.KeyArrowUp:
-		// yoffset := float32(ts.pages[ts.page].line * int(16))
-		// if yoffset > 704 && ts.pages[ts.page].enil > 0 {
-		// 	ts.pages[ts.page].pushScreenDown()
-		// }
+		if len(ts.pages[ts.page].commands) <= ts.pages[ts.page].cmdindex {
+			break
+		}
+
+		ts.pages[ts.page].cmdindex++
+		cmd := ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
+
+		if (length - prefixCount) > 0 {
+			for i := length - 1; i >= prefixCount; i-- {
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+			}
+		}
+
+		for _, char := range cmd {
+			ts.delegateKeyPress(input.StringToKey(string(char)))
+		}
 	case engo.KeyArrowDown:
-		// yoffset := float32(ts.pages[ts.page].line * 16)
-		// if yoffset > 704 {
-		// 	ts.pages[ts.page].pushScreenUp()
-		// }
+		if ts.pages[ts.page].cmdindex < 1 {
+			break
+		}
+
+		ts.pages[ts.page].cmdindex--
+
+		var cmd string
+		if ts.pages[ts.page].cmdindex > 1 {
+			cmd = ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
+		}
+
+		if (length - prefixCount) > 0 {
+			for i := length - 1; i >= prefixCount; i-- {
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+			}
+		}
+
+		for _, char := range cmd {
+			ts.delegateKeyPress(input.StringToKey(string(char)))
+		}
 	case engo.KeyEscape:
 		if ts.pages[ts.page].escapable {
 			ts.pages[ts.page].hide()
@@ -228,6 +260,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 		}
 	case engo.KeyEnter:
+		ts.pages[ts.page].cmdindex = 0
 		if ts.pages[ts.page].readonly && !mods.Output {
 			break
 		}
@@ -247,6 +280,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		}
 
 		if !mods.Ignore {
+			ts.pages[ts.page].commands = append(ts.pages[ts.page].commands, ts.pages[ts.page].lines[ts.pages[ts.page].line-1].String())
 			ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts)
 		}
 
