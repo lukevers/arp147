@@ -17,14 +17,6 @@ type Cell struct {
 }
 
 func NewCell(cell *Cell) *Cell {
-	if cell == nil {
-		cell = &Cell{
-			X: randInt(1234567, 7654321),
-			Y: randInt(1234567, 7654321),
-		}
-
-	}
-
 	cell.initialize()
 	return cell
 }

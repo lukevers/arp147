@@ -13,9 +13,13 @@ type Map struct {
 
 func NewMap() *Map {
 	m := &Map{
-		Center: NewCell(nil),
-		Cells:  make(map[int64]map[int64]*Cell),
+		Cells: make(map[int64]map[int64]*Cell),
 	}
+
+	m.Center = m.GetCell(
+		randInt(1234567, 7654321),
+		randInt(1234567, 7654321),
+	)
 
 	m.Center.Discovered = true
 	return m
