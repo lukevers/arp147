@@ -59,14 +59,14 @@ func (os *OppositionSystem) addButtons() {
 
 func (os *OppositionSystem) createPanes() {
 	panelocal := viewers.NewPane(os.world)
-	panelocal.AddBackground(engo.Point{X: 800, Y: 0})
-	os.addOpposition(panelocal)
 	os.viewer.AddPane("LOCAL", panelocal)
+	panelocal.AddBackground(engo.Point{X: 800, Y: 0})
 	os.viewer.SetActivePane(panelocal)
+	os.addOpposition(panelocal)
 
 	panemap := viewers.NewPane(os.world)
-	panemap.AddBackground(engo.Point{X: 800, Y: 0})
 	os.viewer.AddPane("MAP", panemap)
+	panemap.AddBackground(engo.Point{X: 800, Y: 0})
 	os.addMap(panemap)
 	panemap.Hide()
 }

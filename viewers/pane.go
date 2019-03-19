@@ -33,6 +33,10 @@ func (p *Pane) RegisterEntity(e *ecs.BasicEntity, r *common.RenderComponent) {
 	p.entities[e] = r
 }
 
+func (p *Pane) RemoveEntity(e *ecs.BasicEntity) {
+	delete(p.entities, e)
+}
+
 func (p *Pane) Hide() {
 	p.RenderComponent.Hidden = true
 	for _, entity := range p.entities {

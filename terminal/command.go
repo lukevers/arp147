@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -250,6 +251,32 @@ func newState(args []string, ts *TerminalSystem) *lua.LState {
 			},
 			"min": func(L *lua.LState) int {
 				ts.ship.Shield.Min(ts.ship)
+				return 0
+			},
+		})
+
+		state.Push(mod)
+		return 1
+	})
+
+	state.PreloadModule("ship", func(state *lua.LState) int {
+		mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
+			"go": func(L *lua.LState) int {
+				x, err := strconv.ParseInt(L.ToString(1), 0, 64)
+				if err != nil {
+					ts.WriteLine("Could not parse coordinate x:")
+					ts.WriteError(err)
+					return 0
+				}
+
+				y, err := strconv.ParseInt(L.ToString(2), 0, 64)
+				if err != nil {
+					ts.WriteLine("Could not parse coordinate y:")
+					ts.WriteError(err)
+					return 0
+				}
+
+				ts.Map.GoTo(x, y)
 				return 0
 			},
 		})
