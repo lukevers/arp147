@@ -1,5 +1,9 @@
 package terminal
 
+import (
+	"github.com/lukevers/arp147/ui"
+)
+
 type page struct {
 	commands []string
 	cmdindex int
@@ -7,6 +11,9 @@ type page struct {
 	lines map[int]*line
 	line  int
 	enil  int
+
+	cursor *ui.Text
+	cpoint int
 
 	escapable bool
 	readonly  bool

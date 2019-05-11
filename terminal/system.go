@@ -173,6 +173,8 @@ func (ts *TerminalSystem) registerKeys() {
 
 				engo.KeyArrowUp,
 				engo.KeyArrowDown,
+				engo.KeyArrowLeft,
+				engo.KeyArrowRight,
 			},
 			OnPress: ts.delegateKeyPress,
 		},
@@ -184,6 +186,13 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		ts.pages[ts.page] = &page{
 			lines: make(map[int]*line),
 			line:  0,
+		}
+	}
+
+	if ts.pages[ts.page].readonly {
+		if ts.pages[ts.page].cursor != nil {
+			ts.pages[ts.page].cursor.Remove(ts.world)
+			ts.pages[ts.page].cursor = nil
 		}
 	}
 
@@ -202,10 +211,43 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			break
 		}
 
-		if (length - prefixCount) > 0 {
-			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0 : length-1]
-			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[length-1].Remove(ts.world)
-			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0 : length-1]
+		if (length-prefixCount) > 0 && (length-prefixCount) > ts.pages[ts.page].cpoint {
+			remove := (length - ts.pages[ts.page].cpoint - 1)
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[remove].Remove(ts.world)
+
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text[:remove],
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text[remove+1:]...,
+			)
+
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = append(
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[:remove],
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[remove+1:]...,
+			)
+
+			// Redraw entire line
+			if remove != length-1 {
+				for _, char := range ts.pages[ts.page].lines[ts.pages[ts.page].line].chars {
+					char.Remove(ts.world)
+				}
+
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = nil
+				line := ts.pages[ts.page].lines[ts.pages[ts.page].line].text
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = []string{}
+
+				for _, char := range line {
+					ts.delegateKeyPress(input.StringToKey(char))
+				}
+			}
+		}
+	case engo.KeyArrowLeft:
+		min := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].chars) - ts.pages[ts.page].lines[ts.pages[ts.page].line].prefixCount
+		if min > ts.pages[ts.page].cpoint {
+			ts.pages[ts.page].cpoint++
+		}
+	case engo.KeyArrowRight:
+		if ts.pages[ts.page].cpoint > 0 {
+			ts.pages[ts.page].cpoint--
 		}
 	case engo.KeyArrowUp:
 		if len(ts.pages[ts.page].commands) <= ts.pages[ts.page].cmdindex {
@@ -261,6 +303,8 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 		}
 	case engo.KeyEnter:
 		ts.pages[ts.page].cmdindex = 0
+		ts.pages[ts.page].cpoint = 0
+
 		if ts.pages[ts.page].readonly && !mods.Output {
 			break
 		}
@@ -330,6 +374,28 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].pushScreenUp()
 		}
 	}
+
+	if !ts.pages[ts.page].readonly {
+		if ts.pages[ts.page].cursor == nil {
+			ts.pages[ts.page].cursor = ui.NewText("_")
+			ts.pages[ts.page].cursor.Insert(ts.world)
+		}
+
+		var xoffset, yoffset float32
+		xoffset = ts.getXoffset()
+		yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
+
+		if xoffset >= 710 {
+			lines := int(math.Floor(float64(xoffset) / 710))
+
+			xoffset = xoffset - float32(707*lines)
+			yoffset += float32(16) * float32(lines)
+		}
+
+		ts.pages[ts.page].cursor.SetX(xoffset + (35 + (16 * .65) - (float32(ts.pages[ts.page].cpoint*16))*.65))
+		ts.pages[ts.page].cursor.SetY(yoffset + 38)
+	}
+
 }
 
 func (ts *TerminalSystem) getXoffset() float32 {
