@@ -25,6 +25,7 @@ type Modifiers struct {
 
 	Ignore bool
 	Output bool
+	Redraw bool
 	Line   *string
 }
 

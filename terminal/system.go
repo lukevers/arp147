@@ -236,7 +236,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = []string{}
 
 				for _, char := range line {
-					ts.delegateKeyPress(input.StringToKey(char))
+					ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Redraw: true}))
 				}
 			}
 		}
@@ -345,33 +345,59 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			symbol = *mods.Line
 		}
 
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
-		char := ui.NewText(symbol)
-
-		push := false
-		var xoffset, yoffset float32
-		xoffset = ts.getXoffset()
-		yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
-
-		if xoffset >= 710 {
-			lines := int(math.Floor(float64(xoffset) / 710))
-
-			xoffset = xoffset - float32(707*lines)
-			yoffset += float32(16) * float32(lines)
-
-			if yoffset > 704 {
-				push = true
-			}
+		redraw := false
+		if ts.pages[ts.page].cpoint > 0 && !mods.Redraw {
+			redraw = true
+			pos := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text) - ts.pages[ts.page].cpoint
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].text[:pos],
+				append([]string{symbol}, ts.pages[ts.page].lines[ts.pages[ts.page].line].text[pos:]...)...,
+			)
+		} else {
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].text, symbol)
 		}
 
-		char.X = 35 + xoffset
-		char.Y = 35 + yoffset
+		if !redraw {
+			char := ui.NewText(symbol)
 
-		char.Insert(ts.world)
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].chars, char)
+			push := false
+			var xoffset, yoffset float32
+			xoffset = ts.getXoffset()
+			yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
 
-		if push {
-			ts.pages[ts.page].pushScreenUp()
+			if xoffset >= 710 {
+				lines := int(math.Floor(float64(xoffset) / 710))
+
+				xoffset = xoffset - float32(707*lines)
+				yoffset += float32(16) * float32(lines)
+
+				if yoffset > 704 {
+					push = true
+				}
+			}
+
+			char.X = 35 + xoffset
+			char.Y = 35 + yoffset
+
+			char.Insert(ts.world)
+
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = append(ts.pages[ts.page].lines[ts.pages[ts.page].line].chars, char)
+
+			if push {
+				ts.pages[ts.page].pushScreenUp()
+			}
+		} else {
+			for _, char := range ts.pages[ts.page].lines[ts.pages[ts.page].line].chars {
+				char.Remove(ts.world)
+			}
+
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = nil
+			line := ts.pages[ts.page].lines[ts.pages[ts.page].line].text
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].text = []string{}
+
+			for _, char := range line {
+				ts.delegateKeyPress(input.StringToKey(char, &input.Modifiers{Redraw: true}))
+			}
 		}
 	}
 
