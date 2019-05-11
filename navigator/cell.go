@@ -41,7 +41,7 @@ func (c *Cell) initialize() {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
-	if chance(12) {
+	if chance(6) {
 		c.Planet = planet.New(planet.SizeViewer, planet.TypePlanet, true)
 	}
 }
