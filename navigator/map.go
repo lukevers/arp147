@@ -2,6 +2,8 @@ package navigator
 
 import (
 	"errors"
+	"math/rand"
+	"time"
 
 	"engo.io/engo"
 )
@@ -12,13 +14,16 @@ type Map struct {
 }
 
 func NewMap() *Map {
+	seed := time.Now().UTC().UnixNano()
+	rand.Seed(seed)
+
 	m := &Map{
 		Cells: make(map[int64]map[int64]*Cell),
 	}
 
 	m.Center = m.GetCell(
-		randInt(1234567, 7654321),
-		randInt(1234567, 7654321),
+		randInt(123, 765),
+		randInt(123, 765),
 	)
 
 	m.Center.Discovered = true
