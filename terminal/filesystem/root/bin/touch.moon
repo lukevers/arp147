@@ -5,4 +5,6 @@ if #arg < 1
     return
 
 for argument in *arg
-    fs.touch argument
+    err = fs.touch argument
+    if err
+        print err

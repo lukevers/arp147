@@ -71,6 +71,45 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 
 			return 0
 		},
+		"mv": func(L *lua.LState) int {
+			from := L.ToString(1)
+			to := L.ToString(2)
+
+			fullfrom := from
+			if !strings.HasPrefix(from, "/") {
+				fullfrom = fmt.Sprintf("%s/%s", fs.cwd, from)
+			}
+
+			fullto := to
+			if !strings.HasPrefix(to, "/") {
+				fullto = fmt.Sprintf("%s/%s", fs.cwd, fullto)
+			}
+
+			err := fs.FS.Rename(fullfrom, fullto)
+			if err != nil {
+				L.Push(lua.LString(fmt.Sprintf("%s: could not mv file to %s", from, to)))
+				return 1
+			}
+
+			return 0
+		},
+		"rm": func(L *lua.LState) int {
+			file := L.ToString(1)
+			fullfile := file
+
+			if !strings.HasPrefix(file, "/") {
+				fullfile = fmt.Sprintf("%s/%s", fs.cwd, file)
+			}
+
+			err := fs.FS.Remove(fullfile)
+			if err != nil {
+				L.Push(lua.LString(fmt.Sprintf("%s: could not rm file", file)))
+				return 1
+			}
+
+			return 0
+		},
+
 		"listdir": func(L *lua.LState) int {
 			dir := L.ToString(1)
 			fulldir := dir
