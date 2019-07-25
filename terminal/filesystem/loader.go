@@ -57,8 +57,17 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 			return 0
 		},
 		"touch": func(L *lua.LState) int {
-			// dir := L.ToString(1)
-			// fs.FS.Mkdir(dir, 0777)
+			file := L.ToString(1)
+			fullfile := file
+			if !strings.HasPrefix(file, "/") {
+				fullfile = fmt.Sprintf("%s/%s", fs.cwd, file)
+			}
+
+			_, err := fs.FS.OpenFile(fullfile, os.O_CREATE, 0777)
+			if err != nil {
+				L.Push(lua.LString(fmt.Sprintf("%s: could not touch file", file)))
+				return 1
+			}
 
 			return 0
 		},
