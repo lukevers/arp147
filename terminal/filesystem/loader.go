@@ -25,6 +25,10 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 					break
 				}
 
+				if !strings.HasPrefix(dir, "/") {
+					dir = fmt.Sprintf("%s/%s", fs.cwd, dir)
+				}
+
 				fs.FS.Mkdir(dir, 0777)
 			}
 
