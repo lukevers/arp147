@@ -1,6 +1,10 @@
 screen = require "screen"
 fs = require "fs"
 
+if #arg ~= 1
+    print "Usage: man [command]"
+    return
+
 screen.push!
 screen.readonly!
 
