@@ -8,6 +8,7 @@ var (
 	hasRegisteredModifiers bool
 )
 
+// Defines modifiers that can be used.
 const (
 	ModifierAlt     = "alt"
 	ModifierControl = "control"
@@ -67,6 +68,7 @@ func registerModifiers() {
 	)
 }
 
+// StringToKey takes a string and converts it to an engo.Key.
 func StringToKey(str string, setmods ...*Modifiers) (engo.Key, *Modifiers) {
 	// Defaults
 	key := engo.KeySpace
@@ -85,6 +87,7 @@ func StringToKey(str string, setmods ...*Modifiers) (engo.Key, *Modifiers) {
 	return key, mods
 }
 
+// KeyToString converts an engo.Key to a string.
 func KeyToString(key engo.Key, mods *Modifiers) (symbol string) {
 	// // If the key is [a-z] apply shift rules.
 	if key >= engo.KeyA && key <= engo.KeyZ {

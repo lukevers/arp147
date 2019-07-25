@@ -43,6 +43,7 @@ func NewText(text string) *Text {
 	return t
 }
 
+// SetY changes the Y position of the text.
 func (t *Text) SetY(y float32) *Text {
 	t.Y = y
 	t.SpaceComponent.Position.Y = y
@@ -50,6 +51,7 @@ func (t *Text) SetY(y float32) *Text {
 	return t
 }
 
+// SetX changes the X position of the text.
 func (t *Text) SetX(x float32) *Text {
 	t.X = x
 	t.SpaceComponent.Position.X = x
@@ -57,6 +59,7 @@ func (t *Text) SetX(x float32) *Text {
 	return t
 }
 
+// Render takes the text and displays it to the world it exists in.
 func (t *Text) Render() *Text {
 	t.RenderComponent.Drawable = common.Text{
 		Font: t.Font,
@@ -108,6 +111,7 @@ func (t *Text) Remove(world *ecs.World) {
 	world.RemoveEntity(t.BasicEntity)
 }
 
+// TextUpdateSystem allows text to be dynamically updated.
 type TextUpdateSystem struct {
 	entities []textEntity
 }

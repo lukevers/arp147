@@ -30,7 +30,7 @@ func (l *line) prefix(delegateKeyPress func(key engo.Key, mods *input.Modifiers)
 	l.prefixCount = 9
 }
 
-func (l *line) evaluate(ts *TerminalSystem) {
+func (l *line) evaluate(ts *System) {
 	str := l.String()
 	ts.command(str)
 }

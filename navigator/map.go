@@ -8,11 +8,13 @@ import (
 	"engo.io/engo"
 )
 
+// Map defines a world map.
 type Map struct {
 	Center *Cell
 	Cells  map[int64]map[int64]*Cell
 }
 
+// NewMap generates a new world map.
 func NewMap() *Map {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
@@ -30,10 +32,11 @@ func NewMap() *Map {
 	return m
 }
 
+// GoTo allows a player to jump if they can, or if force is true.
 func (m *Map) GoTo(x, y int64, force bool) error {
 	if !force {
 		if !m.InRange(x, y) {
-			return errors.New("Could not jump: coordinates out of range.")
+			return errors.New("could not jump: coordinates out of range")
 		}
 	}
 
@@ -43,6 +46,7 @@ func (m *Map) GoTo(x, y int64, force bool) error {
 	return nil
 }
 
+// InRange checks if coordinates are in range to jump or not.
 func (m *Map) InRange(x, y int64) bool {
 	for _, cell := range m.GetVisibleCells() {
 		if cell.X == x && cell.Y == y {
@@ -53,6 +57,8 @@ func (m *Map) InRange(x, y int64) bool {
 	return false
 }
 
+// GetCell looks for a Cell, and if it does not yet exist in the world map,
+// it generates it.
 func (m *Map) GetCell(x, y int64) *Cell {
 	if _, exists := m.Cells[x]; !exists {
 		m.Cells[x] = make(map[int64]*Cell)
@@ -66,6 +72,7 @@ func (m *Map) GetCell(x, y int64) *Cell {
 	return m.Cells[x][y]
 }
 
+// GetVisibleCells returns a slice of jumpable locations in range.
 func (m *Map) GetVisibleCells() []*Cell {
 	return []*Cell{
 		m.GetCell(m.Center.X-1, m.Center.Y-1),

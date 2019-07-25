@@ -11,6 +11,7 @@ import (
 	"github.com/blang/vfs/memfs"
 )
 
+// VirtualFS is a fake filesystem.
 type VirtualFS struct {
 	cwd string
 	FS  *memfs.MemFS
@@ -18,6 +19,7 @@ type VirtualFS struct {
 	WriteError func(err error)
 }
 
+// New creates a new VirtualFS and initializes it with data.
 func New(WriteError func(err error)) *VirtualFS {
 	fs := &VirtualFS{
 		cwd: "/home",
@@ -81,6 +83,7 @@ func (fs *VirtualFS) initialize() *VirtualFS {
 	return fs
 }
 
+// DirSize takes a path in the VirtualFS and computes the size of the folder.
 func (fs *VirtualFS) DirSize(root string) (size int64) {
 	info, err := fs.FS.ReadDir(root)
 	if err != nil {

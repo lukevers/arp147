@@ -7,8 +7,8 @@ import (
 	"engo.io/engo"
 )
 
-// InputSystem listens for key events.
-type InputSystem struct {
+// System listens for key events.
+type System struct {
 	entities []inputEntity
 }
 
@@ -17,12 +17,12 @@ type inputEntity struct {
 }
 
 // Add takes an entity and adds it to the system
-func (i *InputSystem) Add(basic *ecs.BasicEntity) {
+func (i *System) Add(basic *ecs.BasicEntity) {
 	i.entities = append(i.entities, inputEntity{basic})
 }
 
 // Remove takes an entity and removes it from the system
-func (i *InputSystem) Remove(basic ecs.BasicEntity) {
+func (i *System) Remove(basic ecs.BasicEntity) {
 	delete := -1
 
 	for index, e := range i.entities {
@@ -38,7 +38,7 @@ func (i *InputSystem) Remove(basic ecs.BasicEntity) {
 }
 
 // Update is called on each frame when the system is in use.
-func (i *InputSystem) Update(dt float32) {
+func (i *System) Update(dt float32) {
 	for _, key := range *sceneRegistry {
 		for index, k := range key.Keys {
 			if btn := engo.Input.Button(key.Name + strconv.Itoa(index)); btn.JustPressed() && key.OnPress != nil {
@@ -50,7 +50,7 @@ func (i *InputSystem) Update(dt float32) {
 	}
 }
 
-func (i *InputSystem) modifiers() *Modifiers {
+func (i *System) modifiers() *Modifiers {
 	return &Modifiers{
 		Alt:     engo.Input.Button(ModifierAlt).Down(),
 		Control: engo.Input.Button(ModifierControl).Down(),

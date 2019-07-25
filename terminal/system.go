@@ -15,8 +15,13 @@ import (
 	"github.com/lukevers/arp147/ui"
 )
 
-// TerminalSystem is a scrollable, visual and text input-able system.
-type TerminalSystem struct {
+const (
+	// FontSize is the size of the font used in the terminal
+	FontSize float32 = 16
+)
+
+// System is a scrollable, visual and text input-able system.
+type System struct {
 	Map *navigator.Map
 
 	pages map[int]*page
@@ -28,7 +33,8 @@ type TerminalSystem struct {
 	ship *ship.Ship
 }
 
-type TerminalViewer struct {
+// Viewer is the background entity for the terminal.
+type Viewer struct {
 	ecs.BasicEntity
 	common.RenderComponent
 	common.SpaceComponent
@@ -36,18 +42,18 @@ type TerminalViewer struct {
 
 // Remove is called whenever an Entity is removed from the World, in order to
 // remove it from this sytem as well.
-func (*TerminalSystem) Remove(ecs.BasicEntity) {
+func (*System) Remove(ecs.BasicEntity) {
 	// TODO
 }
 
 // Update is ran every frame, with `dt` being the time in seconds since the
 // last frame.
-func (*TerminalSystem) Update(dt float32) {
+func (*System) Update(dt float32) {
 	// TODO
 }
 
 // New is the initialisation of the System.
-func (ts *TerminalSystem) New(w *ecs.World) {
+func (ts *System) New(w *ecs.World) {
 	ts.vfs = filesystem.New(ts.WriteError)
 	ts.world = w
 	ts.pages = make(map[int]*page)
@@ -78,11 +84,11 @@ func (ts *TerminalSystem) New(w *ecs.World) {
 		ts.ship = msg.Ship
 	})
 
-	log.Println("TerminalSystem initialized")
+	log.Println("System initialized")
 }
 
-func (ts *TerminalSystem) addBackground(w *ecs.World) {
-	bkg := &TerminalViewer{BasicEntity: ecs.NewBasic()}
+func (ts *System) addBackground(w *ecs.World) {
+	bkg := &Viewer{BasicEntity: ecs.NewBasic()}
 
 	bkg.SpaceComponent = common.SpaceComponent{
 		Position: engo.Point{X: 0, Y: 0},
@@ -110,7 +116,7 @@ func (ts *TerminalSystem) addBackground(w *ecs.World) {
 	}
 }
 
-func (ts *TerminalSystem) registerKeys() {
+func (ts *System) registerKeys() {
 	input.RegisterKeys([]input.Key{
 		input.Key{
 			Name: "terminal-keys",
@@ -181,7 +187,7 @@ func (ts *TerminalSystem) registerKeys() {
 	})
 }
 
-func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
+func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 	if ts.pages[ts.page] == nil {
 		ts.pages[ts.page] = &page{
 			lines: make(map[int]*line),
@@ -318,7 +324,7 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			ts.pages[ts.page].line++
 		}
 
-		yoffset := float32(ts.pages[ts.page].line * 16)
+		yoffset := float32(ts.pages[ts.page].line) * FontSize
 		if yoffset > 704 {
 			ts.pages[ts.page].pushScreenUp()
 		}
@@ -363,13 +369,13 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 			push := false
 			var xoffset, yoffset float32
 			xoffset = ts.getXoffset()
-			yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
+			yoffset = float32(ts.pages[ts.page].lineOffset()) * FontSize
 
 			if xoffset >= 710 {
 				lines := int(math.Floor(float64(xoffset) / 710))
 
 				xoffset = xoffset - float32(707*lines)
-				yoffset += float32(16) * float32(lines)
+				yoffset += FontSize * float32(lines)
 
 				if yoffset > 704 {
 					push = true
@@ -409,30 +415,31 @@ func (ts *TerminalSystem) delegateKeyPress(key engo.Key, mods *input.Modifiers) 
 
 		var xoffset, yoffset float32
 		xoffset = ts.getXoffset()
-		yoffset = float32(ts.pages[ts.page].lineOffset() * 16)
+		yoffset = float32(ts.pages[ts.page].lineOffset()) * FontSize
 
 		if xoffset >= 710 {
 			lines := int(math.Floor(float64(xoffset) / 710))
 
 			xoffset = xoffset - float32(707*lines)
-			yoffset += float32(16) * float32(lines)
+			yoffset += float32(FontSize) * float32(lines)
 		}
 
-		ts.pages[ts.page].cursor.SetX(xoffset + (35 + (16 * .65) - (float32(ts.pages[ts.page].cpoint*16))*.65))
+		ts.pages[ts.page].cursor.SetX(xoffset + (35 + (FontSize * .65) - (float32(ts.pages[ts.page].cpoint)*FontSize)*.65))
 		ts.pages[ts.page].cursor.SetY(yoffset + 38)
 	}
 
 }
 
-func (ts *TerminalSystem) getXoffset() float32 {
+func (ts *System) getXoffset() float32 {
 	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
 		return 0
 	}
 
-	return float32(len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)*int(16)) * .65
+	return float32(len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)*int(FontSize)) * .65
 }
 
-func (ts *TerminalSystem) WriteLine(str string) {
+// WriteLine takes a string, builds characters, and writes it to the terminal.
+func (ts *System) WriteLine(str string) {
 	ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
 
 	line := ""
@@ -448,7 +455,9 @@ func (ts *TerminalSystem) WriteLine(str string) {
 	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true, Output: true})
 }
 
-func (ts *TerminalSystem) WriteError(err error) {
+// WriteError takes an error and uses WriteLine to print the error. This
+// supports multi-line errors.
+func (ts *System) WriteError(err error) {
 	for _, line := range strings.Split(err.Error(), "\n") {
 		ts.WriteLine(line)
 	}

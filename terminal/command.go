@@ -13,7 +13,7 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-func (ts *TerminalSystem) loginScript(result *chan bool) {
+func (ts *System) loginScript(result *chan bool) {
 	file, err := ts.vfs.FS.OpenFile("/home/login.moon", os.O_RDONLY, 0777)
 
 	if err != nil {
@@ -33,7 +33,7 @@ func (ts *TerminalSystem) loginScript(result *chan bool) {
 	*result <- true
 }
 
-func (ts *TerminalSystem) command(str string) {
+func (ts *System) command(str string) {
 	args := strings.Split(strings.Trim(str, " "), " ")
 	if len(args) < 1 || args[0] == "" {
 		return
@@ -58,9 +58,9 @@ func (ts *TerminalSystem) command(str string) {
 	if f == nil {
 		ts.WriteLine(fmt.Sprintf("%s: command not found", args[0]))
 		return
-	} else {
-		defer (*f).Close()
 	}
+
+	defer (*f).Close()
 
 	state := newState(args, ts)
 	bytes, err := ioutil.ReadAll(*f)
@@ -73,7 +73,7 @@ func (ts *TerminalSystem) command(str string) {
 	eval(ftype, preprocessBytes(bytes, ts), state, ts)
 }
 
-func preprocessBytes(bytes []byte, ts *TerminalSystem) (source string) {
+func preprocessBytes(bytes []byte, ts *System) (source string) {
 	lines := strings.Split(string(bytes), "\n")
 
 	for _, line := range lines {
@@ -121,7 +121,7 @@ func preprocessBytes(bytes []byte, ts *TerminalSystem) (source string) {
 	return
 }
 
-func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
+func eval(ftype, source string, state *lua.LState, ts *System) {
 	switch ftype {
 	case "moon":
 		// TODO: better import, not every time...
@@ -153,7 +153,7 @@ func eval(ftype, source string, state *lua.LState, ts *TerminalSystem) {
 	}
 }
 
-func newState(args []string, ts *TerminalSystem) *lua.LState {
+func newState(args []string, ts *System) *lua.LState {
 	state := lua.NewState(lua.Options{
 		CallStackSize: 40960,
 		RegistrySize:  40960 * 20,

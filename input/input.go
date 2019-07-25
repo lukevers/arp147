@@ -20,9 +20,9 @@ type Key struct {
 	OnRelease func(engo.Key, *Modifiers)
 }
 
-// RegisterButtons registers buttons with functions for the scene. It also
-// handles registering modifiers to the global key management system so that we
-// can tell if the key was used at the same time that a modifier key was used.
+// RegisterKeys registers keys with functions for the scene. It also handles
+// registering modifiers to the global key management system so that we can
+// tell if the key was used at the same time that a modifier key was used.
 func RegisterKeys(keys []Key) {
 	// Store the button registry globally
 	sceneRegistry = &keys

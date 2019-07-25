@@ -8,6 +8,8 @@ import (
 	"github.com/lukevers/arp147/planet"
 )
 
+// Cell defines an X,Y location, and also contains data about what is in that
+// location.
 type Cell struct {
 	X int64
 	Y int64
@@ -16,23 +18,28 @@ type Cell struct {
 	Discovered bool
 }
 
+// NewCell initializes cell data from a given *Cell.
 func NewCell(cell *Cell) *Cell {
 	cell.initialize()
 	return cell
 }
 
+// GetX returns a hex formatted X location
 func (c *Cell) GetX() string {
 	return fmt.Sprintf("0x%X", c.X)
 }
 
+// GetY returns a hex formatted Y location
 func (c *Cell) GetY() string {
 	return fmt.Sprintf("0x%X", c.Y)
 }
 
+// HudX returns an HUD friendly X location
 func (c *Cell) HudX() string {
 	return fmt.Sprintf("X: %s", c.GetX())
 }
 
+// HudY returns an HUD friendly Y location
 func (c *Cell) HudY() string {
 	return fmt.Sprintf("Y: %s", c.GetY())
 }

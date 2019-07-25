@@ -10,6 +10,8 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+// ScriptLoader creates a set of filesystem level functions to be used in
+// scripts.
 func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 	mod := state.SetFuncs(state.NewTable(), map[string]lua.LGFunction{
 		"cwd": func(L *lua.LState) int {

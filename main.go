@@ -46,12 +46,12 @@ func (*defaultScene) Setup(u engo.Updater) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&common.MouseSystem{})
 
-	world.AddSystem(&input.InputSystem{})
+	world.AddSystem(&input.System{})
 	world.AddSystem(&ui.TextUpdateSystem{})
 	world.AddSystem(&ui.ButtonControlSystem{})
 
 	m := navigator.NewMap()
-	world.AddSystem(&terminal.TerminalSystem{Map: m})
+	world.AddSystem(&terminal.System{Map: m})
 	world.AddSystem(&opposition.OppositionSystem{Map: m})
 	world.AddSystem(&user.UserSystem{Map: m})
 }
