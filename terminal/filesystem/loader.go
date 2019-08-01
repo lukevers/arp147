@@ -109,7 +109,6 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 
 			return 0
 		},
-
 		"listdir": func(L *lua.LState) int {
 			dir := L.ToString(1)
 			fulldir := dir

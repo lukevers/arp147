@@ -197,6 +197,16 @@ func newState(args []string, ts *System) *lua.LState {
 				L.Push(lua.LNumber(len(ts.pages)))
 				return 1
 			},
+			"clear": func(L *lua.LState) int {
+				ts.pages[ts.page].hide()
+				ts.pages[ts.page] = &page{
+					lines:     make(map[int]*line),
+					line:      0,
+					escapable: true,
+				}
+
+				return 0
+			},
 		})
 
 		state.Push(mod)
