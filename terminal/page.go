@@ -31,9 +31,13 @@ func (p *page) show() {
 			}
 		}
 	}
+
+	p.cursor.RenderComponent.Hidden = false
 }
 
 func (p *page) hide() {
+	p.cursor.RenderComponent.Hidden = true
+
 	for _, line := range p.lines {
 		for _, char := range line.chars {
 			char.RenderComponent.Hidden = true
