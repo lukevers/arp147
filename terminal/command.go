@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lukevers/arp147/input"
+
+	"engo.io/engo"
 	"github.com/blang/vfs"
 	"github.com/rucuriousyet/gmoonscript"
 	lua "github.com/yuin/gopher-lua"
@@ -204,6 +207,47 @@ func newState(args []string, ts *System) *lua.LState {
 					line:      0,
 					escapable: true,
 				}
+
+				return 0
+			},
+			"editable": func(L *lua.LState) int {
+				ts.pages[ts.page].editable = true
+				return 0
+			},
+			"unbind": func(L *lua.LState) int {
+				key := L.ToString(1)
+
+				var engokey engo.Key
+				switch key {
+				case "escape":
+					engokey = engo.KeyEscape
+				default:
+					engokey, _ = input.StringToKey(key)
+				}
+
+				ts.unbind(engokey)
+				return 0
+			},
+			"bind": func(L *lua.LState) int {
+				key := L.ToString(1)
+				cb := L.ToFunction(2)
+
+				var engokey engo.Key
+				switch key {
+				case "escape":
+					engokey = engo.KeyEscape
+				default:
+					engokey, _ = input.StringToKey(key)
+				}
+
+				ts.bind(engokey, func() bool {
+					L.CallByParam(lua.P{
+						Fn:   cb,
+						NRet: 0,
+					})
+
+					return true
+				})
 
 				return 0
 			},

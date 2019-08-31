@@ -17,6 +17,7 @@ type page struct {
 
 	escapable bool
 	readonly  bool
+	editable  bool
 }
 
 func (p *page) lineOffset() int {
@@ -46,12 +47,15 @@ func (p *page) hide() {
 }
 
 func (p *page) pushScreenUp() {
+	lastVisibleIndex := p.getLastVisibleLineIndex()
 	for i, line := range p.lines {
 		for _, char := range line.chars {
-			char.SetY(char.Y - 16)
+			char.SetY(char.Y - FontSize)
 
 			if i <= p.enil {
 				char.RenderComponent.Hidden = true
+			} else if i == lastVisibleIndex+1 {
+				char.RenderComponent.Hidden = false
 			}
 		}
 	}
@@ -59,22 +63,40 @@ func (p *page) pushScreenUp() {
 	p.enil++
 }
 
-// func (p *page) pushScreenDown() {
-// 	for i, line := range p.lines {
-// 		for _, char := range line.chars {
-// 			char.SetY(char.Y + 16)
+func (p *page) getLastVisibleLineIndex() int {
+	for i := len(p.lines) - 1; i > 0; i-- {
+		if p.lines[i] == nil {
+			continue
+		}
 
-// 			if i >= p.enil {
-// 				char.RenderComponent.Hidden = false
-// 			}
+		if len(p.lines[i].chars) > 0 {
+			if !p.lines[i].chars[0].RenderComponent.Hidden {
+				return i
+			}
+		} else {
+			// Handle empty lines that still exist
+			if float32(i)*FontSize <= 704 {
+				return i
+			}
+		}
+	}
 
-// 			// if i <= p.enil {
-// 			// 	char.RenderComponent.Hidden = false
-// 			// } else if i >= p.line {
-// 			// 	char.RenderComponent.Hidden = true
-// 			// }
-// 		}
-// 	}
+	return 0
+}
 
-// 	p.enil--
-// }
+func (p *page) pushScreenDown() {
+	lastVisibleIndex := p.getLastVisibleLineIndex()
+	for i, line := range p.lines {
+		for _, char := range line.chars {
+			char.SetY(char.Y + FontSize)
+
+			if i == p.line && i <= p.enil {
+				char.RenderComponent.Hidden = false
+			} else if i == lastVisibleIndex {
+				char.RenderComponent.Hidden = true
+			}
+		}
+	}
+
+	p.enil--
+}

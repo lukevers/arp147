@@ -31,6 +31,10 @@ type System struct {
 	vfs   *filesystem.VirtualFS
 
 	ship *ship.Ship
+
+	needsDraw []string
+
+	boundKeys map[engo.Key]func() bool
 }
 
 // Viewer is the background entity for the terminal.
@@ -48,8 +52,22 @@ func (*System) Remove(ecs.BasicEntity) {
 
 // Update is ran every frame, with `dt` being the time in seconds since the
 // last frame.
-func (*System) Update(dt float32) {
-	// TODO
+func (ts *System) Update(dt float32) {
+	for i := 0; i < 5; i++ {
+		if len(ts.needsDraw) < 1 {
+			break
+		}
+
+		char := ""
+		char, ts.needsDraw = ts.needsDraw[0], ts.needsDraw[1:]
+
+		switch char {
+		case "\n":
+			ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true})
+		default:
+			ts.delegateKeyPress(input.StringToKey(char))
+		}
+	}
 }
 
 // New is the initialisation of the System.
@@ -64,6 +82,8 @@ func (ts *System) New(w *ecs.World) {
 	}
 
 	ts.registerKeys()
+	ts.boundKeys = make(map[engo.Key]func() bool)
+
 	ts.addBackground(w)
 
 	result := make(chan bool)
@@ -187,6 +207,14 @@ func (ts *System) registerKeys() {
 	})
 }
 
+func (ts *System) bind(key engo.Key, cb func() bool) {
+	ts.boundKeys[key] = cb
+}
+
+func (ts *System) unbind(key engo.Key) {
+	delete(ts.boundKeys, key)
+}
+
 func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 	if ts.pages[ts.page] == nil {
 		ts.pages[ts.page] = &page{
@@ -204,7 +232,20 @@ func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 
 	if ts.pages[ts.page].lines[ts.pages[ts.page].line] == nil {
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+
+		if !ts.pages[ts.page].editable {
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+		}
+	}
+
+	// Check to see if a script set a binding on a key.
+	if cb, ok := ts.boundKeys[key]; ok {
+		// If so, run the callback function. If it results in a false value
+		// then we do not want to continue. If it results in a true value then
+		// we continue with the normal mappings.
+		if !cb() {
+			return
+		}
 	}
 
 	length := len(ts.pages[ts.page].lines[ts.pages[ts.page].line].text)
@@ -256,56 +297,93 @@ func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 			ts.pages[ts.page].cpoint--
 		}
 	case engo.KeyArrowUp:
-		if len(ts.pages[ts.page].commands) <= ts.pages[ts.page].cmdindex {
-			break
-		}
-
-		ts.pages[ts.page].cmdindex++
-		cmd := ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
-
-		if (length - prefixCount) > 0 {
-			for i := length - 1; i >= prefixCount; i-- {
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+		if ts.pages[ts.page].editable {
+			if ts.pages[ts.page].lines[ts.pages[ts.page].line-1] == nil {
+				break
 			}
-		}
 
-		for _, char := range cmd {
-			ts.delegateKeyPress(input.StringToKey(string(char)))
+			if ts.pages[ts.page].cpoint > 0 {
+				ts.pages[ts.page].cpoint = 0
+			}
+
+			ts.pages[ts.page].line--
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = false
+
+			if ts.pages[ts.page].enil > 0 && ts.pages[ts.page].line < ts.pages[ts.page].enil {
+				ts.pages[ts.page].pushScreenDown()
+			}
+		} else {
+			if len(ts.pages[ts.page].commands) <= ts.pages[ts.page].cmdindex {
+				break
+			}
+
+			ts.pages[ts.page].cmdindex++
+			cmd := ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
+
+			if (length - prefixCount) > 0 {
+				for i := length - 1; i >= prefixCount; i-- {
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+				}
+			}
+
+			for _, char := range cmd {
+				ts.delegateKeyPress(input.StringToKey(string(char)))
+			}
 		}
 	case engo.KeyArrowDown:
-		if ts.pages[ts.page].cmdindex < 1 {
-			break
-		}
-
-		ts.pages[ts.page].cmdindex--
-
-		var cmd string
-		if ts.pages[ts.page].cmdindex > 1 {
-			cmd = ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
-		}
-
-		if (length - prefixCount) > 0 {
-			for i := length - 1; i >= prefixCount; i-- {
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+		if ts.pages[ts.page].editable {
+			if ts.pages[ts.page].lines[ts.pages[ts.page].line+1] == nil {
+				break
 			}
-		}
 
-		for _, char := range cmd {
-			ts.delegateKeyPress(input.StringToKey(string(char)))
+			if ts.pages[ts.page].cpoint > 0 {
+				ts.pages[ts.page].cpoint = 0
+			}
+
+			ts.pages[ts.page].line++
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = false
+
+			yoffset := float32(ts.pages[ts.page].line-ts.pages[ts.page].enil) * FontSize
+			if yoffset > 704 {
+				ts.pages[ts.page].pushScreenUp()
+			}
+		} else {
+			if ts.pages[ts.page].cmdindex < 1 {
+				break
+			}
+
+			ts.pages[ts.page].cmdindex--
+
+			var cmd string
+			if ts.pages[ts.page].cmdindex > 1 {
+				cmd = ts.pages[ts.page].commands[len(ts.pages[ts.page].commands)-(ts.pages[ts.page].cmdindex)]
+			}
+
+			if (length - prefixCount) > 0 {
+				for i := length - 1; i >= prefixCount; i-- {
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].text = ts.pages[ts.page].lines[ts.pages[ts.page].line].text[0:i]
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[i].Remove(ts.world)
+					ts.pages[ts.page].lines[ts.pages[ts.page].line].chars = ts.pages[ts.page].lines[ts.pages[ts.page].line].chars[0:i]
+				}
+			}
+
+			for _, char := range cmd {
+				ts.delegateKeyPress(input.StringToKey(string(char)))
+			}
 		}
 	case engo.KeyEscape:
 		if ts.pages[ts.page].escapable {
-			ts.pages[ts.page].hide()
-			delete(ts.pages, ts.page)
-			ts.page--
-			ts.pages[ts.page].show()
+			if !ts.pages[ts.page].editable {
+				ts.pages[ts.page].hide()
+				delete(ts.pages, ts.page)
+				ts.page--
+				ts.pages[ts.page].show()
 
-			ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+				ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
+				ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
+			}
 		}
 	case engo.KeyEnter:
 		ts.pages[ts.page].cmdindex = 0
@@ -315,7 +393,9 @@ func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 			break
 		}
 
-		ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = true
+		if !ts.pages[ts.page].editable {
+			ts.pages[ts.page].lines[ts.pages[ts.page].line].locked = true
+		}
 
 		xoffset := ts.getXoffset()
 		if xoffset > 710 {
@@ -324,19 +404,35 @@ func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 			ts.pages[ts.page].line++
 		}
 
+		lastyoffset := float32(0)
 		yoffset := float32(ts.pages[ts.page].line) * FontSize
-		if yoffset > 704 {
+		if ts.pages[ts.page].line < len(ts.pages[ts.page].lines) {
+			lastyoffset = float32(len(ts.pages[ts.page].lines)-1) * FontSize
+		}
+
+		if yoffset > 704 || lastyoffset > 704 {
 			ts.pages[ts.page].pushScreenUp()
 		}
 
-		if !mods.Ignore {
+		if !mods.Ignore && !ts.pages[ts.page].editable {
 			ts.pages[ts.page].commands = append(ts.pages[ts.page].commands, ts.pages[ts.page].lines[ts.pages[ts.page].line-1].String())
 			ts.pages[ts.page].lines[ts.pages[ts.page].line-1].evaluate(ts)
 		}
 
-		// Add a new line after everything
+		if ts.pages[ts.page].line < len(ts.pages[ts.page].lines) {
+			for i := len(ts.pages[ts.page].lines); i > ts.pages[ts.page].line; i-- {
+				// fmt.Println(len(ts.pages[ts.page].lines), i, ts.pages[ts.page].line)
+
+				ts.pages[ts.page].lines[i] = ts.pages[ts.page].lines[i-1]
+				for _, char := range ts.pages[ts.page].lines[i].chars {
+					char.SetY(char.Y + FontSize).Render()
+				}
+			}
+		}
+
+		// Add a new line
 		ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-		if !mods.Ignore {
+		if !mods.Ignore && !ts.pages[ts.page].editable {
 			ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
 		}
 	default:
@@ -449,10 +545,18 @@ func (ts *System) WriteLine(str string) {
 		}
 
 		line += char
+
+		if ts.pages[ts.page].editable {
+			ts.needsDraw = append(ts.needsDraw, char)
+		}
 	}
 
-	ts.delegateKeyPress(engo.Key(-1), &input.Modifiers{Output: true, Line: &line})
-	ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true, Output: true})
+	if !ts.pages[ts.page].editable {
+		ts.delegateKeyPress(engo.Key(-1), &input.Modifiers{Output: true, Line: &line})
+		ts.delegateKeyPress(engo.KeyEnter, &input.Modifiers{Ignore: true, Output: true})
+	} else {
+		ts.needsDraw = append(ts.needsDraw, "\n")
+	}
 }
 
 // WriteError takes an error and uses WriteLine to print the error. This
