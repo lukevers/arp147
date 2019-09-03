@@ -251,6 +251,10 @@ func newState(args []string, ts *System) *lua.LState {
 
 				return 0
 			},
+			"get_page_contents": func(L *lua.LState) int {
+				L.Push(lua.LString(ts.pages[ts.page].ToString()))
+				return 1
+			},
 		})
 
 		state.Push(mod)

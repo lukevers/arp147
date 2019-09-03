@@ -16,5 +16,7 @@ for line in *lines
 
 screen.bind('escape', ->
     screen.unbind('escape')
+    screen.readonly!
+    fs.write(arg[1], screen.get_page_contents!)
     screen.pop!
 )

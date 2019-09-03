@@ -20,6 +20,15 @@ type page struct {
 	editable  bool
 }
 
+func (p *page) ToString() string {
+	contents := ""
+	for i := 0; i <= p.line; i++ {
+		contents += p.lines[i].String() + "\n"
+	}
+
+	return contents
+}
+
 func (p *page) lineOffset() int {
 	return p.line - p.enil
 }

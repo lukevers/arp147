@@ -207,6 +207,30 @@ func (fs *VirtualFS) ScriptLoader(state *lua.LState) int {
 			L.Push(lines)
 			return 1
 		},
+		"write": func(L *lua.LState) int {
+			file := L.ToString(1)
+			fullfile := file
+			if !strings.HasPrefix(file, "/") {
+				fullfile = fmt.Sprintf("%s/%s", fs.cwd, file)
+			}
+
+			fs.FS.Remove(fullfile)
+			f, err := fs.FS.OpenFile(fullfile, os.O_CREATE|os.O_RDWR, 0777)
+			if err != nil {
+				L.Push(lua.LString(fmt.Sprintf("%s: could not open file", file)))
+				return 1
+			}
+
+			defer f.Close()
+			contents := L.ToString(2)
+			_, err = f.Write([]byte(contents))
+			if err != nil {
+				L.Push(lua.LString(fmt.Sprintf("%s: could not write file: %s", file, err.Error())))
+				return 1
+			}
+
+			return 0
+		},
 	})
 
 	state.Push(mod)
