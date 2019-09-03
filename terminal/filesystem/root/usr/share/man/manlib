@@ -13,5 +13,8 @@ DESCRIPTION
     Manual library files are stored on the filesystem at
     `/usr/share/manlib`.
 
+KEY BINDINGS
+    ESCAPE - Exit the manual
+
 SEE ALSO
     man

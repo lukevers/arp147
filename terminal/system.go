@@ -374,17 +374,7 @@ func (ts *System) delegateKeyPress(key engo.Key, mods *input.Modifiers) {
 			}
 		}
 	case engo.KeyEscape:
-		if ts.pages[ts.page].escapable {
-			if !ts.pages[ts.page].editable {
-				ts.pages[ts.page].hide()
-				delete(ts.pages, ts.page)
-				ts.page--
-				ts.pages[ts.page].show()
-
-				ts.pages[ts.page].lines[ts.pages[ts.page].line] = &line{}
-				ts.pages[ts.page].lines[ts.pages[ts.page].line].prefix(ts.delegateKeyPress)
-			}
-		}
+		// Nothing
 	case engo.KeyEnter:
 		ts.pages[ts.page].cmdindex = 0
 		ts.pages[ts.page].cpoint = 0

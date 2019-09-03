@@ -15,9 +15,8 @@ type page struct {
 	cursor *ui.Text
 	cpoint int
 
-	escapable bool
-	readonly  bool
-	editable  bool
+	readonly bool
+	editable bool
 }
 
 func (p *page) ToString() string {
@@ -46,7 +45,9 @@ func (p *page) show() {
 }
 
 func (p *page) hide() {
-	p.cursor.RenderComponent.Hidden = true
+	if p.cursor != nil {
+		p.cursor.RenderComponent.Hidden = true
+	}
 
 	for _, line := range p.lines {
 		for _, char := range line.chars {

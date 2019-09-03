@@ -11,3 +11,8 @@ screen.readonly!
 lines = fs.cat "/usr/share/manlib/#{arg[1]}"
 for line in *lines
     print line
+
+screen.bind('escape', ->
+    screen.unbind('escape')
+    screen.pop!
+)
