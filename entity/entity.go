@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"math/rand"
@@ -10,7 +9,6 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
-	"github.com/Pallinder/go-randomdata"
 	"github.com/disintegration/gift"
 	"github.com/fogleman/gg"
 )
@@ -32,6 +30,7 @@ type Entity struct {
 	size float64
 	t    Type
 
+	Data *data
 	Icon *Icon
 
 	full  image.Image
@@ -59,7 +58,7 @@ func New(size float64, t Type, initalize bool) *Entity {
 	if initalize {
 		e.Generate()
 		e.SetSpritesheet()
-		e.data()
+		e.Data = datagen()
 	}
 
 	return e
@@ -238,14 +237,4 @@ func (e *Entity) SetSpritesheet() {
 		Drawable: e.spriteSheet.Cell(0),
 		Scale:    engo.Point{X: 1, Y: 1},
 	}
-}
-
-func (e *Entity) data() {
-	fmt.Println("----------")
-	fmt.Println(randomdata.City())
-	fmt.Println(randomdata.Locale())
-	fmt.Println(randomdata.Currency())
-	fmt.Println(randomdata.SillyName())
-	fmt.Println(randomdata.IpV4Address())
-	fmt.Println(randomdata.PostalCode("SE"))
 }

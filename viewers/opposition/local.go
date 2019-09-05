@@ -17,11 +17,11 @@ func (os *OppositionSystem) addOpposition(pane *viewers.Pane) {
 		}
 
 		if os.Map.Center.Entity != nil {
-			p := os.Map.Center.Entity
-			p.SetPosition(engo.Point{X: 1000, Y: 200})
-			p.AddToWorld(os.world)
-			pane.RegisterEntity(&p.BasicEntity, &p.RenderComponent)
-			entities = append(entities, &p.BasicEntity)
+			e := os.Map.Center.Entity
+			e.SetPosition(engo.Point{X: 1000, Y: 200})
+			e.AddToWorld(os.world)
+			pane.RegisterEntity(&e.BasicEntity, &e.RenderComponent)
+			entities = append(entities, &e.BasicEntity)
 
 			if pane != os.viewer.GetActivePane() {
 				pane.Hide()
