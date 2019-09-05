@@ -1,0 +1,17 @@
+                  ARP-SH1 GENERAL COMMANDS MANUAL
+
+NAME
+    edit - basic file editor
+
+SYNOPSIS
+    edit [file]
+
+DESCRIPTION
+    The `edit` command allows you to edit a file.
+
+KEY BINDINGS
+    ESCAPE      - Save the file and exit
+    UP ARROW    - Move up a line
+    DOWN ARROW  - Move down a line
+    LEFT ARROW  - Move a character to the left
+    RIGTH ARROW - Move a character to the right
