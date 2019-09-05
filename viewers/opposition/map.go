@@ -89,16 +89,16 @@ func (os *OppositionSystem) addGrid(pane *viewers.Pane) {
 			if !cell.Discovered {
 				etext = ""
 			} else {
-				if cell.Planet != nil {
+				if cell.Entity != nil {
 					if yoffset == 0 {
 						yoffset = 10
 					}
 
-					cell.Planet.Icon.SetPosition(engo.Point{X: 875 + xoffset, Y: 70 + yoffset})
-					cell.Planet.Icon.AddToWorld(pane.World)
-					pane.RegisterEntity(&cell.Planet.Icon.BasicEntity, &cell.Planet.Icon.RenderComponent)
-					entities = append(entities, &cell.Planet.Icon.BasicEntity)
-					etext = "PLANET"
+					cell.Entity.Icon.SetPosition(engo.Point{X: 875 + xoffset, Y: 70 + yoffset})
+					cell.Entity.Icon.AddToWorld(pane.World)
+					pane.RegisterEntity(&cell.Entity.Icon.BasicEntity, &cell.Entity.Icon.RenderComponent)
+					entities = append(entities, &cell.Entity.Icon.BasicEntity)
+					etext = cell.Entity.Type()
 				}
 			}
 

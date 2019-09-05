@@ -16,8 +16,8 @@ func (os *OppositionSystem) addOpposition(pane *viewers.Pane) {
 			os.world.RemoveEntity(*entity)
 		}
 
-		if os.Map.Center.Planet != nil {
-			p := os.Map.Center.Planet
+		if os.Map.Center.Entity != nil {
+			p := os.Map.Center.Entity
 			p.SetPosition(engo.Point{X: 1000, Y: 200})
 			p.AddToWorld(os.world)
 			pane.RegisterEntity(&p.BasicEntity, &p.RenderComponent)

@@ -1,4 +1,4 @@
-package planet
+package entity
 
 import (
 	"image"
@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-func TestPlanetCreate(t *testing.T) {
-	p := New(SizeViewer, TypePlanet, false)
-	p.Generate(TypePlanet)
+func TestEntityCreate(t *testing.T) {
+	e := New(SizeViewer, TypePlanet, false)
+	e.Generate(TypePlanet)
 
-	saveImage("out.png", p.full)
+	saveImage("out.png", e.full)
 }
 
 // for testing

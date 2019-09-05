@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/lukevers/arp147/planet"
+	"github.com/lukevers/arp147/entity"
 )
 
 // Cell defines an X,Y location, and also contains data about what is in that
@@ -14,7 +14,7 @@ type Cell struct {
 	X int64
 	Y int64
 
-	Planet     *planet.Planet
+	Entity     *entity.Entity
 	Discovered bool
 }
 
@@ -48,8 +48,9 @@ func (c *Cell) initialize() {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
-	if chance(6) {
-		c.Planet = planet.New(planet.SizeViewer, planet.TypePlanet, true)
+	if true {
+		// if chance(6) {
+		c.Entity = entity.New(entity.SizeViewer, entity.TypePlanet, true)
 	}
 }
 

@@ -1,4 +1,4 @@
-package planet
+package entity
 
 // func (s *Ship) HudShieldLevel() string {
 // 	return fmt.Sprintf(

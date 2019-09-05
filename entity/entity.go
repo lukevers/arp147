@@ -1,6 +1,7 @@
-package planet
+package entity
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"math/rand"
@@ -9,6 +10,7 @@ import (
 	"engo.io/ecs"
 	"engo.io/engo"
 	"engo.io/engo/common"
+	"github.com/Pallinder/go-randomdata"
 	"github.com/disintegration/gift"
 	"github.com/fogleman/gg"
 )
@@ -25,7 +27,7 @@ const (
 	SizeViewer = 64
 )
 
-type Planet struct {
+type Entity struct {
 	Seed int64
 	size float64
 	t    Type
@@ -43,11 +45,11 @@ type Planet struct {
 	spriteSheet *common.Spritesheet
 }
 
-func New(size float64, t Type, initalize bool) *Planet {
+func New(size float64, t Type, initalize bool) *Entity {
 	seed := time.Now().UTC().UnixNano()
 	rand.Seed(seed)
 
-	p := &Planet{
+	e := &Entity{
 		Seed:        seed,
 		size:        size,
 		t:           t,
@@ -55,36 +57,50 @@ func New(size float64, t Type, initalize bool) *Planet {
 	}
 
 	if initalize {
-		p.Generate()
-		p.SetSpritesheet()
+		e.Generate()
+		e.SetSpritesheet()
+		e.data()
 	}
 
-	return p
+	return e
 }
 
 func randInt(min, max int) uint8 {
 	return uint8(min + rand.Intn(max-min))
 }
 
-func (p *Planet) Generate() {
-	p.main = p.generate(p.size, p.t)
+func (e *Entity) Type() string {
+	switch e.t {
+	case TypePlanet:
+		return "PLANET"
+	case TypeMoon:
+		return "MOON"
+	case TypeStar:
+		return "STAR"
+	}
 
-	if p.t == TypePlanet {
+	return ""
+}
+
+func (e *Entity) Generate() {
+	e.main = e.generate(e.size, e.t)
+
+	if e.t == TypePlanet {
 		for i := 0; i < int(randInt(0, 4)); i++ {
-			moon := p.generate(float64(randInt(int(p.size/16), int(p.size/4))), TypeMoon)
-			p.moons = append(p.moons, moon)
+			moon := e.generate(float64(randInt(int(e.size/16), int(e.size/4))), TypeMoon)
+			e.moons = append(e.moons, moon)
 		}
 	}
 
-	p.full = p.patchMoons()
-	p.generateIcon()
+	e.full = e.patchMoons()
+	e.generateIcon()
 }
 
-func (p *Planet) generateIcon() {
-	p.Icon = newIcon(p.full, p.size/2)
+func (e *Entity) generateIcon() {
+	e.Icon = newIcon(e.full, e.size/2)
 }
 
-func (p *Planet) generate(size float64, t Type) image.Image {
+func (e *Entity) generate(size float64, t Type) image.Image {
 	dc := gg.NewContext(int(size*2), int(size*2))
 	dc.DrawCircle(size, size, size)
 
@@ -99,7 +115,7 @@ func (p *Planet) generate(size float64, t Type) image.Image {
 
 	img := dc.Image()
 
-	for _, filter := range p.filters(t, size) {
+	for _, filter := range e.filters(t, size) {
 		g := gift.New(filter)
 		dst := image.NewNRGBA(g.Bounds(img.Bounds()))
 		g.Draw(dst, img)
@@ -109,7 +125,7 @@ func (p *Planet) generate(size float64, t Type) image.Image {
 	return img
 }
 
-func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
+func (e *Entity) filters(t Type, size float64) map[string]gift.Filter {
 	// Make changes before applying filters if TypeMoon
 	if t == TypeMoon {
 		// Double the "size" when applying filters related to sizing to
@@ -133,25 +149,25 @@ func (p *Planet) filters(t Type, size float64) map[string]gift.Filter {
 	}
 }
 
-func (p *Planet) patchMoons() image.Image {
-	size := int(p.size * 4)
+func (e *Entity) patchMoons() image.Image {
+	size := int(e.size * 4)
 	dc := gg.NewContext(size, size)
-	dc.DrawImageAnchored(p.main, p.main.Bounds().Size().X, p.main.Bounds().Size().Y, .5, .5)
+	dc.DrawImageAnchored(e.main, e.main.Bounds().Size().X, e.main.Bounds().Size().Y, .5, .5)
 
 	var x, y int
 	var ax, ay float64
 
-	for i, moon := range p.moons {
-		xoffset := int(p.size/4) + moon.Bounds().Size().X
-		yoffset := int(p.size/4) + moon.Bounds().Size().Y
+	for i, moon := range e.moons {
+		xoffset := int(e.size/4) + moon.Bounds().Size().X
+		yoffset := int(e.size/4) + moon.Bounds().Size().Y
 
 		if moon.Bounds().Size().X <= 12 {
 			xoffset *= 2
 			yoffset *= 2
 		}
 
-		xoffset -= int(randInt(0, int(p.size/6)))
-		yoffset -= int(randInt(0, int(p.size/6)))
+		xoffset -= int(randInt(0, int(e.size/6)))
+		yoffset -= int(randInt(0, int(e.size/6)))
 
 		switch i {
 		case 0:
@@ -183,43 +199,53 @@ func (p *Planet) patchMoons() image.Image {
 	return dc.Image()
 }
 
-func (p *Planet) AddToWorld(world *ecs.World) {
+func (e *Entity) AddToWorld(world *ecs.World) {
 	for _, system := range world.Systems() {
 		switch sys := system.(type) {
 		case *common.RenderSystem:
-			sys.Add(&p.BasicEntity, &p.RenderComponent, &p.SpaceComponent)
+			sys.Add(&e.BasicEntity, &e.RenderComponent, &e.SpaceComponent)
 		}
 	}
 }
 
-func (p *Planet) SetPosition(pos engo.Point) {
-	pos.X -= p.SpaceComponent.Width / 2
-	pos.Y -= p.SpaceComponent.Height / 2
-	p.SpaceComponent.Position = pos
+func (e *Entity) SetPosition(pos engo.Point) {
+	pos.X -= e.SpaceComponent.Width / 2
+	pos.Y -= e.SpaceComponent.Height / 2
+	e.SpaceComponent.Position = pos
 }
 
-func (p *Planet) SetSpritesheet() {
+func (e *Entity) SetSpritesheet() {
 	g := gift.New()
-	dst := image.NewNRGBA(g.Bounds(p.full.Bounds()))
-	g.Draw(dst, p.full)
+	dst := image.NewNRGBA(g.Bounds(e.full.Bounds()))
+	g.Draw(dst, e.full)
 
 	width := dst.Bounds().Size().X
 	height := dst.Bounds().Size().Y
 
 	texture := common.NewTextureResource(common.NewImageObject(dst))
-	p.spriteSheet = common.NewSpritesheetFromTexture(
+	e.spriteSheet = common.NewSpritesheetFromTexture(
 		&texture,
 		width,
 		height,
 	)
 
-	p.SpaceComponent = common.SpaceComponent{
+	e.SpaceComponent = common.SpaceComponent{
 		Width:  float32(width),
 		Height: float32(height),
 	}
 
-	p.RenderComponent = common.RenderComponent{
-		Drawable: p.spriteSheet.Cell(0),
+	e.RenderComponent = common.RenderComponent{
+		Drawable: e.spriteSheet.Cell(0),
 		Scale:    engo.Point{X: 1, Y: 1},
 	}
+}
+
+func (e *Entity) data() {
+	fmt.Println("----------")
+	fmt.Println(randomdata.City())
+	fmt.Println(randomdata.Locale())
+	fmt.Println(randomdata.Currency())
+	fmt.Println(randomdata.SillyName())
+	fmt.Println(randomdata.IpV4Address())
+	fmt.Println(randomdata.PostalCode("SE"))
 }
